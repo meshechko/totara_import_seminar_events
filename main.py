@@ -35,8 +35,7 @@ def uploadRooms():
         rooms_list = models.covertCsvToList(CSV)
         if models.validateCsvHeaders(rooms_list):
             models.saveRooms(rooms_list)
-            flash(
-                f'Successfully upladed {len(models.getRooms())} rooms', 'success')
+            flash(f'Successfully upladed {len(models.getRooms())} rooms', 'success')
         else:
             flash('Please upload CSV that contains the following headers: \n id, name, description, capacity, location, building, published', 'danger')
     return render_template('form.html', form=form)
@@ -47,16 +46,14 @@ def uploadBackup():
     checkUserSession()
     form = UploadBackup()
     
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST':
         file = form.file.data
         if models.validateBackup(file):
-            models.uploadBackup(file)
             if models.unzipBackup(file):
-                flash(
-                    f'Backup file uploaded', 'success')
+                flash(f'Backup file uploaded', 'success')
             else:
                 flash(f'Incorrect backup', 'danger')
         else:
-            flash('The uploaded file doesn’t have Seminar activity. Click here to learn how to generate the seminar activity backup.')
+            flash('Upload the correct Totara activity backup that ends with .mbz. Click here to learn how to generate the seminar activity backup.', 'danger')
     return render_template('backup.html', form=form)
 
