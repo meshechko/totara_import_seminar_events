@@ -24,6 +24,12 @@ def getSeminarFolder(userID):
 def getUserFolder(userID):
     return UPLOAD_FOLDER + userID
 
+# COMMON
+
+def fileAllowed(filename, allowedExtension):
+    if Path(filename).suffix == allowedExtension:
+        return Ture
+
 # ROOMS upload
 
 requiredHeaders = ['id', 'name', 'description', 'capacity', 'location', 'building', 'published']
@@ -62,31 +68,34 @@ def saveRooms(rooms_list):
 # BACKUP upload
 
 def validateBackup(file):
-    if "facetoface" in file.filename:
-        return True
-
-def uploadBackup(file):
-    seminarFolder = getSeminarFolder(session["userID"])
-    if os.path.exists(seminarFolder):
-        shutil.rmtree(seminarFolder)
-    
     filename = secure_filename(file.filename)
-    Path(seminarFolder).mkdir(parents=True, exist_ok=True)
-    file.save(os.path.join(seminarFolder, filename))
-        
+    if "facetoface" in filename and fileAllowed(filename, ".mbz"):
+        return True
+     
 
 def unzipBackup(file):
     seminarFolder = getSeminarFolder(session["userID"])
-    mbz_filepath = seminarFolder+file.filename
+    
+    # check if diectory alreay exist
+    if os.path.exists(seminarFolder):
+        shutil.rmtree(seminarFolder)
+    
+    #TODO check why this one is not under ELSE?
+    filename = secure_filename(file.filename)
+    createFolder(seminarFolder)
+    
+    # upload file in to user folder
+    file.save(os.path.join(seminarFolder, filename))
+    
+    mbz_filepath = seminarFolder+filename
     fileinfo = magic.from_file(mbz_filepath)
-    fullpath_to_unzip_dir = seminarFolder
 
     if 'Zip archive data' in fileinfo:
         with zipfile.ZipFile(mbz_filepath, 'r') as myzip:
-            myzip.extractall(fullpath_to_unzip_dir)
+            myzip.extractall(seminarFolder)
     elif 'gzip compressed data' in fileinfo:
         tar = tarfile.open(mbz_filepath)
-        tar.extractall(path=fullpath_to_unzip_dir)
+        tar.extractall(path=seminarFolder)
         tar.close()
     else:
         return False
