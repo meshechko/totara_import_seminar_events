@@ -1,0 +1,856 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activity id="439" moduleid="14291" modulename="facetoface" contextid="120655">
+  <facetoface id="439">
+    <name>Advanced Supervision Workshop</name>
+    <intro>&lt;p&gt;Click on the link below to select a session from the list of available dates. Once you have signed up to the session your manager will receive a notification of your booking request. You will not be formally accepted into the course until the course request has been approved by your Manager.&lt;/p&gt;</intro>
+    <introformat>1</introformat>
+    <thirdparty></thirdparty>
+    <thirdpartywaitlist>0</thirdpartywaitlist>
+    <display>6</display>
+    <timecreated>0</timecreated>
+    <timemodified>1505174209</timemodified>
+    <shortname></shortname>
+    <showoncalendar>1</showoncalendar>
+    <usercalentry>1</usercalentry>
+    <multiplesessions>0</multiplesessions>
+    <completionstatusrequired>{"100":1}</completionstatusrequired>
+    <managerreserve>0</managerreserve>
+    <maxmanagerreserves>4</maxmanagerreserves>
+    <reservecanceldays>4</reservecanceldays>
+    <reservedays>5</reservedays>
+    <declareinterest>0</declareinterest>
+    <interestonlyiffull>0</interestonlyiffull>
+    <allowcancellationsdefault>1</allowcancellationsdefault>
+    <cancellationscutoffdefault>0</cancellationscutoffdefault>
+    <selectjobassignmentonsignup>0</selectjobassignmentonsignup>
+    <forceselectjobassignment>0</forceselectjobassignment>
+    <approvaltype>4</approvaltype>
+    <approvalrole>$@NULL@$</approvalrole>
+    <approvalterms>By checking the box you confirm that permission to sign up to this seminar activity has been granted by your manager.
+
+Falsely claiming that approval has been granted can result in non-admittance and disciplinary action.
+</approvalterms>
+    <approvaladmins>$@NULL@$</approvaladmins>
+    <multisignupfully>0</multisignupfully>
+    <multisignuppartly>0</multisignuppartly>
+    <multisignupnoshow>0</multisignupnoshow>
+    <multisignupmaximum>1</multisignupmaximum>
+    <waitlistautoclean>0</waitlistautoclean>
+    <notifications>
+      <notification id="8003">
+        <type>4</type>
+        <conditiontype>4</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>1</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;&lt;span style="background-color: #ffff00;"&gt;*** Advice only ****&lt;/span&gt;&lt;br /&gt;&lt;br /&gt;&lt;strong&gt; This is to advise that [firstname] [lastname] has been formally booked for the following course and listed you as their Team Leader / Manager.&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt; If you are not their Team Leader / Manager and believe you have received this email by mistake please reply to this email. If you have concerns about your staff member taking this course please discuss this with them directly.&lt;br /&gt;&lt;br /&gt; Below are the details that were sent to your staff member:&lt;br /&gt;&lt;br /&gt;&lt;/div&gt;
+&lt;div class="text_to_html"&gt;&lt;strong&gt;Participant: &lt;/strong&gt;[firstname] [lastname]&lt;br /&gt;&lt;strong&gt;Course: &lt;/strong&gt;[coursename]&lt;br /&gt;&lt;strong&gt;Seminar: &lt;/strong&gt;[facetofacename]&lt;br /&gt;&lt;strong&gt;Cost:&lt;/strong&gt; [cost]&lt;br /&gt;&lt;br /&gt;&lt;strong&gt;Date(s) and location(s):&lt;/strong&gt;&lt;br /&gt;&lt;strong&gt;[#sessions]&lt;/strong&gt;&lt;br /&gt;&lt;strong&gt;[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;/strong&gt;&lt;/div&gt;
+&lt;div class="text_to_html"&gt;&lt;br /&gt;&lt;strong&gt;Duration:&lt;/strong&gt; [session:duration]&lt;br /&gt;&lt;strong&gt;Room:&lt;/strong&gt; [session:room:name]&lt;br /&gt;&lt;strong&gt;Building:&lt;/strong&gt; [session:room:cf_building]&lt;br /&gt;&lt;strong&gt;Location:&lt;/strong&gt; [session:room:cf_location]&lt;br /&gt;[session:room:link]&lt;br /&gt;[/sessions]&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/div&gt;</managerprefix>
+        <title>Seminar booking confirmation: [facetofacename], [starttime]-[finishtime], [sessiondate]</title>
+        <body>&lt;div class="text_to_html"&gt;This is to confirm that &lt;strong&gt;you are now booked on the following course:&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt; &lt;strong&gt;Participant:&lt;/strong&gt; [firstname] [lastname]&lt;br /&gt;&lt;strong&gt;Course: &lt;/strong&gt;[coursename]&lt;br /&gt;&lt;strong&gt; Seminar: &lt;/strong&gt;[facetofacename]&lt;br /&gt; Cost: [cost]&lt;br /&gt;&lt;br /&gt;&lt;strong&gt;Date(s) and location(s):&lt;/strong&gt;&lt;br /&gt;&lt;strong&gt; [#sessions]&lt;/strong&gt;&lt;br /&gt;&lt;strong&gt; [session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;/strong&gt;&lt;br /&gt; Duration: [session:duration]&lt;br /&gt; Room: [session:room:name]&lt;br /&gt; Building: [session:room:cf_building]&lt;br /&gt; Location: [session:room:cf_location]&lt;br /&gt; [session:room:link]&lt;br /&gt; [/sessions]&lt;br /&gt;&lt;br /&gt; ***Please arrive ten minutes before the course starts***&lt;br /&gt;&lt;br /&gt; To re-schedule or cancel your booking&lt;br /&gt; To re-schedule your booking you need to cancel this booking and then re-book a new event. To cancel your booking, return to the site, then to the page for this course, and then select 'cancel' from the booking information screen.&lt;br /&gt;&lt;br /&gt; [details]&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>1</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8004">
+        <type>4</type>
+        <conditiontype>16</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>$@NULL@$</managerprefix>
+        <title>Waitlisting advice for [facetofacename]</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise that you have been added to the waitlist for:&lt;br /&gt;
+&lt;br /&gt;
+Course:   [coursename]&lt;br /&gt;
+Seminar:   [facetofacename]&lt;br /&gt;
+Participant:   [firstname] [lastname]&lt;br /&gt;
+&lt;br /&gt;
+Location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;br /&gt;
+***Please note this is not a course booking confirmation***&lt;br /&gt;
+&lt;br /&gt;
+By waitlisting you have registered your interest in this course and will be contacted directly when events become available.&lt;br /&gt;
+&lt;br /&gt;
+To remove yourself from this waitlist please return to this course and click Cancel waitlist. Please note there is no waitlist removal confirmation email.&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>3</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8005">
+        <type>4</type>
+        <conditiontype>8</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>1</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;*** Advice only ****&lt;br /&gt;&lt;br /&gt; This is to advise that [firstname] [lastname] is no longer signed up for the following course and listed you as their Team Leader / Manager.&lt;br /&gt;&lt;br /&gt; Below is the message that was sent to the learner:&lt;br /&gt;&lt;br /&gt;&lt;/div&gt;
+&lt;div class="text_to_html"&gt;&lt;span&gt;&lt;br /&gt;Participant: [firstname] [lastname]&lt;br /&gt;Course: [coursename]&lt;br /&gt;Seminar: [facetofacename]&lt;br /&gt;&lt;br /&gt;Date(s) and location(s):&lt;br /&gt;[#sessions]&lt;br /&gt;[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;Duration: [session:duration]&lt;br /&gt;Room: [session:room:name]&lt;br /&gt;Building: [session:room:cf_building]&lt;br /&gt;Location: [session:room:cf_location]&lt;br /&gt;[session:room:link]&lt;br /&gt;[/sessions]&lt;/span&gt;&lt;/div&gt;</managerprefix>
+        <title>Seminar booking cancellation</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise that your booking on the following course has been cancelled:&lt;br /&gt;&lt;br /&gt; ***BOOKING CANCELLED***&lt;br /&gt;&lt;br /&gt; Participant: [firstname] [lastname]&lt;br /&gt; Course: [coursename]&lt;br /&gt; Seminar: [facetofacename]&lt;br /&gt;&lt;br /&gt; Date(s) and location(s):&lt;br /&gt; [#sessions]&lt;br /&gt; [session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt; Duration: [session:duration]&lt;br /&gt; Room: [session:room:name]&lt;br /&gt; Building: [session:room:cf_building]&lt;br /&gt; Location: [session:room:cf_location]&lt;br /&gt; [session:room:link]&lt;br /&gt; [/sessions]&lt;/div&gt;
+&lt;div class="text_to_html"&gt; &lt;/div&gt;
+&lt;div class="text_to_html"&gt;&lt;span&gt;&lt;br /&gt; &lt;span style="background-color: #ffff00;"&gt;&lt;strong&gt;To re-schedule your booking you need to cancel this booking and then re-book a new event. To cancel your booking, return to the site, then to the page for this course, and then select 'cancel' from the booking information screen.&lt;/strong&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>1</cancelled>
+        <requested>0</requested>
+        <templateid>2</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8006">
+        <type>4</type>
+        <conditiontype>12</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;*** Advice only ****&lt;br /&gt;&lt;br /&gt; This is to advise that [firstname] [lastname] is no longer signed up for the following course and listed you as their Team Leader / Manager.&lt;br /&gt;&lt;br /&gt; Below is the message that was sent to the learner:&lt;br /&gt;&lt;br /&gt;&lt;/div&gt;
+&lt;div class="text_to_html"&gt;&lt;br /&gt;***BOOKING DECLINED***&lt;br /&gt;&lt;br /&gt;Participant: [firstname] [lastname]&lt;br /&gt;Course: [coursename]&lt;br /&gt;Seminar: [facetofacename]&lt;br /&gt;&lt;br /&gt;Date(s) and location(s):&lt;br /&gt;[#sessions]&lt;br /&gt;[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;Duration: [session:duration]&lt;br /&gt;Room: [session:room:name]&lt;br /&gt;Building: [session:room:cf_building]&lt;br /&gt;Location: [session:room:cf_location]&lt;br /&gt;[session:room:link]&lt;br /&gt;[/sessions]&lt;/div&gt;</managerprefix>
+        <title>Seminar booking decline</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise that your booking on the following course has been declined:&lt;br /&gt;&lt;br /&gt; ***BOOKING DECLINED***&lt;br /&gt;&lt;br /&gt; Participant: [firstname] [lastname]&lt;br /&gt; Course: [coursename]&lt;br /&gt; Seminar: [facetofacename]&lt;br /&gt;&lt;br /&gt; Date(s) and location(s):&lt;br /&gt; [#sessions]&lt;br /&gt; [session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt; Duration: [session:duration]&lt;br /&gt; Room: [session:room:name]&lt;br /&gt; Building: [session:room:cf_building]&lt;br /&gt; Location: [session:room:cf_location]&lt;br /&gt; [session:room:link]&lt;br /&gt; [/sessions]&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>6</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8007">
+        <type>4</type>
+        <conditiontype>1</conditiontype>
+        <scheduleunit>2</scheduleunit>
+        <scheduleamount>2</scheduleamount>
+        <scheduletime>172800</scheduletime>
+        <ccmanager>1</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;*** Reminder only ****&lt;br /&gt;&lt;br /&gt; Your staff member [firstname] [lastname] is booked to attend and above course and has also received this reminder email.&lt;br /&gt;&lt;br /&gt; If you are not their Team Leader / Manager and believe you have received this email by mistake please reply to this email.&lt;br /&gt;&lt;br /&gt; Below is the message that was sent to the learner:&lt;br /&gt;&lt;br /&gt;&lt;/div&gt;</managerprefix>
+        <title>Seminar booking reminder: [facetofacename], [starttime]-[finishtime], [sessiondate]</title>
+        <body>&lt;div&gt;This is a reminder that you are booked on the following course:&lt;br&gt;&lt;br&gt; Participant: [firstname] [lastname]&lt;br&gt; Course: [coursename]&lt;br&gt; Seminar: [facetofacename]&lt;br&gt; Cost: [cost]&lt;br&gt;&lt;br&gt; Date(s) and location(s):&lt;br&gt; [#sessions]&lt;br&gt; [session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br&gt; Duration: [session:duration]&lt;br&gt; Room: [session:room:name]&lt;br&gt; Building: [session:room:cf_building]&lt;br&gt; Location: [session:room:cf_location]&lt;br&gt; [session:room:link]&lt;br&gt; [/sessions]&lt;br&gt;&lt;br&gt; ***Please arrive ten minutes before the course starts***&lt;br&gt;&lt;br&gt; To re-schedule or cancel your booking&lt;br&gt; To re-schedule your booking you need to cancel this booking and then re-book a new event. To cancel your booking, return to the site, then to the page for this course, and then select 'cancel' from the booking information screen.&lt;br&gt;&lt;br&gt; [details]&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span lang="EN"&gt;&lt;strong&gt;&lt;em&gt;There is no water or cups available in the training rooms so please ensure you bring your own water and&amp;nbsp;water bottles.&lt;/em&gt;&lt;/strong&gt; &lt;/span&gt;&lt;i&gt;&lt;span lang="EN"&gt;Please also bring a pen as notes may be required.&lt;/span&gt;&lt;/i&gt;&lt;/div&gt;</body>
+        <booked>1</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>0</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1538106368</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8008">
+        <type>4</type>
+        <conditiontype>32</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>1</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;This is to advise that [firstname] [lastname] has requested to be booked into the following course, and you are listed as their Team Leader / Manager.&lt;br /&gt;&lt;br /&gt;&lt;strong&gt;&lt;span style="background-color: #ffff00;"&gt;Please follow the link below to &lt;span style="text-decoration: underline;"&gt;APPROVE OR DECLINE&lt;/span&gt; the request:&lt;/span&gt;&lt;/strong&gt;&lt;br /&gt; [attendeeslink]&lt;/div&gt;
+&lt;div class="text_to_html"&gt;&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/div&gt;</managerprefix>
+        <title>APPROVAL REQUIRED - Face-to-face booking request: [facetofacename], [starttime]-[finishtime], [sessiondate]</title>
+        <body>&lt;div class="text_to_html"&gt;&lt;strong&gt;Your request to book into the following course has been sent to your manager. Please remember you are not confirmed on to the course until your manager completes the approval.&lt;/strong&gt;&lt;br /&gt;&lt;br /&gt; &lt;strong&gt;Participant:&lt;/strong&gt; [firstname] [lastname]&lt;br /&gt; &lt;strong&gt;Course:&lt;/strong&gt; [coursename]&lt;br /&gt; &lt;strong&gt;Seminar:&lt;/strong&gt; [facetofacename]&lt;br /&gt; Cost: [cost]&lt;br /&gt;&lt;br /&gt; &lt;strong&gt;Date(s) and location(s):&lt;/strong&gt;&lt;br /&gt; [#sessions]&lt;br /&gt; [session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt; &lt;strong&gt;Duration:&lt;/strong&gt; [session:duration]&lt;br /&gt; &lt;strong&gt;Room:&lt;/strong&gt; [session:room:name]&lt;br /&gt; &lt;strong&gt;Building:&lt;/strong&gt; [session:room:cf_building]&lt;br /&gt; &lt;strong&gt;Location:&lt;/strong&gt; [session:room:cf_location]&lt;br /&gt; [session:room:link]&lt;br /&gt; [/sessions]&lt;br /&gt;&lt;br /&gt; This request will expire on [registrationcutoff]&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>5</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8009">
+        <type>4</type>
+        <conditiontype>65536</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;This is to advise that [firstname] [lastname] has requested to be booked into the following course, and you are listed as a [sessionrole] for the session.&lt;br /&gt;
+&lt;br /&gt;
+Please review this request before registration closes on [registrationcutoff]&lt;br /&gt;
+&lt;br /&gt;
+Follow the link below to review the request:&lt;br /&gt;
+[attendeeslink]&lt;br /&gt;
+&lt;br /&gt;
+Below is the message that was sent to the learner:&lt;br /&gt;
+&lt;br /&gt;
+&lt;/div&gt;</managerprefix>
+        <title>Seminar booking role request: [facetofacename], [starttime]-[finishtime], [sessiondate]</title>
+        <body>&lt;div class="text_to_html"&gt;Your request to book into the following course has been sent to the sessions [sessionrole](s):&lt;br /&gt;
+&lt;br /&gt;
+Participant:   [firstname] [lastname]&lt;br /&gt;
+Course:   [coursename]&lt;br /&gt;
+Seminar:   [facetofacename]&lt;br /&gt;
+Cost:   [cost]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;br /&gt;
+This request will expire on [registrationcutoff]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>13</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8010">
+        <type>4</type>
+        <conditiontype>131072</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>1</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;This is to advise that [firstname] [lastname] has requested to be booked into the following course, and you are listed as an approver for the session.&lt;br /&gt;
+&lt;br /&gt;
+Please review this request before registration closes on [registrationcutoff]&lt;br /&gt;
+&lt;br /&gt;
+Follow the link below to approve the request:&lt;br /&gt;
+[attendeeslink]&lt;br /&gt;
+&lt;br /&gt;
+Below is the message that was sent to the learner:&lt;br /&gt;
+&lt;br /&gt;
+&lt;/div&gt;</managerprefix>
+        <title>Seminar booking admin request: [facetofacename], [starttime]-[finishtime], [sessiondate]</title>
+        <body>&lt;div class="text_to_html"&gt;Your request to book into the following course has been sent to the sessions approvers:&lt;br /&gt;
+&lt;br /&gt;
+Participant:   [firstname] [lastname]&lt;br /&gt;
+Course:   [coursename]&lt;br /&gt;
+Seminar:   [facetofacename]&lt;br /&gt;
+Cost:   [cost]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;br /&gt;
+This request will expire on [registrationcutoff]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>14</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8011">
+        <type>4</type>
+        <conditiontype>64</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>$@NULL@$</managerprefix>
+        <title>Seminar booking date/time changed: [facetofacename], [starttime]-[finishtime], [sessiondate]</title>
+        <body>&lt;div class="text_to_html"&gt;Your session has changed:&lt;br /&gt;
+&lt;br /&gt;
+Participant:   [firstname] [lastname]&lt;br /&gt;
+Course:   [coursename]&lt;br /&gt;
+Seminar:   [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>1</booked>
+        <waitlisted>1</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>9</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8012">
+        <type>4</type>
+        <conditiontype>128</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>$@NULL@$</managerprefix>
+        <title>Seminar trainer confirmation: [facetofacename], [starttime]-[finishtime], [sessiondate]</title>
+        <body>&lt;div class="text_to_html"&gt;This is to confirm that you are now assigned to deliver training on the following course:&lt;br /&gt;
+&lt;br /&gt;
+Participant:   [firstname] [lastname]&lt;br /&gt;
+Course:   [coursename]&lt;br /&gt;
+Seminar:   [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;br /&gt;
+***Please arrive ten minutes before the course starts***&lt;br /&gt;
+&lt;br /&gt;
+[details]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>12</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8013">
+        <type>4</type>
+        <conditiontype>256</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>$@NULL@$</managerprefix>
+        <title>Seminar event trainer cancellation</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise that your assigned training event the following course has been cancelled:&lt;br /&gt;
+&lt;br /&gt;
+***EVENT CANCELLED***&lt;br /&gt;
+&lt;br /&gt;
+Participant:   [firstname] [lastname]&lt;br /&gt;
+Course:   [coursename]&lt;br /&gt;
+Seminar:   [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>10</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8014">
+        <type>4</type>
+        <conditiontype>512</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>$@NULL@$</managerprefix>
+        <title>Seminar event trainer unassigned</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise that you have been unassigned from training for following course:&lt;br /&gt;
+&lt;br /&gt;
+***EVENT UNASSIGNED***&lt;br /&gt;
+&lt;br /&gt;
+Participant:   [firstname] [lastname]&lt;br /&gt;
+Course:   [coursename]&lt;br /&gt;
+Seminar:   [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>11</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8015">
+        <type>4</type>
+        <conditiontype>16384</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>$@NULL@$</managerprefix>
+        <title>Reservation cancellation</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise you that your reservation for the following course has been cancelled:&lt;br /&gt;
+&lt;br /&gt;
+***RESERVATION CANCELLED***&lt;br /&gt;
+&lt;br /&gt;
+Course:   [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>1</cancelled>
+        <requested>0</requested>
+        <templateid>7</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8016">
+        <type>4</type>
+        <conditiontype>32768</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>$@NULL@$</managerprefix>
+        <title>All reservations cancelled</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise you that all unallocated reservations for the following course have been automatically cancelled, as the course will be starting soon:&lt;br /&gt;
+&lt;br /&gt;
+***ALL RESERVATIONS CANCELLED***&lt;br /&gt;
+&lt;br /&gt;
+Course:   [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>1</cancelled>
+        <requested>0</requested>
+        <templateid>8</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8017">
+        <type>4</type>
+        <conditiontype>2048</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;*** [firstname] [lastname]'s session cancellation is copied below ****&lt;/div&gt;</managerprefix>
+        <title>Seminar event cancellation</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise that the following session has been cancelled:&lt;br /&gt;
+&lt;br /&gt;
+***EVENT CANCELLED***&lt;br /&gt;
+&lt;br /&gt;
+Course:   [coursename]&lt;br /&gt;
+Seminar:   [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>1</cancelled>
+        <requested>0</requested>
+        <templateid>15</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8018">
+        <type>4</type>
+        <conditiontype>1024</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;&lt;br /&gt;
+*** Advice only ****&lt;br /&gt;
+&lt;br /&gt;
+This is to advise that [firstname] [lastname] has been sent the following email and you are listed as their Team Leader / Manager.&lt;br /&gt;
+&lt;br /&gt;
+If you are not their Team Leader / Manager and believe you have received this email by mistake please reply to this email.&lt;br /&gt;
+&lt;br /&gt;
+Below is the message that was sent to the learner:&lt;br /&gt;
+&lt;br /&gt;
+&lt;/div&gt;</managerprefix>
+        <title>Seminar registration closed: [facetofacename], [starttime]-[finishtime], [sessiondate]</title>
+        <body>&lt;div class="text_to_html"&gt;The registration period for the following session has been closed:&lt;br /&gt;
+&lt;br /&gt;
+Course: [coursename]&lt;br /&gt;
+&lt;br /&gt;
+Seminar: [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>16</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8019">
+        <type>4</type>
+        <conditiontype>262144</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>1</ccmanager>
+        <managerprefix>&lt;div class="text_to_html"&gt;*** Advice only ****&lt;br /&gt;
+Your staff member [firstname] [lastname] had a pending request to attend the below seminar event and has also received this closure email.&lt;br /&gt;
+&lt;br /&gt;
+If you are not their Team Leader / Manager and believe you have received this email by mistake please reply to this email.&lt;br /&gt;
+&lt;br /&gt;
+Below is the message that was sent to the learner:&lt;br /&gt;
+&lt;br /&gt;
+&lt;/div&gt;</managerprefix>
+        <title>Seminar event registration closure</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise that your pending booking request for the following seminar event has expired:&lt;br /&gt;
+This seminar events registration period has closed while your request was pending, please request a booking on a different event.&lt;br /&gt;
+&lt;br /&gt;
+Course: [coursename]&lt;br /&gt;
+&lt;br /&gt;
+Seminar: [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;br /&gt;
+&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>1</requested>
+        <templateid>17</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1505174209</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8020">
+        <type>2</type>
+        <conditiontype>1</conditiontype>
+        <scheduleunit>4</scheduleunit>
+        <scheduleamount>2</scheduleamount>
+        <scheduletime>1209600</scheduletime>
+        <ccmanager>1</ccmanager>
+        <managerprefix>&lt;p&gt;*** 2 week Reminder only ****&lt;br /&gt;&lt;br /&gt;Your staff member [firstname] [lastname] is booked to attend and above course and has also received this reminder email.&lt;br /&gt;&lt;br /&gt;If you are not their Team Leader / Manager and believe you have received this email by mistake please reply to this email.&lt;br /&gt;&lt;br /&gt;Below is the message that was sent to the learner:&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;</managerprefix>
+        <title>2 Week Seminar booking reminder: [facetofacename], [starttime]-[finishtime], [sessiondate]</title>
+        <body>&lt;p&gt;This is a reminder that you are booked on the following course due to run in 2 weeks time:&lt;br&gt;&lt;br&gt;Participant: [firstname] [lastname]&lt;br&gt;Course: [coursename]&lt;br&gt;Seminar: [facetofacename]&lt;br&gt;Cost: [cost]&lt;br&gt;&lt;br&gt;Date(s) and location(s):&lt;br&gt;[#sessions]&lt;br&gt;[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br&gt;Duration: [session:duration]&lt;br&gt;Room: [session:room:name]&lt;br&gt;Building: [session:room:cf_building]&lt;br&gt;Location: [session:room:cf_location]&lt;br&gt;[session:room:link]&lt;br&gt;[/sessions]&lt;br&gt;&lt;br&gt;***Please arrive ten minutes before the course starts***&lt;br&gt;&lt;br&gt;To re-schedule or cancel your booking&lt;br&gt;To re-schedule your booking you need to cancel this booking and then re-book a new event. To cancel your booking, return to the site, then to the page for this course, and then select 'cancel' from the booking information screen.&lt;br&gt;&lt;br&gt;[details]&lt;/p&gt;&lt;p&gt;&lt;span lang="EN"&gt;&lt;strong&gt;&lt;em&gt;There is no water or cups available in the training rooms so please ensure you bring your own water and&amp;nbsp;water bottles.&lt;/em&gt;&lt;/strong&gt; &lt;/span&gt;&lt;i&gt;&lt;span lang="EN"&gt;Please also bring a pen as notes may be required.&lt;/span&gt;&lt;/i&gt;&lt;br&gt;&lt;/p&gt;</body>
+        <booked>1</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>0</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>1538106351</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8021">
+        <type>4</type>
+        <conditiontype>524288</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>$@NULL@$</managerprefix>
+        <title>Waitlisted signup expired</title>
+        <body>&lt;div class="text_to_html"&gt;This is to advise you that your waitlisted signup for the following course has been cancelled due to the event starting:&lt;br /&gt;
+&lt;br /&gt;
+***WAITLIST CANCELLATION***&lt;br /&gt;
+&lt;br /&gt;
+Course:   [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>20</templateid>
+        <status>0</status>
+        <issent>0</issent>
+        <timemodified>$@NULL@$</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+      <notification id="8022">
+        <type>4</type>
+        <conditiontype>1048576</conditiontype>
+        <scheduleunit>$@NULL@$</scheduleunit>
+        <scheduleamount>$@NULL@$</scheduleamount>
+        <scheduletime>$@NULL@$</scheduletime>
+        <ccmanager>0</ccmanager>
+        <managerprefix>$@NULL@$</managerprefix>
+        <title>Event under minimum bookings for: [facetofacename]</title>
+        <body>&lt;div class="text_to_html"&gt;The following event is under minimum bookings:&lt;br /&gt;
+&lt;br /&gt;
+***EVENT UNDER CAPACITY***&lt;br /&gt;
+&lt;br /&gt;
+Course:   [coursename]&lt;br /&gt;
+Seminar:   [facetofacename]&lt;br /&gt;
+&lt;br /&gt;
+Capacity: [booked] / [capacity] (minimum: [mincapacity])&lt;br /&gt;
+&lt;br /&gt;
+Date(s) and location(s):&lt;br /&gt;
+[#sessions]&lt;br /&gt;
+[session:startdate], [session:starttime] - [session:finishdate], [session:finishtime] [session:timezone]&lt;br /&gt;
+Duration: [session:duration]&lt;br /&gt;
+Room: [session:room:name]&lt;br /&gt;
+Building: [session:room:cf_building]&lt;br /&gt;
+Location: [session:room:cf_location]&lt;br /&gt;
+[session:room:link]&lt;br /&gt;
+[/sessions]&lt;/div&gt;</body>
+        <booked>0</booked>
+        <waitlisted>0</waitlisted>
+        <cancelled>0</cancelled>
+        <requested>0</requested>
+        <templateid>21</templateid>
+        <status>1</status>
+        <issent>0</issent>
+        <timemodified>$@NULL@$</timemodified>
+        <usermodified>0</usermodified>
+      </notification>
+    </notifications>
+    <sessions>
+      <session id="6868">
+        <capacity>10</capacity>
+        <allowoverbook>0</allowoverbook>
+        <waitlisteveryone>0</waitlisteveryone>
+        <details></details>
+        <normalcost>0</normalcost>
+        <discountcost>0</discountcost>
+        <allowcancellations>1</allowcancellations>
+        <cancellationcutoff>0</cancellationcutoff>
+        <timecreated>1619048501</timecreated>
+        <timemodified>1619055381</timemodified>
+        <usermodified>19239</usermodified>
+        <selfapproval>0</selfapproval>
+        <mincapacity>0</mincapacity>
+        <cutoff>0</cutoff>
+        <sendcapacityemail>0</sendcapacityemail>
+        <registrationtimestart>0</registrationtimestart>
+        <registrationtimefinish>0</registrationtimefinish>
+        <cancelledstatus>0</cancelledstatus>
+        <session_roles>
+        </session_roles>
+        <custom_fields>
+          <custom_field id="6910">
+            <field_name>Presenter</field_name>
+            <field_type>text</field_type>
+            <field_data>Olexiy</field_data>
+            <paramdatavalue>$@NULL@$</paramdatavalue>
+          </custom_field>
+        </custom_fields>
+        <sessioncancel_fields>
+        </sessioncancel_fields>
+        <signups>
+        </signups>
+        <sessions_dates>
+          <sessions_date id="12814">
+            <sessiontimezone>99</sessiontimezone>
+            <timestart>1619812800</timestart>
+            <timefinish>1619816400</timefinish>
+            <room id="636">
+              <name></name>
+              <description>&lt;p&gt;Marae for Tikanga Maori use only&lt;/p&gt;</description>
+              <capacity>18</capacity>
+              <allowconflicts>0</allowconflicts>
+              <custom>0</custom>
+              <hidden>0</hidden>
+              <usercreated>$@NULL@$</usercreated>
+              <usermodified>$@NULL@$</usermodified>
+              <timecreated>1478480518</timecreated>
+              <timemodified>1478480518</timemodified>
+              <room_fields>
+                <room_field id="582">
+                  <field_name>building</field_name>
+                  <field_type>text</field_type>
+                  <field_data>Rehua Marae</field_data>
+                  <paramdatavalue>$@NULL@$</paramdatavalue>
+                </room_field>
+                <room_field id="581">
+                  <field_name>location</field_name>
+                  <field_type>location</field_type>
+                  <field_data>{"address":"79 Springfield Road, Edgeware","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}</field_data>
+                  <paramdatavalue>$@NULL@$</paramdatavalue>
+                </room_field>
+              </room_fields>
+            </room>
+            <assets>
+            </assets>
+          </sessions_date>
+        </sessions_dates>
+      </session>
+      <session id="6869">
+        <capacity>10</capacity>
+        <allowoverbook>0</allowoverbook>
+        <waitlisteveryone>0</waitlisteveryone>
+        <details></details>
+        <normalcost>0</normalcost>
+        <discountcost>0</discountcost>
+        <allowcancellations>1</allowcancellations>
+        <cancellationcutoff>0</cancellationcutoff>
+        <timecreated>1619054981</timecreated>
+        <timemodified>1619055350</timemodified>
+        <usermodified>19239</usermodified>
+        <selfapproval>0</selfapproval>
+        <mincapacity>0</mincapacity>
+        <cutoff>0</cutoff>
+        <sendcapacityemail>0</sendcapacityemail>
+        <registrationtimestart>0</registrationtimestart>
+        <registrationtimefinish>0</registrationtimefinish>
+        <cancelledstatus>0</cancelledstatus>
+        <session_roles>
+        </session_roles>
+        <custom_fields>
+          <custom_field id="6911">
+            <field_name>Presenter</field_name>
+            <field_type>text</field_type>
+            <field_data>Nathan</field_data>
+            <paramdatavalue>$@NULL@$</paramdatavalue>
+          </custom_field>
+        </custom_fields>
+        <sessioncancel_fields>
+        </sessioncancel_fields>
+        <signups>
+        </signups>
+        <sessions_dates>
+          <sessions_date id="12815">
+            <sessiontimezone>99</sessiontimezone>
+            <timestart>1619121600</timestart>
+            <timefinish>1619125200</timefinish>
+            <room id="1505">
+              <name>Flamingo Palace</name>
+              <description></description>
+              <capacity>8</capacity>
+              <allowconflicts>0</allowconflicts>
+              <custom>0</custom>
+              <hidden>0</hidden>
+              <usercreated>10780</usercreated>
+              <usermodified>10780</usermodified>
+              <timecreated>1576016198</timecreated>
+              <timemodified>1576016198</timemodified>
+              <room_fields>
+                <room_field id="2120">
+                  <field_name>building</field_name>
+                  <field_type>text</field_type>
+                  <field_data>Christchurch Hospital</field_data>
+                  <paramdatavalue>$@NULL@$</paramdatavalue>
+                </room_field>
+                <room_field id="2121">
+                  <field_name>location</field_name>
+                  <field_type>location</field_type>
+                  <field_data>{"address":"Lower Ground Floor, Parkside East","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":-36.86666,"longitude":174.76666}}</field_data>
+                  <paramdatavalue>$@NULL@$</paramdatavalue>
+                </room_field>
+              </room_fields>
+            </room>
+            <assets>
+            </assets>
+          </sessions_date>
+        </sessions_dates>
+      </session>
+    </sessions>
+    <interests>
+    </interests>
+  </facetoface>
+</activity>

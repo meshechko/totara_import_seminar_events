@@ -1,0 +1,17 @@
+{% extends "base.html" %} {% block title %}Upload MBZ backup file{% endblock %} {% block
+content %}
+
+<form method="POST" action="" enctype="multipart/form-data">
+  {{form.hidden_tag()}}
+  <div>{{ form.file.label}} {{ form.file(class="css_class") }}</div>
+  {{ form.submit }}
+</form>
+
+<div class="message">
+  {% for category, message in get_flashed_messages(with_categories=True) %}
+  <div class="alert-{{category}}">{{category}}: {{ message }}</div>
+  {% endfor %} {% if form.file.errors %} {% for error in form.file.errors %}
+  <span>{{ error }}</span>
+  {% endfor %} {% endif %}
+</div>
+{% endblock %}
