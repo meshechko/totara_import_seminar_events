@@ -110,7 +110,7 @@ def getf2fxml():
             return folder+"/facetoface.xml"
 
 
-def convert_xml_to_dictionary(xml_attribs=True):
+def readXml(xml_attribs=True):
     with open(getf2fxml(), "rb") as f:
         # my_dictionary = xmltodict.parse(f, xml_attribs=xml_attribs)
         return xmltodict.parse(f, dict_constructor=dict)
@@ -146,3 +146,25 @@ events = list(rrulestr(recurrance_data_string))
 
 for event in events:
     print(event.strftime("%m/%d/%Y"))
+    
+class Recurrence:
+    def __init__(self):
+        self.xmlData = {}
+        self.generatedEvents = {}
+    
+    def getCustomFieldsFromXml(self):
+        list_of_custom_fiels = []
+        return list_of_custom_fiels
+        
+    def getEvents(self):
+        list_of_events = []
+        return list_of_events
+    
+    #TODO is this method required or just internal statement would work
+    def setEvents(self):
+        self.xmlData["add_path_to_events_dict_or_list"] = self.generatedEvents
+        return True
+        
+
+
+        
