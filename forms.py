@@ -11,5 +11,5 @@ class UploadRooms(FlaskForm):
 
 class UploadBackup(FlaskForm):
     file = FileField("Upload Totara Seminar activity backup", validators=[
-        FileRequired(), FileAllowed(['mbz', 'zip'], 'Upload the correct Totara activity backup that ends with .mbz. Click here to learn how to generate the seminar activity backup.')])
+        FileRequired()])
     submit = SubmitField('Upload')
