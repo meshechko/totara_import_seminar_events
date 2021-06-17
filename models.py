@@ -28,7 +28,7 @@ def getUserFolder(userID):
 
 def fileAllowed(filename, allowedExtension):
     if Path(filename).suffix == allowedExtension:
-        return Ture
+        return True
 
 # ROOMS upload
 
@@ -150,19 +150,19 @@ for event in events:
 class Recurrence:
     def __init__(self):
         self.xmlData = {}
-        self.generatedEvents = {}
+        self.generatedSessions = {}
     
-    def getCustomFieldsFromXml(self):
-        list_of_custom_fiels = []
+    def getCustomFields(self):
+        list_of_custom_fiels = self.xmlData["activity"]["facetoface"]["sessions"]["session"][0]["custom_fields"]["custom_field"]
         return list_of_custom_fiels
         
-    def getEvents(self):
-        list_of_events = []
-        return list_of_events
+    def getSessions(self):
+        list_of_sessions = self.xmlData["activity"]["facetoface"]["sessions"]["session"]
+        return list_of_sessions
     
     #TODO is this method required or just internal statement would work
-    def setEvents(self):
-        self.xmlData["add_path_to_events_dict_or_list"] = self.generatedEvents
+    def setSessions(self):
+        self.xmlData["activity"]["facetoface"]["sessions"] = self.generatedSessions
         return True
         
 

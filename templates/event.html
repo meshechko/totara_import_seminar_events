@@ -1,4 +1,5 @@
-{% extends "base.html" %} {% block title %}Create event recurrance{% endblock %}
+{% extends "base.html" %} 
+{% block title %}Create event recurrance{% endblock title %}
 {% block content %}
 
 <div class="row g-5">
@@ -8,29 +9,29 @@
         <div class="col-md-6">
           <h4 class="mb-3">Event details</h4>
           <div class="row g-3">
-            <div class="col-6">
-              <label class="form-label" for="presenter">Presenter</label>
+            
 
-              <input
-                id="presenter"
-                name="presenter"
-                type="text"
-                placeholder=""
-                class="form-control"
-                required=""
-              />
-            </div>
-            <div class="col-sm-6">
-              <label class="form-label" for="capacity">Maximum bookings</label>
-              <input
-                id="capacity"
-                name="capacity"
-                type="number"
-                placeholder=""
-                class="form-control"
-                required=""
-              />
-            </div>
+              {% for field in custom_fields%}
+                {% if field.field_type == "text"%}
+                <div class="col-6">
+                  <label class="form-label" for="{{ field.field_name }}">{{ field.field_name }}</label>
+
+                  <input
+                    id="{{ field.field_name }}"
+                    name="{{ field.field_name }}"
+                    type="text"
+                    placeholder=""
+                    class="form-control"
+                    value="{{ field.field_data }}"
+                    required=""
+                  />
+                </div>
+                {% endif %}
+              
+              {% endfor %}
+
+            
+            
 
             <div class="col-sm-12">
               <label class="form-label" for="details">Details</label>
@@ -66,15 +67,26 @@
               />
             </div>
 
-            <div class="col-12">
+            <div class="col-sm-6">
               <div class="control-group">
                 <label class="form-label" for="room">Room</label>
                 <select id="room" name="room" class="form-select">
                   {% for room in rooms %}
-                  <option value="{{room[0]}}">{{room["name"]}}</option>
+                  <option value="{{ room.id }}">{{ room.name }}</option>
                   {% endfor %}
                 </select>
               </div>
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="capacity">Maximum bookings</label>
+              <input
+                id="capacity"
+                name="capacity"
+                type="number"
+                placeholder=""
+                class="form-control"
+                required=""
+              />
             </div>
           </div>
         </div>
@@ -264,7 +276,37 @@
   </div>
 </div>
 
-{% endblock %} {% block body_bottom_js %}
+<div class="row g-5">
+  <div class="col-md-12">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Presenter</th>
+          <th>Max.bookings</th>
+          <th>Details</th>
+          <th>Start time</th>
+          <th>Finish time</th>
+          <th>Room</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for session in sessions %}
+        <tr>
+          <td scope="row">{{ session.custom_fields.custom_field.field_data }}</td>
+          <td>{{ session.capacity }}</td>
+          <td>{{ session.details }}</td>
+          <td>{{ session.sessions_dates.sessions_date.timestart|time_format }}</td>
+          <td>{{ session.sessions_dates.sessions_date.timefinish|time_format }}</td>
+          <td>{{ session.sessions_dates.sessions_date.room.name }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock content %} 
+
+{% block body_bottom_js %}
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 

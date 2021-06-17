@@ -3,12 +3,26 @@ import models
 from forms import UploadBackup, UploadRooms
 import random
 import string
-
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
+#FILTERS
+
+@app.template_filter('time_format')
+def datetime_format(value, format="%H:%M"):
+    proper_date = datetime.fromtimestamp(int(value))
+    return proper_date.strftime(format)
+
+@app.template_filter('date_format')
+def datetime_format(value, format="%d/%m/%y"):
+    proper_date = datetime.fromtimestamp(int(value))
+    return proper_date.strftime(format)
+
+
+# ROUTES
 
 def checkUserSession():
     if 'userID' not in session:
@@ -17,12 +31,25 @@ def checkUserSession():
         session['userID'] = randomString
 
 
-@app.route('/create-events', methods=['POST', 'GET'])
-def upload_route_summary():
+@app.route('/create-events')
+def create_events():
     checkUserSession()
     rooms = models.getRooms()
+    rec = models.Recurrence()
+    rec.xmlData = models.readXml()
+    sessions = rec.getSessions()
+    custom_fields = rec.getCustomFields()
     
-    return render_template('event.html', rooms=rooms)
+
+    print(sessions)
+    return render_template('event.html', rooms=rooms, sessions=sessions, custom_fields=custom_fields)
+
+
+@app.route('/generate-events', methods=['GET', 'POST'])
+def generate_events():
+    if request.method == 'POST':
+        return redirect(url_for('create_events'))
+    return render_template('event.html')
 
 
 @app.route('/', methods=['POST', 'GET'])

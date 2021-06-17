@@ -1,5 +1,7 @@
-{% extends "base.html" %} {% block title %}Upload MBZ backup file{% endblock %} {% block
-content %}
+{% extends "base.html" %} 
+{% block title %}Upload MBZ backup file{% endblock %} 
+
+{% block content %}
 
 <form method="POST" action="" enctype="multipart/form-data">
   {{form.hidden_tag()}}
@@ -10,8 +12,15 @@ content %}
 <div class="message">
   {% for category, message in get_flashed_messages(with_categories=True) %}
   <div class="alert-{{category}}">{{category}}: {{ message }}</div>
-  {% endfor %} {% if form.file.errors %} {% for error in form.file.errors %}
+  {% if category == 'success'%}
+  <a href="/create-events">Next step</a>
+  {% endif %}
+  {% endfor %} 
+  
+  {% if form.file.errors %} {% for error in form.file.errors %}
   <span>{{ error }}</span>
-  {% endfor %} {% endif %}
+  {% endfor %} 
+  
+  {% endif %}
 </div>
 {% endblock %}
