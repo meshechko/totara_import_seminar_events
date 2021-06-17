@@ -297,7 +297,11 @@
           <td>{{ session.details }}</td>
           <td>{{ session.sessions_dates.sessions_date.timestart|time_format }}</td>
           <td>{{ session.sessions_dates.sessions_date.timefinish|time_format }}</td>
-          <td>{{ session.sessions_dates.sessions_date.room.name }}</td>
+          <td>
+            {% if session.sessions_dates.sessions_date.room %}
+            {{ session.sessions_dates.sessions_date.room.name }}
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
