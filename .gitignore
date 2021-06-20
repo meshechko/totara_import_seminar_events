@@ -1,0 +1,4 @@
+uploads/*
+workspace*
+__pycache__/
+env/

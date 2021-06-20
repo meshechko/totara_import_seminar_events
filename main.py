@@ -31,17 +31,47 @@ def checkUserSession():
         session['userID'] = randomString
 
 
-@app.route('/create-events')
+@app.route('/create-events', methods=['GET', 'POST'])
 def create_events():
     checkUserSession()
     rooms = models.getRooms()
     rec = models.Recurrence()
     rec.xmlData = models.readXml()
     sessions = rec.getSessions()
-    custom_fields = rec.getCustomFields()
-    
 
-    print(sessions)
+    custom_fields = rec.getCustomFields()
+
+    if request.method == 'POST':
+        custom_fiels_data = []
+        for field in custom_fields:
+            if field["field_type"] == "text":
+                new_field = {
+                    "@id": "",
+                    "field_name": field['field_name'],
+                    "field_type": "text",
+                    "field_data": request.form[field['field_name']],
+                    "paramdatavalue": "$@NULL@$",
+                }
+                custom_fiels_data.append(new_field)
+
+        details = request.form['details']
+        timestart = request.form['timestart']
+        timefinish = request.form['timefinish']
+        room = request.form['room']
+        capacity = request.form['capacity']
+
+        #recurrence
+        datestart = datetime.strptime(request.form['datestart'], '%d/%m/%Y').strftime("%Y%m%d")
+        datefinish = datetime.strptime(request.form['datefinish'], '%d/%m/%Y').strftime("%Y%m%d")
+        frequency = request.form['frequency']
+        occurance_number = request.form['occurance_number']
+        days_of_week = request.form.getlist('days_of_week[]')
+        interval = request.form['interval']
+        
+        rec.generatedSessions = models.generate_events(custom_fiels_data=custom_fiels_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurance_number=occurance_number, days_of_week=days_of_week, interval=interval)
+        rec.setSessions()
+        sessions = rec.getSessions()
+        print(rec.generatedSessions)
     return render_template('event.html', rooms=rooms, sessions=sessions, custom_fields=custom_fields)
 
 

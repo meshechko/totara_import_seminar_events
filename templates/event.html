@@ -4,7 +4,7 @@
 
 <div class="row g-5">
   <div class="col-md-12">
-    <form class="needs-validation" novalidate="">
+    <form class="needs-validation" method="POST" novalidate="">
       <div class="row g-3">
         <div class="col-md-6">
           <h4 class="mb-3">Event details</h4>
@@ -96,7 +96,7 @@
             Recurrence
           </h4>
 
-          <div class="row g-3">
+          <div class="row mb-3">
             <div class="col-6">
               <label class="form-label" for="datestart">Start</label>
 
@@ -111,7 +111,7 @@
             </div>
 
             <div class="col-6">
-              <label class="form-label" for="datefinish">End by</label>
+              <label class="form-label" for="until">End by</label>
               <input
                 id="datefinish"
                 name="datefinish"
@@ -123,27 +123,27 @@
             </div>
           </div>
 
-          <h4 class="d-flex justify-content-between align-items-center mb-3">
-            Recurrence pattern
-          </h4>
-          <div class="row g-3">
-            <div class="col-12">
+          
+          <div class="row mb-3">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+              Recurrence pattern
+            </h4>
               <div class="control-group">
-                <label class="form-label" for="recurrance-period">Period</label>
+                <label class="form-label" for="frequency">Period</label>
                 <select
-                  id="recurrance-period"
-                  name="recurrance-period"
+                  id="frequency"
+                  name="frequency"
                   class="form-select"
                 >
-                  <option value="daily">Daily</option>
-                  <option selected="selected" value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
+                  <!-- <option value="daily">Daily</option> -->
+                  <option selected="selected" value="WEEKLY">Weekly</option>
+                  <option value="MONTHLY">Monthly</option>
                 </select>
               </div>
             </div>
 
-            <div class="col-12">
-              <div class="period-settings" style="display: none" id="daily">
+            <div class="row mb-3">
+              <!-- <div class="period-settings" style="display: none" id="daily">
                 <div class="form-check">
                   <input
                     class="form-check-input"
@@ -176,24 +176,36 @@
                     Every weekday
                   </label>
                 </div>
+              </div> -->
+
+              <div class="col-4">
+                
+                <div id="occurance-number-container" class="d-none control-group">
+                  <label class="form-label" for="occurance_number">The</label>
+                  <select
+                    id="occurance_number"
+                    name="occurance_number"
+                    class="form-select"
+                  >
+                    <!-- <option value="daily">Daily</option> -->
+                    <option selected="selected" value="1">First</option>
+                    <option value="2">Second</option>
+                    <option value="3">Third</option>
+                    <option value="4">Fourth</option>
+                    <option value="-1">Last</option>
+                  </select>
+                </div>
+
               </div>
-              <div class="period-settings" id="weekly">
-                <span class="d-inline">Recur every</span>
-                <input
-                  id="w_interval_weeks"
-                  name="w_interval_weeks"
-                  type="number"
-                  placeholder=""
-                  class="form-control d-inline"
-                  required=""
-                />
-                <span class="d-inline">week(s) on:</span>
+              <div class="col-4">
+                <div id="days-of-week-container">
+                  <label class="form-label"> </label>
                 <div class="form-check">
                   <input
                     class="form-check-input"
                     type="checkbox"
                     value="MO"
-                    name="m_mo"
+                    name="days_of_week[]"
                     id="m_mo"
                   />
                   <label class="form-check-label" for="m_mo"> Monday </label>
@@ -203,7 +215,7 @@
                     class="form-check-input"
                     type="checkbox"
                     value="TU"
-                    name="m_tu"
+                    name="days_of_week[]"
                     id="m_tu"
                   />
                   <label class="form-check-label" for="m_tu"> Tuesday </label>
@@ -213,7 +225,7 @@
                     class="form-check-input"
                     type="checkbox"
                     value="WE"
-                    name="m_we"
+                    name="days_of_week[]"
                     id="m_we"
                   />
                   <label class="form-check-label" for="m_we"> Wednesday </label>
@@ -223,7 +235,7 @@
                     class="form-check-input"
                     type="checkbox"
                     value="TH"
-                    name="m_th"
+                    name="days_of_week[]"
                     id="m_th"
                   />
                   <label class="form-check-label" for="m_th"> Thursday </label>
@@ -233,7 +245,7 @@
                     class="form-check-input"
                     type="checkbox"
                     value="FR"
-                    name="m_fr"
+                    name="days_of_week[]"
                     id="m_fr"
                   />
                   <label class="form-check-label" for="m_fr"> Friday </label>
@@ -243,7 +255,7 @@
                     class="form-check-input"
                     type="checkbox"
                     value="SA"
-                    name="m_sa"
+                    name="days_of_week[]"
                     id="m_sa"
                   />
                   <label class="form-check-label" for="m_sa"> Saturday </label>
@@ -253,25 +265,40 @@
                     class="form-check-input"
                     type="checkbox"
                     value="SU"
-                    name="m_su"
+                    name="days_of_week[]"
                     id="m_su"
                   />
                   <label class="form-check-label" for="m_su"> Sunday </label>
                 </div>
               </div>
             </div>
-            <div class="period-settings" style="display: none" id="monthly">
-              MONTHLY
+
+              <div class="col-4">
+              <div id="interval-container">
+                <span class="d-inline">of every</span>
+                <input
+                  id="interval"
+                  name="interval"
+                  type="number"
+                  placeholder=""
+                  class="form-control d-inline"
+                  required=""
+                />
+                <span class="d-inline" id="interval-text">week(s)</span>
+              </div>
             </div>
+            
           </div>
+
+          <div class="row mb-3">
+          <input class="w-100 btn btn-primary btn-lg" type="submit" value="Generate events">
+        </div>
         </div>
       </div>
 
       <hr class="my-4" />
 
-      <button class="w-100 btn btn-primary btn-lg" type="submit">
-        Generate events
-      </button>
+      
     </form>
   </div>
 </div>
@@ -295,8 +322,8 @@
           <td scope="row">{{ session.custom_fields.custom_field.field_data }}</td>
           <td>{{ session.capacity }}</td>
           <td>{{ session.details }}</td>
-          <td>{{ session.sessions_dates.sessions_date.timestart|time_format }}</td>
-          <td>{{ session.sessions_dates.sessions_date.timefinish|time_format }}</td>
+          <td>{{ session.sessions_dates.sessions_date.timestart|date_format }} {{ session.sessions_dates.sessions_date.timestart|time_format }}</td>
+          <td>{{ session.sessions_dates.sessions_date.timefinish|date_format }} {{ session.sessions_dates.sessions_date.timefinish|time_format }}</td>
           <td>
             {% if session.sessions_dates.sessions_date.room %}
             {{ session.sessions_dates.sessions_date.room.name }}
@@ -322,21 +349,29 @@
   });
   flatpickr(".cal", {
     enableTime: false,
-    dateFormat: "Y-m-d",
+    dateFormat: "d/m/Y",
   });
 </script>
 
 <script>
-  let recurrancePeriod = document.querySelector("#recurrance-period");
-  let settings = document.querySelectorAll(".period-settings");
-  recurrancePeriod.addEventListener("change", function () {
-    // handle change
-    for (var i = 0; i < settings.length; i++) {
-      if (settings[i].id != recurrancePeriod.value) {
-        settings[i].style.display = "none";
-      } else {
-        settings[i].style.display = "block";
-      }
+  let frequency = document.getElementById("frequency");
+  let monthly = document.getElementById("occurance-number-container");
+  let interval_text = document.getElementById("interval-text");
+  frequency.addEventListener("change", function () {
+    document.getElementById("interval").value = "";
+    checkboxes = document.getElementsByName('days_of_week');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+      checkboxes[i].checked = false;
+    }
+
+    if (frequency.value == "MONTHLY")
+    {
+      monthly.classList.remove("d-none")
+      interval_text.innerHTML = "month(s)"
+    } else {
+      monthly.classList.add("d-none")
+      interval_text.innerHTML = "week(s)"
+      document.getElementById("occurance_number").value = ""
     }
   });
 </script>

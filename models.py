@@ -120,33 +120,116 @@ def readXml(xml_attribs=True):
 
 # "DTSTART:20210902T090000 RRULE:FREQ=WEEKLY;COUNT=5;INTERVAL=10;UNTIL=20230102T090000"
 
-recurance_data = []
 
-start = "20210902"
-frequency = "WEEKLY"
-days = []
-inteval = "10"
-end = "20220102"
-
-if frequency:
-  recurance_data.append("FREQ="+frequency)
-  
-if len(days) > 0:
-  recurance_data.append("BYDAY="+','.join(days))
-
-if inteval:
-  recurance_data.append("INTERVAL="+inteval)
-  
-if end:
-  recurance_data.append("UNTIL="+end)
-  
-recurrance_data_string = f"DTSTART:{start} RRULE:{ ';'.join(recurance_data[0:]) }"
-
-events = list(rrulestr(recurrance_data_string))
-
-for event in events:
-    print(event.strftime("%m/%d/%Y"))
     
+
+def generate_events(custom_fiels_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurance_number, days_of_week, interval):
+    recurance_data = []
+    generated_events = []
+    if frequency:
+        recurance_data.append("FREQ="+frequency)
+
+    if days_of_week:
+        recurance_data.append(f"BYDAY={ ','.join(days_of_week) }")
+
+    if interval:
+        recurance_data.append(f"INTERVAL={ interval }")
+    
+    if datefinish:
+        recurance_data.append(f"UNTIL={ datefinish }")
+
+    if occurance_number and frequency == "MONTHLY":
+        recurance_data.append(f"BYSETPOS={ occurance_number }")
+    
+    recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
+    # print(recurrance_data_string)
+    dates = list(rrulestr(recurrance_data_string))
+
+
+    for date in dates:
+        start = f"{ str(date.date()) } { timestart }"
+        start = int(datetime.strptime(start, '%Y-%m-%d %H:%M').timestamp())
+        finish = f"{ str(date.date()) } { timefinish }"
+        finish = int(datetime.strptime(finish, '%Y-%m-%d %H:%M').timestamp())
+        
+        #TODO adjust custom fields
+        # field = {
+            #     "@id": "6892",
+            #     "field_name": "Presenter",
+            #     "field_type": "text",
+            #     "field_data": "James Smith",
+            #     "paramdatavalue": "$@NULL@$",
+            # }
+
+        generated_events.append({"@id": "",
+                "capacity": capacity,
+                "allowoverbook": "0",
+                "waitlisteveryone": "0",
+                "details": details,
+                "normalcost": "0",
+                "discountcost": "0",
+                "allowcancellations": "1",
+                "cancellationcutoff": "0",
+                "timecreated": "1615156305",
+                "timemodified": "1623841147",
+                "usermodified": "19239",
+                "selfapproval": "0",
+                "mincapacity": "0",
+                "cutoff": "0",
+                "sendcapacityemail": "0",
+                "registrationtimestart": "0",
+                "registrationtimefinish": "0",
+                "cancelledstatus": "0",
+                "session_roles": None,
+                "custom_fields": {
+                    "custom_field": custom_fiels_data
+                },
+                "sessioncancel_fields": None,
+                "signups": None,
+                "sessions_dates": {
+                    "sessions_date": {
+                        "@id": "",
+                        "sessiontimezone": "99",
+                        "timestart": start,
+                        "timefinish": finish,
+                        "room": {
+                            "@id": "636",
+                            "name": None,
+                            "description": "<p>Marae for Tikanga Maori use only</p>",
+                            "capacity": "18",
+                            "allowconflicts": "0",
+                            "custom": "0",
+                            "hidden": "0",
+                            "usercreated": "$@NULL@$",
+                            "usermodified": "$@NULL@$",
+                            "timecreated": "1478480518",
+                            "timemodified": "1478480518",
+                            "room_fields": {
+                                "room_field": [
+                                    {
+                                        "@id": "582",
+                                        "field_name": "building",
+                                        "field_type": "text",
+                                        "field_data": "Rehua Marae",
+                                        "paramdatavalue": "$@NULL@$",
+                                    },
+                                    {
+                                        "@id": "581",
+                                        "field_name": "location",
+                                        "field_type": "location",
+                                        "field_data": '{"address":"79 Springfield Road, Edgeware","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
+                                        "paramdatavalue": "$@NULL@$",
+                                    },
+                                ]
+                            },
+                        },
+                        "assets": None,
+                    }
+                    }
+       })
+
+    return generated_events
+
 class Recurrence:
     def __init__(self):
         self.xmlData = {}
@@ -162,7 +245,7 @@ class Recurrence:
     
     #TODO is this method required or just internal statement would work
     def setSessions(self):
-        self.xmlData["activity"]["facetoface"]["sessions"] = self.generatedSessions
+        self.xmlData["activity"]["facetoface"]["sessions"]["session"] = self.generatedSessions
         return True
         
 
