@@ -38,11 +38,11 @@ def create_events():
     rec = models.Recurrence()
     rec.xmlData = models.readXml()
     sessions = rec.getSessions()
-
+    session_sets = ""
     custom_fields = rec.getCustomFields()
 
     if request.method == 'POST':
-        custom_fiels_data = []
+        custom_fields_data = []
         for field in custom_fields:
             if field["field_type"] == "text":
                 new_field = {
@@ -52,7 +52,7 @@ def create_events():
                     "field_data": request.form[field['field_name']],
                     "paramdatavalue": "$@NULL@$",
                 }
-                custom_fiels_data.append(new_field)
+                custom_fields_data.append(new_field)
 
         details = request.form['details']
         timestart = request.form['timestart']
@@ -68,11 +68,9 @@ def create_events():
         days_of_week = request.form.getlist('days_of_week[]')
         interval = request.form['interval']
         
-        rec.generatedSessions = models.generate_events(custom_fiels_data=custom_fiels_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurance_number=occurance_number, days_of_week=days_of_week, interval=interval)
-        rec.setSessions()
-        sessions = rec.getSessions()
-        print(rec.generatedSessions)
-    return render_template('event.html', rooms=rooms, sessions=sessions, custom_fields=custom_fields)
+        session_sets = models.generate_events(custom_fields_data=custom_fields_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurance_number=occurance_number, days_of_week=days_of_week, interval=interval)
+        print(session_sets)
+    return render_template('event.html', rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 
 @app.route('/generate-events', methods=['GET', 'POST'])

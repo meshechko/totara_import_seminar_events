@@ -305,12 +305,16 @@
 
 <div class="row g-5">
   <div class="col-md-12">
+
+    {% for sessions in session_sets %}
+
     <table class="table">
       <thead>
         <tr>
-          <th>Presenter</th>
+          <th>Custom fields</th>
           <th>Max.bookings</th>
           <th>Details</th>
+          <th>Date</th>
           <th>Start time</th>
           <th>Finish time</th>
           <th>Room</th>
@@ -319,20 +323,29 @@
       <tbody>
         {% for session in sessions %}
         <tr>
-          <td scope="row">{{ session.custom_fields.custom_field.field_data }}</td>
+          <td scope="row">
+            {% for custom_field in session.custom_fields_data %}
+              {{ custom_field.field_name }} : {{ custom_field.field_data }} <br>
+            {% endfor %}
+          </td>
           <td>{{ session.capacity }}</td>
           <td>{{ session.details }}</td>
-          <td>{{ session.sessions_dates.sessions_date.timestart|date_format }} {{ session.sessions_dates.sessions_date.timestart|time_format }}</td>
-          <td>{{ session.sessions_dates.sessions_date.timefinish|date_format }} {{ session.sessions_dates.sessions_date.timefinish|time_format }}</td>
+          <td>{{ session.date }}</td>
+          <td>{{ session.timestart }}</td>
+          <td>{{ session.timefinish }}</td>
+          <td>{{ session.room }}</td>
           <td>
-            {% if session.sessions_dates.sessions_date.room %}
-            {{ session.sessions_dates.sessions_date.room.name }}
-            {% endif %}
+            <form method="POST">
+
+          </form>
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+
+    {% endfor %}
+
   </div>
 </div>
 {% endblock content %} 

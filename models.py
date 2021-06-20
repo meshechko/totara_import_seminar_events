@@ -9,7 +9,7 @@ import magic
 import xmltodict
 import json
 import csv
-
+import uuid
 from dateutil import rrule, parser, relativedelta
 from dateutil.rrule import rrulestr
 from datetime import datetime
@@ -123,9 +123,11 @@ def readXml(xml_attribs=True):
 
     
 
-def generate_events(custom_fiels_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurance_number, days_of_week, interval):
+def generate_events(custom_fields_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurance_number, days_of_week, interval):
     recurance_data = []
+
     generated_events = []
+
     if frequency:
         recurance_data.append("FREQ="+frequency)
 
@@ -145,90 +147,97 @@ def generate_events(custom_fiels_data, details, timestart, timefinish, room, cap
     # print(recurrance_data_string)
     dates = list(rrulestr(recurrance_data_string))
 
-
+    set = []
     for date in dates:
         start = f"{ str(date.date()) } { timestart }"
         start = int(datetime.strptime(start, '%Y-%m-%d %H:%M').timestamp())
         finish = f"{ str(date.date()) } { timefinish }"
         finish = int(datetime.strptime(finish, '%Y-%m-%d %H:%M').timestamp())
-        
-        #TODO adjust custom fields
-        # field = {
-            #     "@id": "6892",
-            #     "field_name": "Presenter",
-            #     "field_type": "text",
-            #     "field_data": "James Smith",
-            #     "paramdatavalue": "$@NULL@$",
-            # }
 
-        generated_events.append({"@id": "",
-                "capacity": capacity,
-                "allowoverbook": "0",
-                "waitlisteveryone": "0",
-                "details": details,
-                "normalcost": "0",
-                "discountcost": "0",
-                "allowcancellations": "1",
-                "cancellationcutoff": "0",
-                "timecreated": "1615156305",
-                "timemodified": "1623841147",
-                "usermodified": "19239",
-                "selfapproval": "0",
-                "mincapacity": "0",
-                "cutoff": "0",
-                "sendcapacityemail": "0",
-                "registrationtimestart": "0",
-                "registrationtimefinish": "0",
-                "cancelledstatus": "0",
-                "session_roles": None,
-                "custom_fields": {
-                    "custom_field": custom_fiels_data
-                },
-                "sessioncancel_fields": None,
-                "signups": None,
-                "sessions_dates": {
-                    "sessions_date": {
-                        "@id": "",
-                        "sessiontimezone": "99",
-                        "timestart": start,
-                        "timefinish": finish,
-                        "room": {
-                            "@id": "636",
-                            "name": None,
-                            "description": "<p>Marae for Tikanga Maori use only</p>",
-                            "capacity": "18",
-                            "allowconflicts": "0",
-                            "custom": "0",
-                            "hidden": "0",
-                            "usercreated": "$@NULL@$",
-                            "usermodified": "$@NULL@$",
-                            "timecreated": "1478480518",
-                            "timemodified": "1478480518",
-                            "room_fields": {
-                                "room_field": [
-                                    {
-                                        "@id": "582",
-                                        "field_name": "building",
-                                        "field_type": "text",
-                                        "field_data": "Rehua Marae",
-                                        "paramdatavalue": "$@NULL@$",
-                                    },
-                                    {
-                                        "@id": "581",
-                                        "field_name": "location",
-                                        "field_type": "location",
-                                        "field_data": '{"address":"79 Springfield Road, Edgeware","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
-                                        "paramdatavalue": "$@NULL@$",
-                                    },
-                                ]
-                            },
-                        },
-                        "assets": None,
-                    }
-                    }
-       })
+        session = {
+            'custom_fields_data':custom_fields_data,
+            'date':date,
+            'timestart':timestart,
+            'timefinish':timefinish,
+            'details': details,
+            'room':room,
+            'capacity':capacity
+        }
+        set.append(session)
 
+    generated_events.append(set)
+    set = []
     return generated_events
+    #     #TODO adjust custom fields
+    #     test = []
+    #     test.append({"@id": "",
+    #             "capacity": capacity,
+    #             "allowoverbook": "0",
+    #             "waitlisteveryone": "0",
+    #             "details": details,
+    #             "normalcost": "0",
+    #             "discountcost": "0",
+    #             "allowcancellations": "1",
+    #             "cancellationcutoff": "0",
+    #             "timecreated": "1615156305",
+    #             "timemodified": "1623841147",
+    #             "usermodified": "19239",
+    #             "selfapproval": "0",
+    #             "mincapacity": "0",
+    #             "cutoff": "0",
+    #             "sendcapacityemail": "0",
+    #             "registrationtimestart": "0",
+    #             "registrationtimefinish": "0",
+    #             "cancelledstatus": "0",
+    #             "session_roles": None,
+    #             "custom_fields": {
+    #                 "custom_field": custom_fields_data
+    #             },
+    #             "sessioncancel_fields": None,
+    #             "signups": None,
+    #             "sessions_dates": {
+    #                 "sessions_date": {
+    #                     "@id": "",
+    #                     "sessiontimezone": "99",
+    #                     "timestart": start,
+    #                     "timefinish": finish,
+    #                     "room": {
+    #                         "@id": "636",
+    #                         "name": None,
+    #                         "description": "<p>Marae for Tikanga Maori use only</p>",
+    #                         "capacity": "18",
+    #                         "allowconflicts": "0",
+    #                         "custom": "0",
+    #                         "hidden": "0",
+    #                         "usercreated": "$@NULL@$",
+    #                         "usermodified": "$@NULL@$",
+    #                         "timecreated": "1478480518",
+    #                         "timemodified": "1478480518",
+    #                         "room_fields": {
+    #                             "room_field": [
+    #                                 {
+    #                                     "@id": "582",
+    #                                     "field_name": "building",
+    #                                     "field_type": "text",
+    #                                     "field_data": "Rehua Marae",
+    #                                     "paramdatavalue": "$@NULL@$",
+    #                                 },
+    #                                 {
+    #                                     "@id": "581",
+    #                                     "field_name": "location",
+    #                                     "field_type": "location",
+    #                                     "field_data": '{"address":"79 Springfield Road, Edgeware","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
+    #                                     "paramdatavalue": "$@NULL@$",
+    #                                 },
+    #                             ]
+    #                         },
+    #                     },
+    #                     "assets": None,
+    #                 }
+    #                 }
+    #    })
+
+    
 
 class Recurrence:
     def __init__(self):
