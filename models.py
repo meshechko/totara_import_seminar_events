@@ -123,7 +123,7 @@ def readXml(xml_attribs=True):
 
     
 
-def generate_events(custom_fields_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurance_number, days_of_week, interval):
+def generate_recurring_sessions(custom_fields_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurance_number, days_of_week, interval):
     recurance_data = []
 
     sessions = []
