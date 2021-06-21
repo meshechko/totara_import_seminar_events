@@ -38,7 +38,6 @@ def create_events():
     rec = models.Recurrence()
     rec.xmlData = models.readXml()
     sessions = rec.getSessions()
-    session_sets = ""
     custom_fields = rec.getCustomFields()
 
     if request.method == 'POST':
@@ -68,8 +67,9 @@ def create_events():
         days_of_week = request.form.getlist('days_of_week[]')
         interval = request.form['interval']
         
-        session_sets = models.generate_events(custom_fields_data=custom_fields_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurance_number=occurance_number, days_of_week=days_of_week, interval=interval)
-        print(session_sets)
+        generated_session = models.generate_events(custom_fields_data=custom_fields_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurance_number=occurance_number, days_of_week=days_of_week, interval=interval)
+        rec.appendToTempGeneratedSessions(generated_session)
+        session_sets = rec.getTempGeneratedSessions
     return render_template('event.html', rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 
