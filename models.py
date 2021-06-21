@@ -126,7 +126,7 @@ def readXml(xml_attribs=True):
 def generate_events(custom_fields_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurance_number, days_of_week, interval):
     recurance_data = []
 
-    generated_events = []
+    sessions = []
 
     if frequency:
         recurance_data.append("FREQ="+frequency)
@@ -144,10 +144,9 @@ def generate_events(custom_fields_data, details, timestart, timefinish, room, ca
         recurance_data.append(f"BYSETPOS={ occurance_number }")
     
     recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
-    # print(recurrance_data_string)
+
     dates = list(rrulestr(recurrance_data_string))
 
-    set = []
     for date in dates:
         start = f"{ str(date.date()) } { timestart }"
         start = int(datetime.strptime(start, '%Y-%m-%d %H:%M').timestamp())
@@ -163,11 +162,8 @@ def generate_events(custom_fields_data, details, timestart, timefinish, room, ca
             'room':room,
             'capacity':capacity
         }
-        set.append(session)
-
-    generated_events.append(set)
-    set = []
-    return generated_events
+        sessions.append(session)
+    return sessions
     #     #TODO adjust custom fields
     #     test = []
     #     test.append({"@id": "",
@@ -242,7 +238,7 @@ def generate_events(custom_fields_data, details, timestart, timefinish, room, ca
 class Recurrence:
     def __init__(self):
         self.xmlData = {}
-        self.generatedSessions = {}
+        self.tempGeneratedSessions = []
     
     def getCustomFields(self):
         list_of_custom_fiels = self.xmlData["activity"]["facetoface"]["sessions"]["session"][0]["custom_fields"]["custom_field"]
@@ -257,6 +253,12 @@ class Recurrence:
         self.xmlData["activity"]["facetoface"]["sessions"]["session"] = self.generatedSessions
         return True
         
+    def getTempGeneratedSessions(self):
+        return self.tempGeneratedSessions
+    
+    def appendToTempGeneratedSessions(self, sessions):
+        self.tempGeneratedSessions.append(sessions)
+        return True
 
 
         
