@@ -233,32 +233,13 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
     #                 }
     #    })
 
-    
 
-class Recurrence:
-    def __init__(self):
-        self.xmlData = {}
-        self.tempGeneratedSessions = []
+
+
     
-    def getCustomFields(self):
-        list_of_custom_fiels = self.xmlData["activity"]["facetoface"]["sessions"]["session"][0]["custom_fields"]["custom_field"]
-        return list_of_custom_fiels
-        
-    def getSessions(self):
-        list_of_sessions = self.xmlData["activity"]["facetoface"]["sessions"]["session"]
-        return list_of_sessions
-    
-    #TODO is this method required or just internal statement would work
-    def setSessions(self):
-        self.xmlData["activity"]["facetoface"]["sessions"]["session"] = self.generatedSessions
-        return True
-        
-    def getTempGeneratedSessions(self):
-        return self.tempGeneratedSessions
-    
-    def appendToTempGeneratedSessions(self, sessions):
-        self.tempGeneratedSessions.append(sessions)
-        return True
+def getCustomFields(file):
+    custom_fields = file["activity"]["facetoface"]["sessions"]["session"][0]["custom_fields"]["custom_field"]
+    return custom_fields
 
 
         

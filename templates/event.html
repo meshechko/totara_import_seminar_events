@@ -4,7 +4,7 @@
 
 <div class="row g-5">
   <div class="col-md-12">
-    <form class="needs-validation" method="POST" novalidate="">
+    <form class="needs-validation" method="POST" action="generate-events" novalidate="">
       <div class="row g-3">
         <div class="col-md-6">
           <h4 class="mb-3">Event details</h4>
@@ -307,7 +307,7 @@
   <div class="col-md-12">
 
     {% for sessions in session_sets %}
-
+    {% set set_index = loop.index %}
     <table class="table">
       <thead>
         <tr>
@@ -318,6 +318,10 @@
           <th>Start time</th>
           <th>Finish time</th>
           <th>Room</th>
+          <th><form method="POST" action="delete-sessions-set">
+            <input type="hidden" name="session_set_index" value="{{ set_index - 1 }}">
+            <button type="hidden" name="delete_session">Delete this recurrance</button>
+        </form></th>
         </tr>
       </thead>
       <tbody>
@@ -335,8 +339,11 @@
           <td>{{ session.timefinish }}</td>
           <td>{{ session.room }}</td>
           <td>
-            <form method="POST">
-
+            {% set session_index = loop.index %}
+            <form method="POST" action="delete-session">
+              <input type="hidden" name="session_set_index" value="{{ set_index - 1 }}">
+              <input type="hidden" name="session_index" value="{{ session_index - 1 }}">
+              <button type="hidden" name="delete_session">x</button>
           </form>
           </td>
         </tr>

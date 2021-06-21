@@ -31,16 +31,25 @@ def checkUserSession():
         session['userID'] = randomString
 
 
+
 @app.route('/create-events', methods=['GET', 'POST'])
 def create_events():
     checkUserSession()
     rooms = models.getRooms()
-    rec = models.Recurrence()
-    rec.xmlData = models.readXml()
-    sessions = rec.getSessions()
-    custom_fields = rec.getCustomFields()
+    custom_fields = models.getCustomFields(models.readXml())
+    session_sets = []
+    if 'sessions' in session:
+        session_sets = session['sessions']
+    else:
+        session['sessions'] = []
+    return render_template('event.html', rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
+
+
+@app.route('/generate-events', methods=['POST'])
+def generate_events():
     if request.method == 'POST':
+        custom_fields = models.getCustomFields(models.readXml())
         custom_fields_data = []
         for field in custom_fields:
             if field["field_type"] == "text":
@@ -68,17 +77,35 @@ def create_events():
         interval = request.form['interval']
         
         generated_session = models.generate_recurring_sessions(custom_fields_data=custom_fields_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurance_number=occurance_number, days_of_week=days_of_week, interval=interval)
-        rec.appendToTempGeneratedSessions(generated_session)
-        session_sets = rec.getTempGeneratedSessions
-    return render_template('event.html', rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
-
-
-@app.route('/generate-events', methods=['GET', 'POST'])
-def generate_events():
-    if request.method == 'POST':
+        sessions = session['sessions']
+        sessions.append(generated_session)
+        session['sessions'] = sessions
         return redirect(url_for('create_events'))
     return render_template('event.html')
 
+@app.route('/delete-session', methods=['POST'])
+def delete_session():
+    if request.method == 'POST':
+        sessions = session['sessions']
+        set_index = int(request.form['session_set_index'])
+        session_index = int(request.form['session_index'])
+        if len(sessions[set_index]) == 1:
+            del sessions[set_index]
+        else:
+            del sessions[set_index][session_index]
+        session['sessions'] = sessions
+        return redirect(url_for('create_events'))
+    return render_template('event.html')
+
+@app.route('/delete-sessions-set', methods=['POST'])
+def delete_sessions_set():
+    if request.method == 'POST':
+        sessions = session['sessions']
+        set_index = int(request.form['session_set_index'])
+        del sessions[set_index]
+        session['sessions'] = sessions
+        return redirect(url_for('create_events'))
+    return render_template('event.html')
 
 @app.route('/', methods=['POST', 'GET'])
 def uploadRooms():
@@ -111,4 +138,3 @@ def uploadBackup():
         else:
             flash('Upload the correct Totara activity backup that ends with .mbz. Click here to learn how to generate the seminar activity backup.', 'danger')
     return render_template('backup.html', form=form)
-
