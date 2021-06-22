@@ -50,8 +50,10 @@ def validateCsvHeaders(rooms_list):
         return True
 
 def getRooms():
-    userFolder = getUserFolder(session["userID"])
-    rooms = open(userFolder+"/rooms.json", "rb").read()
+    rooms = []
+    if "userID" in session: 
+        userFolder = getUserFolder(session["userID"])
+        rooms = open(userFolder+"/rooms.json", "rb").read()
     return json.loads(rooms)
 
 def saveRooms(rooms_list):
@@ -103,7 +105,10 @@ def unzipBackup(file):
     return True
 
 def getf2fxml():
-    seminarFolder = getSeminarFolder(session["userID"])
+    seminarFolder = UPLOAD_FOLDER + "default/"
+    if "userID"  in session:
+        seminarFolder = getSeminarFolder(session["userID"])
+        
     subfolders = [ f.path for f in os.scandir(seminarFolder+"activities/") if f.is_dir() ]
     for folder in list(subfolders):
         if "facetoface" in folder:
