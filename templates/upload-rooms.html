@@ -18,9 +18,9 @@ content %}
          
          <div class="message">
             {% for category, message in get_flashed_messages(with_categories=True) %}
-            <div class="alert-{{category}}">{{category}}: {{ message }}</div>
+            <div class="alert alert-{{category}} mt-3" role="alert">{{ message }}</div>
             {% if category == 'success'%}
-            <a href="/upload-backup">Next step</a>
+            <a class="mb-3 btn btn-lg btn-light" href="/upload-backup">Go to the step</a>
             {% endif %}
             {% endfor %} 
             {% if form.file.errors %} 
