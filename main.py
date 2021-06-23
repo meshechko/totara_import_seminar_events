@@ -24,6 +24,10 @@ def datetime_format(value, format="%d/%m/%y"):
 
 # ROUTES
 
+@app.route('/')
+def home():
+    return render_template('home.html')
+
 def checkUserSession():
     if 'userID' not in session:
         letters = string.ascii_lowercase
@@ -107,7 +111,7 @@ def delete_sessions_set():
         return redirect(url_for('create_events'))
     return render_template('event.html')
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/upload-rooms', methods=['POST', 'GET'])
 def uploadRooms():
     checkUserSession()
     form = UploadRooms()
