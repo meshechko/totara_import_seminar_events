@@ -1,5 +1,12 @@
-uploads/*
-workspace*
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+
+# Environments
 env/
-.vscode/
+
+workspace.code-workspace
+.flaskenv
+
+uploads/*
+!uploads/default
