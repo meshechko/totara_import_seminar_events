@@ -46,7 +46,7 @@ def create_events():
         session_sets = session['sessions']
     else:
         session['sessions'] = []
-    return render_template('event.html', rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
+    return render_template('create-events.html', rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 
 
