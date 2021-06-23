@@ -123,7 +123,7 @@ def uploadRooms():
             models.saveRooms(rooms_list)
             flash(f'Successfully upladed {len(models.getRooms())} rooms', 'success')
         else:
-            flash('Please upload CSV that contains the following headers: \n id, name, description, capacity, location, building, published', 'danger')
+            flash('Please upload CSV that contains the following headers: \n id, name, description, capacity, allowconflicts, building, location', 'danger')
     return render_template('upload-rooms.html', form=form)
 
 
