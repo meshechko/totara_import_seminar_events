@@ -1,0 +1,5 @@
+nav .active{
+    color:#CE412D !important;
+    background: rgba(231, 175, 172, 0.15);
+    border-radius: 14px;
+}

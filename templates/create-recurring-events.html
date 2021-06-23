@@ -1,4 +1,5 @@
 {% extends "base.html" %} 
+{% set active_page = "create-recurring-events" %}
 {% block title %}Create event recurrance{% endblock title %}
 {% block content %}
 
@@ -71,9 +72,14 @@
               <div class="control-group">
                 <label class="form-label" for="room">Room</label>
                 <select id="room" name="room" class="form-select">
-                  {% for room in rooms %}
-                  <option value="{{ room.id }}">{{ room.name }}</option>
-                  {% endfor %}
+                  {% if rooms|length > 0 %}
+                    {% for room in rooms %}
+                    <option value="{{ room.id }}">{{ room.name }}</option>
+                    {% endfor %}
+                  {% else %}
+                    <option value="None">None</option>
+                  {% endif %}
+
                 </select>
               </div>
             </div>

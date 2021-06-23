@@ -1,26 +1,46 @@
 {% extends "base.html" %} 
+{% set active_page = "upload-backup" %}
 {% block title %}Upload MBZ backup file{% endblock %} 
 
 {% block content %}
 
-<form method="POST" action="" enctype="multipart/form-data">
-  {{form.hidden_tag()}}
-  <div>{{ form.file.label}} {{ form.file(class="css_class") }}</div>
-  {{ form.submit }}
-</form>
 
-<div class="message">
-  {% for category, message in get_flashed_messages(with_categories=True) %}
-  <div class="alert-{{category}}">{{category}}: {{ message }}</div>
-  {% if category == 'success'%}
-  <a href="/create-events">Next step</a>
-  {% endif %}
-  {% endfor %} 
-  
-  {% if form.file.errors %} {% for error in form.file.errors %}
-  <span>{{ error }}</span>
-  {% endfor %} 
-  
-  {% endif %}
+<div class="row p-4 p-md-5 mb-4 text-white rounded bg-dark">
+   <div class="col-md-8 px-0">
+      <large class="text-muted fw-light d-block">Step 2 (optional)</large>
+      <h1 class="display-4">Upload custom fields</h1>
+      <p class="fs-5 text-muted">If you have custom fields for Seminars in your Totara instance and want to add these fields to your recurring events, then you need to create a backup of seminar activity with at least one event and upload it on this page.
+      </p>
+      <p class="fs-5 text-muted">Below I have added a quick guide how to create Seminar activity backup with custom fields.</p>
+      <div>
+         <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            {{ form.file.label }} {{ form.file(class="form-control mb-3 btn btn-lg btn-light") }}
+		 <div class="btn-group w-100">
+            {{ form.submit(class="btn btn-lg btn-primary active") }}<a class="btn btn-lg btn-outline-light"  href="{{ url_for('create_recurring_events') }}">Skip this step</a>
+			 </div>
+         </form>
+
+         
+         <div class="message">
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+		    <div class="alert alert-{{category}} mt-3" role="alert">{{ message }}</div>
+		    {% if category == 'success'%}
+		    	<a class="mb-3 btn btn-lg btn-light" href="{{ url_for('create_recurring_events') }}">Go to next step</a>
+		    {% endif %}
+            {% endfor %} 
+         </div>
+      </div>
+   </div>
+   <div class="col-md-4"><img class="img-fluid" src="/static/csv.png"></div>
 </div>
+<h2 class="display-6 text-center mb-4">How to create Seminar activity backup with custom fields</h2>
+<ol class="list-group list-group-numbered">
+   <li class="list-group-item">Go to Reports.</li>
+   <li class="list-group-item">Click on "Create report.</li>
+   <li class="list-group-item">Enter report name, select source - "Seminar Rooms" and click "Create report" button.</li>
+   <li class="list-group-item">Add all required columns and customise their headings as per screenshot: id, name, description, capacity, allowconflicts, building, location</li>
+   <li class="list-group-item">Open this report</li>
+   <li class="list-group-item">Export report as csv file</li>
+</ol>
 {% endblock %}

@@ -16,21 +16,33 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
-    <link rel="icon" href="/static/favicon.ico">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <title>{% block title %}{% endblock %}</title>
     {% endblock %}
   </head>
   <body class="container py-3">
       <header>
         <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
-          <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
-            <img src="/static/logo.png" style="height: 54px;" class="me-3">
+          <a href="{{ url_for('index') }}" class="d-flex align-items-center text-dark text-decoration-none">
+            <img src="{{ url_for('static', filename='logo.png') }}" style="height: 54px;" class="me-3">
             <span class="fs-4">Totara recurring events generator</span>
           </a>
           <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
-            <a class="me-3 py-2 text-dark text-decoration-none" href="/upload-rooms"><small class="text-muted fw-light d-block">Step 1 (optional)</small>Upload rooms </a>
-            <a class="me-3 py-2 text-dark text-decoration-none" href="/upload-backup"><small class="text-muted fw-light d-block">Step 2 (optional)</small>Add custom fields</a>
-            <a class="me-3 py-2 text-dark text-decoration-none" href="/create-recurring-events"><small class="text-muted fw-light d-block">Step 3</small>Generate events</a>
+
+           {% set navigation_bar = [
+              ('index', 'index', 'Home', '&nbsp;'),
+              ('upload_rooms', 'upload-rooms', 'Upload Rooms', 'Step 1 (optional)'),
+              ('upload_backup', 'upload-backup', 'Add custom fields', 'Step 2 (optional)'),
+              ('create_recurring_events', 'create-recurring-events', 'Generate events', 'Step 3'),
+          ] -%}
+          {% set active_page = active_page|default('index') -%}
+          
+
+          {% for href, id, caption, superscript in navigation_bar %}
+          <a class="me-3 py-2 px-3 text-dark text-decoration-none {% if id == active_page %} active{% endif
+            %}" href="{{ url_for( href|e ) }}"><small class="text-muted fw-light d-block">{{ superscript|safe }}</small>{{ caption|e }}</a>
+          {% endfor %}
           </nav>
         </div>
       </header>

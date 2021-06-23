@@ -13,6 +13,8 @@ import uuid
 from dateutil import rrule, parser, relativedelta
 from dateutil.rrule import rrulestr
 from datetime import datetime
+import os.path
+from os import path
 
 #CONFIG data
 
@@ -51,15 +53,18 @@ def validateCsvHeaders(rooms_list):
 
 def getRooms():
     rooms = []
-    if "userID" in session: 
-        userFolder = getUserFolder(session["userID"])
-        rooms = open(userFolder+"/rooms.json", "rb").read()
-    return json.loads(rooms)
+    userFile = getUserFolder(session["userID"])+"/rooms.json"
+    
+    if path.exists(userFile):
+        rooms = open(userFile, "rb").read()
+        rooms = json.loads(rooms)
+    else:
+        rooms = []
+    return rooms
 
 def saveRooms(rooms_list):
     userFolder = getUserFolder(session["userID"])
     if os.path.isdir(userFolder) == False:
-        
         createFolder(userFolder)
     with open(os.path.join(userFolder, "rooms.json"), 'w') as file:
         toJson = json.dumps(rooms_list)
@@ -105,11 +110,10 @@ def unzipBackup(file):
     return True
 
 def getf2fxml():
-    seminarFolder = UPLOAD_FOLDER + "default/"
-    if "userID"  in session:
-        seminarFolder = getSeminarFolder(session["userID"])
-        
-    subfolders = [ f.path for f in os.scandir(seminarFolder+"activities/") if f.is_dir() ]
+    userActivitiesFolder = getSeminarFolder(session["userID"])+"activities/"
+    if path.exists(userActivitiesFolder) == False:
+        userActivitiesFolder = UPLOAD_FOLDER + "default/seminar/activities/"
+    subfolders = [ f.path for f in os.scandir(userActivitiesFolder) if f.is_dir() ]
     for folder in list(subfolders):
         if "facetoface" in folder:
             return folder+"/facetoface.xml"

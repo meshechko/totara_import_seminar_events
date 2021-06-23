@@ -1,18 +1,20 @@
-{% extends "base.html" %} {% block title %}Upload rooms{% endblock %} {% block
+{% extends "base.html" %}
+{% set active_page = "upload-rooms" %}
+{% block title %}Upload rooms{% endblock %} {% block
 content %}
 <div class="row p-4 p-md-5 mb-4 text-white rounded bg-dark">
    <div class="col-md-8 px-0">
       <large class="text-muted fw-light d-block">Step 1 (optional)</large>
       <h1 class="display-4">Upload rooms</h1>
-      <p class="fs-5 text-muted">Upload csv file with your Totra instance room details. Enure that csv has the following headings: id, name, description, capacity, allowconflicts, building, location
+      <p class="fs-5 text-muted">Upload csv file with your Totra instance room details. Ensure that csv has the following headings: id, name, description, capacity, allowconflicts, building, location
       </p>
-      <p class="fs-5 text-muted">Below I have added a quick guide how o create this report and generate csv file with rooms in Totara.</p>
+      <p class="fs-5 text-muted">Below I have added a quick guide how to create this report and generate csv file with rooms in Totara.</p>
       <div>
          <form method="POST" action="" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             {{ form.file.label }} {{ form.file(class="form-control mb-3 btn btn-lg btn-light") }}
 		 <div class="btn-group w-100">
-            {{ form.submit(class="btn btn-lg btn-primary active") }}<a class="btn btn-lg btn-outline-light" type="button" href="/upload-backup">Skip this step</a>
+            {{ form.submit(class="btn btn-lg btn-primary active") }}<a class="btn btn-lg btn-outline-light"  href="{{ url_for('upload_backup') }}">Skip this step</a>
 			 </div>
          </form>
          

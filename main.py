@@ -25,8 +25,8 @@ def datetime_format(value, format="%d/%m/%y"):
 # ROUTES
 
 @app.route('/')
-def home():
-    return render_template('home.html')
+def index():
+    return render_template('index.html')
 
 def checkUserSession():
     if 'userID' not in session:
@@ -36,8 +36,8 @@ def checkUserSession():
 
 
 
-@app.route('/create-events', methods=['GET', 'POST'])
-def create_events():
+@app.route('/create-recurring-events', methods=['GET', 'POST'])
+def create_recurring_events():
     checkUserSession()
     rooms = models.getRooms()
     custom_fields = models.getCustomFields(models.readXml())
@@ -46,7 +46,7 @@ def create_events():
         session_sets = session['sessions']
     else:
         session['sessions'] = []
-    return render_template('create-events.html', rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
+    return render_template('create-recurring-events.html', rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 
 
@@ -84,8 +84,8 @@ def generate_events():
         sessions = session['sessions']
         sessions.append(generated_session)
         session['sessions'] = sessions
-        return redirect(url_for('create_events'))
-    return render_template('create-events.html')
+        return redirect(url_for('create_recurring_events'))
+    return render_template('create-recurring-events.html')
 
 @app.route('/delete-session', methods=['POST'])
 def delete_session():
@@ -98,8 +98,8 @@ def delete_session():
         else:
             del sessions[set_index][session_index]
         session['sessions'] = sessions
-        return redirect(url_for('create_events'))
-    return render_template('create-events.html')
+        return redirect(url_for('create_recurring_events'))
+    return render_template('create-recurring-events.html')
 
 @app.route('/delete-sessions-set', methods=['POST'])
 def delete_sessions_set():
@@ -108,11 +108,11 @@ def delete_sessions_set():
         set_index = int(request.form['session_set_index'])
         del sessions[set_index]
         session['sessions'] = sessions
-        return redirect(url_for('create_events'))
-    return render_template('create-events.html')
+        return redirect(url_for('create_recurring_events'))
+    return render_template('create-recurring-events.html')
 
 @app.route('/upload-rooms', methods=['POST', 'GET'])
-def uploadRooms():
+def upload_rooms():
     checkUserSession()
     form = UploadRooms()
     
@@ -128,7 +128,7 @@ def uploadRooms():
 
 
 @app.route('/upload-backup', methods=['POST', 'GET'])
-def uploadBackup():
+def upload_backup():
     checkUserSession()
     form = UploadBackup()
     
@@ -136,9 +136,9 @@ def uploadBackup():
         file = form.file.data
         if models.validateBackup(file):
             if models.unzipBackup(file):
-                flash(f'Backup file uploaded', 'success')
+                flash(f'Backup file uploaded successfully', 'success')
             else:
                 flash(f'Incorrect backup', 'danger')
         else:
-            flash('Upload the correct Totara activity backup that ends with .mbz. Click here to learn how to generate the seminar activity backup.', 'danger')
+            flash('Upload the correct Totara activity backup that ends with .mbz. Scroll down to see a guide how to create Seminar activity backup with custom fields.', 'danger')
     return render_template('upload-backup.html', form=form)
