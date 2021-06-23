@@ -18,17 +18,16 @@ content %}
          
          <div class="message">
             {% for category, message in get_flashed_messages(with_categories=True) %}
-            <div class="alert alert-{{category}} mt-3" role="alert">{{ message }}</div>
-            {% if category == 'success'%}
-            <a class="mb-3 btn btn-lg btn-light" href="/upload-backup">Go to next step</a>
-            {% endif %}
+		    <div class="alert alert-{{category}} mt-3" role="alert">{{ message }}</div>
+		    {% if category == 'success'%}
+		    	<a class="mb-3 btn btn-lg btn-light" href="/upload-backup">Go to next step</a>
+		    {% endif %}
             {% endfor %} 
+		 
             {% if form.file.errors %} 
-            {% for error in form.file.errors %}
-            <span>{{ error }}</span>
-            {% else %}
-            {% endfor %} 
-            validateCsvHeaders
+		    {% for error in form.file.errors %}
+		 	<div class="alert alert-danger mt-3" role="alert">{{ error }}</div>
+		    {% endfor %} 
             {% endif %}
          </div>
       </div>
