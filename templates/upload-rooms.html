@@ -1,3 +1,5 @@
+{% extends "base.html" %} {% block title %}Upload rooms{% endblock %} {% block
+content %}
 <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
    <div class="col-md-8 px-0">
       <large class="text-muted fw-light d-block">Step 1 (optional)</large>
@@ -8,8 +10,10 @@
       <div>
          <form method="POST" action="" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
-            {{ form.file.label }} {{ form.file(class="css_class") }}
-            {{ form.submit }}
+            {{ form.file.label }} {{ form.file(class="form-control mb-3 btn btn-lg btn-outline-light") }}
+		 <div class="btn-group w-100">
+            {{ form.submit(class="btn btn-lg btn-primary active") }}<a class="btn btn-lg btn-outline-light" type="button" href="/upload-backup">Skip this step</a>
+			 </div>
             <! ––   
             <input type="file" class="form-control mb-3 btn btn-lg btn-outline-light" id="inputGroupFile02">
             <div class="btn-group w-100">
@@ -46,3 +50,4 @@
    <li class="list-group-item">Open this report</li>
    <li class="list-group-item">Export report as csv file</li>
 </ol>
+{% endblock %}
