@@ -1,29 +1,48 @@
-{% extends "base.html" %} {% block title %}Import rooms{% endblock %} {% block
-content %}
-
-<form method="POST" action="" enctype="multipart/form-data">
-  {{form.hidden_tag()}}
-  <div>{{ form.file.label}} {{ form.file(class="css_class") }}</div>
-  {{ form.submit }}
-</form>
-
-<div class="message">
-  {% for category, message in get_flashed_messages(with_categories=True) %}
-  <div class="alert-{{category}}">{{category}}: {{ message }}</div>
-
-  {% if category == 'success'%}
-  <a href="/upload-backup">Next step</a>
-  {% endif %}
-  {% endfor %} 
-
-  {% if form.file.errors %} 
-  {% for error in form.file.errors %}
-  <span>{{ error }}</span>
-  {% else %}
-  {% endfor %} 
-
-  validateCsvHeaders
-
-  {% endif %}
+<div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
+   <div class="col-md-8 px-0">
+      <large class="text-muted fw-light d-block">Step 1 (optional)</large>
+      <h1 class="display-4">Upload rooms</h1>
+      <p class="fs-5 text-muted">Upload csv file with your Totra instance room details. Enure that csv has the following headings: id, name, description, capacity, allowconflicts, building, location
+      </p>
+      <p class="fs-5 text-muted">Below I have added a quick guide how o create this report and generate csv file with rooms in Totara.</p>
+      <div>
+         <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            {{ form.file.label }} {{ form.file(class="css_class") }}
+            {{ form.submit }}
+            <! ––   
+            <input type="file" class="form-control mb-3 btn btn-lg btn-outline-light" id="inputGroupFile02">
+            <div class="btn-group w-100">
+               <button class="btn btn-lg btn-primary active" type="submit">Upload</button>
+               <a class="btn btn-lg btn-outline-light" type="button" href="/upload-backup">Skip this step</a>
+			</div>
+         </form>
+         
+         <div class="message">
+            {% for category, message in get_flashed_messages(with_categories=True) %}
+            <div class="alert-{{category}}">{{category}}: {{ message }}</div>
+            {% if category == 'success'%}
+            <a href="/upload-backup">Next step</a>
+            {% endif %}
+            {% endfor %} 
+            {% if form.file.errors %} 
+            {% for error in form.file.errors %}
+            <span>{{ error }}</span>
+            {% else %}
+            {% endfor %} 
+            validateCsvHeaders
+            {% endif %}
+         </div>
+      </div>
+   </div>
+   <div class="col-md-4"><img src=""></div>
 </div>
-{% endblock %}
+<h2 class="display-6 text-center mb-4">How to download csv with rooms from your Totara instance</h2>
+<ol class="list-group list-group-numbered">
+   <li class="list-group-item">Go to Reports.</li>
+   <li class="list-group-item">Click on "Create report.</li>
+   <li class="list-group-item">Enter report name, select source - "Seminar Rooms" and click "Create report" button.</li>
+   <li class="list-group-item">Add all required columns and customise their headings as per screenshot: id, name, description, capacity, allowconflicts, building, location</li>
+   <li class="list-group-item">Open this report</li>
+   <li class="list-group-item">Export report as csv file</li>
+</ol>
