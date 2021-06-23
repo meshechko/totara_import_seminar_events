@@ -85,7 +85,7 @@ def generate_events():
         sessions.append(generated_session)
         session['sessions'] = sessions
         return redirect(url_for('create_events'))
-    return render_template('event.html')
+    return render_template('create-events.html')
 
 @app.route('/delete-session', methods=['POST'])
 def delete_session():
@@ -99,7 +99,7 @@ def delete_session():
             del sessions[set_index][session_index]
         session['sessions'] = sessions
         return redirect(url_for('create_events'))
-    return render_template('event.html')
+    return render_template('create-events.html')
 
 @app.route('/delete-sessions-set', methods=['POST'])
 def delete_sessions_set():
@@ -109,7 +109,7 @@ def delete_sessions_set():
         del sessions[set_index]
         session['sessions'] = sessions
         return redirect(url_for('create_events'))
-    return render_template('event.html')
+    return render_template('create-events.html')
 
 @app.route('/upload-rooms', methods=['POST', 'GET'])
 def uploadRooms():
@@ -124,7 +124,7 @@ def uploadRooms():
             flash(f'Successfully upladed {len(models.getRooms())} rooms', 'success')
         else:
             flash('Please upload CSV that contains the following headers: \n id, name, description, capacity, location, building, published', 'danger')
-    return render_template('form.html', form=form)
+    return render_template('upload-rooms.html', form=form)
 
 
 @app.route('/upload-backup', methods=['POST', 'GET'])
@@ -141,4 +141,4 @@ def uploadBackup():
                 flash(f'Incorrect backup', 'danger')
         else:
             flash('Upload the correct Totara activity backup that ends with .mbz. Click here to learn how to generate the seminar activity backup.', 'danger')
-    return render_template('backup.html', form=form)
+    return render_template('upload-backup.html', form=form)
