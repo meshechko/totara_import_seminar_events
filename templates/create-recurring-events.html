@@ -11,7 +11,7 @@
           <h4 class="mb-3">Event details</h4>
           <div class="row g-3">
             
-
+            {% if custom_fields|length > 0 %}
               {% for field in custom_fields%}
                 {% if field.field_type == "text"%}
                 <div class="col-6">
@@ -30,69 +30,43 @@
                 {% endif %}
               
               {% endfor %}
-
-            
-            
+            {% else %}
+            <div class="col-6">
+              <label class="form-label" for="timestart">Custom fields</label>
+              <a class=" btn btn-light" href="{{ url_for('upload_backup') }}">Add custom fields (optional)</a>
+            </div>
+            {% endif %}
 
             <div class="col-sm-12">
-              <label class="form-label" for="details">Details</label>
-              <textarea
-                class="form-control"
-                id="details"
-                name="details"
-              ></textarea>
+              {{ form.details.label(class_='form-label') }}
+              {{ form.details() }}
             </div>
 
             <div class="col-6">
-              <label class="form-label" for="timestart">Start time</label>
-
-              <input
-                id="timestart"
-                name="timestart"
-                type="text"
-                placeholder=""
-                class="form-control time"
-                required=""
-              />
+              {{ form.timestart.label(class_='form-label') }}
+              {{ form.timestart() }}
             </div>
 
             <div class="col-6">
-              <label class="form-label" for="timefinish">Finish time</label>
-              <input
-                id="timefinish"
-                name="timefinish"
-                type="text"
-                placeholder=""
-                class="form-control time"
-                required=""
-              />
+              {{ form.timefinish.label(class_='form-label') }}
+              {{ form.timefinish() }}
             </div>
 
             <div class="col-sm-6">
               <div class="control-group">
-                <label class="form-label" for="room">Room</label>
-                <select id="room" name="room" class="form-select">
-                  {% if rooms|length > 0 %}
-                    {% for room in rooms %}
-                    <option value="{{ room.id }}">{{ room.name }}</option>
-                    {% endfor %}
-                  {% else %}
-                    <option value="None">None</option>
-                  {% endif %}
-
-                </select>
+                
+                {{ form.rooms.label(class_='form-label') }}
+                
+                {% if form.rooms.choices %}                
+                {{ form.rooms() }}
+                {% else %}
+                  <a class="d-block btn btn-light" href="{{ url_for('upload_rooms') }}">Add rooms (optional)</a>
+                {% endif %}
               </div>
             </div>
             <div class="col-sm-6">
-              <label class="form-label" for="capacity">Maximum bookings</label>
-              <input
-                id="capacity"
-                name="capacity"
-                type="number"
-                placeholder=""
-                class="form-control"
-                required=""
-              />
+              {{ form.capacity.label(class_='form-label') }}
+              {{ form.capacity() }}              
             </div>
           </div>
         </div>
@@ -104,47 +78,23 @@
 
           <div class="row mb-3">
             <div class="col-6">
-              <label class="form-label" for="datestart">Start</label>
-
-              <input
-                id="datestart"
-                name="datestart"
-                type="text"
-                placeholder=""
-                class="form-control cal"
-                required=""
-              />
+              {{ form.datestart.label(class_='form-label') }}
+              {{ form.datestart() }}
             </div>
 
             <div class="col-6">
-              <label class="form-label" for="until">End by</label>
-              <input
-                id="datefinish"
-                name="datefinish"
-                type="text"
-                placeholder=""
-                class="form-control cal"
-                required=""
-              />
-            </div>
+              {{ form.datefinish.label(class_='form-label') }}
+              {{ form.datefinish() }}
           </div>
-
+        </div>
           
           <div class="row mb-3">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
               Recurrence pattern
             </h4>
               <div class="control-group">
-                <label class="form-label" for="frequency">Period</label>
-                <select
-                  id="frequency"
-                  name="frequency"
-                  class="form-select"
-                >
-                  <!-- <option value="daily">Daily</option> -->
-                  <option selected="selected" value="WEEKLY">Weekly</option>
-                  <option value="MONTHLY">Monthly</option>
-                </select>
+                {{ form.frequency.label(class_='form-label') }}
+                {{ form.frequency() }}
               </div>
             </div>
 

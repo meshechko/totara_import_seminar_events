@@ -59,7 +59,8 @@ def getRooms():
         rooms = open(userFile, "rb").read()
         rooms = json.loads(rooms)
     else:
-        rooms = []
+        rooms = open(getUserFolder("default/rooms.json"), "rb").read()
+        rooms = json.loads(rooms)
     return rooms
 
 def saveRooms(rooms_list):
@@ -247,7 +248,11 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
 
     
 def getCustomFields(file):
-    custom_fields = file["activity"]["facetoface"]["sessions"]["session"][0]["custom_fields"]["custom_field"]
+    custom_fields = []
+    try:
+        custom_fields = file["activity"]["facetoface"]["sessions"]["session"][0]["custom_fields"]["custom_field"]
+    except:
+        custom_fields = []
     return custom_fields
 
 

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash
 import models
-from forms import UploadBackup, UploadRooms
+from forms import UploadBackup, UploadRooms, CreateEventForm
 import random
 import string
 from datetime import datetime
@@ -39,14 +39,18 @@ def checkUserSession():
 @app.route('/create-recurring-events', methods=['GET', 'POST'])
 def create_recurring_events():
     checkUserSession()
+    form = CreateEventForm()
     rooms = models.getRooms()
+    if len(rooms) > 0:
+        form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
+    
     custom_fields = models.getCustomFields(models.readXml())
     session_sets = []
     if 'sessions' in session:
         session_sets = session['sessions']
     else:
         session['sessions'] = []
-    return render_template('create-recurring-events.html', rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
+    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 
 
