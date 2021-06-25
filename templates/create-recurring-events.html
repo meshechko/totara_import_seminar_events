@@ -231,15 +231,8 @@
 
               <div class="col-4">
               <div id="interval-container">
-                <span class="d-inline">of every</span>
-                <input
-                  id="interval"
-                  name="interval"
-                  type="number"
-                  placeholder=""
-                  class="form-control d-inline"
-                  required=""
-                />
+                {{ form.interval.label(class_='d-inline') }}
+                {{ form.interval() }}  
                 <span class="d-inline" id="interval-text">week(s)</span>
               </div>
             </div>
