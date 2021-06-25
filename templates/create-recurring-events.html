@@ -135,97 +135,26 @@
               </div> -->
 
               <div class="col-4">
-                
-                <div id="occurance-number-container" class="d-none control-group">
-                  <label class="form-label" for="occurance_number">The</label>
-                  <select
-                    id="occurance_number"
-                    name="occurance_number"
-                    class="form-select"
-                  >
-                    <!-- <option value="daily">Daily</option> -->
-                    <option selected="selected" value="1">First</option>
-                    <option value="2">Second</option>
-                    <option value="3">Third</option>
-                    <option value="4">Fourth</option>
-                    <option value="-1">Last</option>
-                  </select>
+                <div id="occurrence-number-container" class="d-none control-group">
+                  {{ form.occurrence_number.label(class_='form-label') }}
+                  {{ form.occurrence_number() }}
                 </div>
 
               </div>
               <div class="col-4">
                 <div id="days-of-week-container">
-                  <label class="form-label"> </label>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="MO"
-                    name="days_of_week[]"
-                    id="m_mo"
-                  />
-                  <label class="form-check-label" for="m_mo"> Monday </label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="TU"
-                    name="days_of_week[]"
-                    id="m_tu"
-                  />
-                  <label class="form-check-label" for="m_tu"> Tuesday </label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="WE"
-                    name="days_of_week[]"
-                    id="m_we"
-                  />
-                  <label class="form-check-label" for="m_we"> Wednesday </label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="TH"
-                    name="days_of_week[]"
-                    id="m_th"
-                  />
-                  <label class="form-check-label" for="m_th"> Thursday </label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="FR"
-                    name="days_of_week[]"
-                    id="m_fr"
-                  />
-                  <label class="form-check-label" for="m_fr"> Friday </label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="SA"
-                    name="days_of_week[]"
-                    id="m_sa"
-                  />
-                  <label class="form-check-label" for="m_sa"> Saturday </label>
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    value="SU"
-                    name="days_of_week[]"
-                    id="m_su"
-                  />
-                  <label class="form-check-label" for="m_su"> Sunday </label>
-                </div>
+                  {% for value, text in form.days_of_week.choices %}
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            value="{{ value }}"
+                            name="days_of_week[]"
+                            id="{{ value }}"
+                          />
+                          <label class="form-check-label" for="{{ value }}">{{ text }}</label>
+                        </div>
+                    {% endfor %}
               </div>
             </div>
 
@@ -324,7 +253,7 @@
 
 <script>
   let frequency = document.getElementById("frequency");
-  let monthly = document.getElementById("occurance-number-container");
+  let monthly = document.getElementById("occurrence-number-container");
   let interval_text = document.getElementById("interval-text");
   frequency.addEventListener("change", function () {
     document.getElementById("interval").value = "";
@@ -340,7 +269,6 @@
     } else {
       monthly.classList.add("d-none")
       interval_text.innerHTML = "week(s)"
-      document.getElementById("occurance_number").value = ""
     }
   });
 </script>
