@@ -3,6 +3,7 @@ from wtforms import SubmitField, TextAreaField, DateTimeField, IntegerField, Sel
 from wtforms.fields import html5 as h5fields
 from wtforms.widgets import html5 as h5widgets
 from flask_wtf.file import FileField, FileAllowed, FileRequired
+from datetime import date
 
 
 class UploadRooms(FlaskForm):
