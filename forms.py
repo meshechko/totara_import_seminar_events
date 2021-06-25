@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, TextAreaField, DateTimeField, IntegerField, SelectField, SelectMultipleField, validators
+from wtforms import SubmitField, TextAreaField, DateTimeField, IntegerField, SelectField, SelectMultipleField, validators, widgets
 from wtforms.fields import html5 as h5fields
 from wtforms.widgets import html5 as h5widgets
 from flask_wtf.file import FileField, FileAllowed, FileRequired
