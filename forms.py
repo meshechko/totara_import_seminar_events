@@ -27,4 +27,5 @@ class CreateEventForm(FlaskForm):
     datefinish = DateTimeField(u'End by', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input active", "readonly":"readonly"}, default=datetime.today)
     frequency = SelectField(u'Frequency', choices=[('WEEKLY', 'Weekly'), ('MONTHLY', 'Monthly')], default='WEEKLY', render_kw={"class": "form-select"})
     interval = IntegerField(u'of every', [validators.required()], widget=h5widgets.NumberInput(min=0, max=50, step=1), render_kw={"class": "form-control d-inline"}, default="1")
-    
+    days_of_week = MultiCheckboxField('', choices=[('MO', 'Monday'), ('TU', 'Tuesday'), ('WE', 'Wednesday'), ('TH', 'Thursday'), ('FR', 'Friday'), ('SA', 'Saturday'), ('SU', 'Sunday')], render_kw={'class': "form-check-input"})
+    occurance_number = SelectField(u'For', choices=[(1, 'First'), (2, 'Second'), (3, 'Third'), (4, 'Fourth'), (-1, 'Last')], default=1, render_kw={"class": "form-select"})
