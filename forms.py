@@ -1,9 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, TextAreaField, DateTimeField, IntegerField, SelectField, validators
+from wtforms import SubmitField, TextAreaField, DateTimeField, IntegerField, SelectField, SelectMultipleField, validators
 from wtforms.fields import html5 as h5fields
 from wtforms.widgets import html5 as h5widgets
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from datetime import datetime, time
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
 
 class UploadRooms(FlaskForm):
     file = FileField("Upload CSV", validators=[
