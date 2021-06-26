@@ -133,7 +133,7 @@ def readXml(xml_attribs=True):
 
     
 
-def generate_recurring_sessions(custom_fields_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurance_number, days_of_week, interval):
+def generate_recurring_sessions(custom_fields_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurrence_number, days_of_week, interval):
     recurance_data = []
 
     sessions = []
@@ -150,8 +150,8 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
     if datefinish:
         recurance_data.append(f"UNTIL={ datefinish }")
 
-    if occurance_number and frequency == "MONTHLY":
-        recurance_data.append(f"BYSETPOS={ occurance_number }")
+    if occurrence_number and frequency == "MONTHLY":
+        recurance_data.append(f"BYSETPOS={ occurrence_number }")
     
     recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
 

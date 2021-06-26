@@ -73,20 +73,21 @@ def generate_events():
         details = request.form['details']
         timestart = request.form['timestart']
         timefinish = request.form['timefinish']
-        room = request.form['room']
+        room = request.form['rooms']
         capacity = request.form['capacity']
 
         #recurrence
         datestart = datetime.strptime(request.form['datestart'], '%d/%m/%Y').strftime("%Y%m%d")
         datefinish = datetime.strptime(request.form['datefinish'], '%d/%m/%Y').strftime("%Y%m%d")
         frequency = request.form['frequency']
-        occurance_number = request.form['occurance_number']
+        occurrence_number = request.form['occurrence_number']
         days_of_week = request.form.getlist('days_of_week[]')
         interval = request.form['interval']
         
-        generated_session = models.generate_recurring_sessions(custom_fields_data=custom_fields_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurance_number=occurance_number, days_of_week=days_of_week, interval=interval)
+        generated_session = models.generate_recurring_sessions(custom_fields_data=custom_fields_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurrence_number=occurrence_number, days_of_week=days_of_week, interval=interval)
         sessions = session['sessions']
-        sessions.append(generated_session)
+        if len(generated_session) > 0:
+            sessions.append(generated_session)
         session['sessions'] = sessions
         return redirect(url_for('create_recurring_events'))
     return render_template('create-recurring-events.html')

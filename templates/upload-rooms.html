@@ -22,7 +22,7 @@ content %}
             {% for category, message in get_flashed_messages(with_categories=True) %}
 		    <div class="alert alert-{{category}} mt-3" role="alert">{{ message }}</div>
 		    {% if category == 'success'%}
-		    	<a class="mb-3 btn btn-lg btn-light" href="/upload-backup">Go to next step</a>
+		    	<a class="mb-3 btn btn-lg btn-light" href=" {{ url_for('upload_backup') }}">Go to next step</a>
 		    {% endif %}
             {% endfor %} 
 		 
@@ -34,7 +34,7 @@ content %}
          </div>
       </div>
    </div>
-   <div class="col-md-4"><img class="img-fluid" src="/static/csv.png"></div>
+   <div class="col-md-4"><img class="img-fluid" src="{{ url_for('static', filename='img/csv.png') }}"></div>
 </div>
 <h2 class="display-6 text-center mb-4">How to download csv with rooms from your Totara instance</h2>
 <ol class="list-group list-group-numbered">
