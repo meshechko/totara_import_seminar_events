@@ -4,9 +4,11 @@ from forms import UploadBackup, UploadRooms, CreateEventForm
 import random
 import string
 from datetime import datetime
+import dicttoxml
+import xmltodict
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]a/'
 
 
 #FILTERS
@@ -41,6 +43,9 @@ def create_recurring_events():
     checkUserSession()
     form = CreateEventForm()
     rooms = models.getRooms()
+    #https://gis.stackexchange.com/questions/202978/converting-xml-dict-xml-using-python
+    # out = xmltodict.unparse(models.readXml(), pretty=True)
+    # print(out)
     if len(rooms) > 0:
         form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
     
