@@ -50,6 +50,7 @@ def create_recurring_events():
         form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
     
     custom_fields = models.getCustomFields(models.readXml())
+
     session_sets = []
     if 'sessions' in session:
         session_sets = session['sessions']
@@ -61,10 +62,11 @@ def create_recurring_events():
 
 @app.route('/generate-events', methods=['POST'])
 def generate_events():
+    form = CreateEventForm()
     if request.method == 'POST':
-        custom_fields = models.getCustomFields(models.readXml())
+        list_of_custom_fields = models.getCustomFields(models.readXml())
         custom_fields_data = []
-        for field in custom_fields:
+        for field in list_of_custom_fields:
             if field["field_type"] == "text":
                 new_field = {
                     "@id": "",
@@ -74,22 +76,44 @@ def generate_events():
                     "paramdatavalue": "$@NULL@$",
                 }
                 custom_fields_data.append(new_field)
+        # custom_fields = ""
+        # if "custom_fields" in request.form:
+        #     custom_fields = request.form.getlist('custom_fields')
 
-        details = request.form['details']
-        timestart = request.form['timestart']
-        timefinish = request.form['timefinish']
-        room = request.form['rooms']
-        capacity = request.form['capacity']
+        details = form.details.data
+        timestart = form.timestart.data.strftime("%H:%M")
+        timefinish = form.timefinish.data.strftime("%H:%M")
+        room = ""
+        if form.rooms:
+            room = form.rooms.data
+        capacity = form.capacity.data
 
         #recurrence
-        datestart = datetime.strptime(request.form['datestart'], '%d/%m/%Y').strftime("%Y%m%d")
-        datefinish = datetime.strptime(request.form['datefinish'], '%d/%m/%Y').strftime("%Y%m%d")
-        frequency = request.form['frequency']
-        occurrence_number = request.form['occurrence_number']
-        days_of_week = request.form.getlist('days_of_week[]')
-        interval = request.form['interval']
         
-        generated_session = models.generate_recurring_sessions(custom_fields_data=custom_fields_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurrence_number=occurrence_number, days_of_week=days_of_week, interval=interval)
+        
+        datestart = form.datestart.data.strftime("%Y%m%d")
+        datefinish = form.datefinish.data.strftime("%Y%m%d")
+        
+        frequency = form.frequency.data
+        if form.occurrence_number:
+            occurrence_number = form.occurrence_number.data
+        days_of_week = ""
+        if form.days_of_week:
+            days_of_week = request.form.getlist('days_of_week')
+        interval = form.interval.data
+        allow_overbook = form.allow_overbook.data
+
+        allow_cancellations = int(form.allow_cancellations.data)
+        cancellation_cutoff_number = form.cancellation_cutoff_number.data
+        cancellation_cutoff_timeunit = int(form.cancellation_cutoff_timeunit.data)
+        min_capacity = form.min_capacity.data
+        send_capacity_email = form.send_capacity_email.data
+        send_capacity_email_cutoff_number = form.send_capacity_email_cutoff_number.data
+        send_capacity_email_cutoff_timeunit = int(form.send_capacity_email_cutoff_timeunit.data)
+        normal_cost = form.normal_cost.data
+
+        generated_session = models.generate_recurring_sessions(custom_fields_data=custom_fields_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurrence_number=occurrence_number, days_of_week=days_of_week, interval=interval, allow_overbook=allow_overbook, allow_cancellations=allow_cancellations, cancellation_cutoff_number=cancellation_cutoff_number, cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, min_capacity=min_capacity, send_capacity_email=send_capacity_email, send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,normal_cost=normal_cost)
+        
         sessions = session['sessions']
         if len(generated_session) > 0:
             sessions.append(generated_session)

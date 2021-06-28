@@ -133,7 +133,7 @@ def readXml(xml_attribs=True):
 
     
 
-def generate_recurring_sessions(custom_fields_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurrence_number, days_of_week, interval):
+def generate_recurring_sessions(custom_fields_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurrence_number, days_of_week, interval, allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number,send_capacity_email_cutoff_timeunit,normal_cost):
     recurance_data = []
 
     sessions = []
@@ -170,7 +170,16 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
             'timefinish':timefinish,
             'details': details,
             'room':room,
-            'capacity':capacity
+            'capacity':capacity,
+            'allow_overbook':allow_overbook,        'allow_cancellations':allow_cancellations,
+            'cancellation_cutoff_number': cancellation_cutoff_number,
+            'cancellation_cutoff_timeunit':        cancellation_cutoff_timeunit,
+            'min_capacity':min_capacity,
+            'send_capacity_email':send_capacity_email,
+            'send_capacity_email_cutoff_number':send_capacity_email_cutoff_number,
+            'send_capacity_email_cutoff_timeunit':send_capacity_email_cutoff_timeunit,
+            'normal_cost':normal_cost
+            
         }
         sessions.append(session)
     return sessions

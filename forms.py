@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, TextAreaField, DateTimeField, IntegerField, SelectField, SelectMultipleField, BooleanField, RadioField, validators, widgets
+from wtforms import SubmitField, StringField, TextAreaField, FieldList, FormField, DateTimeField, IntegerField, SelectField, SelectMultipleField, BooleanField, RadioField, validators, widgets
 from wtforms.fields import html5 as h5fields
 from wtforms.widgets import html5 as h5widgets
 from flask_wtf.file import FileField, FileAllowed, FileRequired
@@ -21,8 +21,12 @@ class UploadBackup(FlaskForm):
     file = FileField("Upload Totara Seminar activity backup", validators=[
         FileRequired()])
     submit = SubmitField('Upload')
-    
+
+class CustomField(FlaskForm):
+    name = StringField()
+
 class CreateEventForm(FlaskForm):
+    custom_fieldss = FieldList(FormField(CustomField), min_entries=0)
     details = TextAreaField(u'Details', render_kw={"class": "form-control"})
     timestart = DateTimeField(u'Start time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
     timefinish = DateTimeField(u'Finish time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
@@ -38,15 +42,15 @@ class CreateEventForm(FlaskForm):
     # registration_timefinish = DateTimeField(u'Time', format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
     # enable_registration_finish = CheckboxInput("Enable Sign-up closes date and time")
 
-    allow_overbook = BooleanField("Enable waitlist")
+    allow_overbook = BooleanField("Enable waitlist", render_kw={"class": "form-check-input"})
 
-    allow_cancellations = RadioField('Enable waitlist', choices=[("1",'At any time'),("0",'Never'),("2",'Until specified period')], default="1")
+    allow_cancellations = RadioField('Allow cancellations', choices=[("1",'At any time'),("0",'Never'),("2",'Until specified period')], default="1")
     cancellation_cutoff_number = IntegerField(u'Time', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control", 'disabled':''}, default=0)
     cancellation_cutoff_timeunit = SelectField(u'Time unit', choices=[(604800, 'weeks'), (86400, 'days'), (3600, 'hours'), (60, 'minutes'), (1, 'seconds')], default=3600, render_kw={"class": "form-select", 'disabled':''})
 
     min_capacity = IntegerField(u'Minimum bookings ', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default=0)
 
-    send_capacity_email = BooleanField("Notify about minimum bookings")
+    send_capacity_email = BooleanField("Notify about minimum bookings", render_kw={"class": "form-check-input"})
     send_capacity_email_cutoff_number = IntegerField(u'Time', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control", 'disabled':''}, default=0)
     send_capacity_email_cutoff_timeunit = SelectField(u'Time unit', choices=[(604800, 'weeks'), (86400, 'days'), (3600, 'hours'), (60, 'minutes'), (1, 'seconds')], default=3600, render_kw={"class": "form-select", 'disabled':''})
 
@@ -57,7 +61,7 @@ class CreateEventForm(FlaskForm):
     datefinish = DateTimeField(u'End by', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input active", "readonly":"readonly"}, default=datetime.today)
     frequency = SelectField(u'Frequency', choices=[('WEEKLY', 'Weekly'), ('MONTHLY', 'Monthly')], default='WEEKLY', render_kw={"class": "form-select"})
     interval = IntegerField(u'of every', [validators.required()], widget=h5widgets.NumberInput(min=0, max=50, step=1), render_kw={"class": "form-control d-inline"}, default=1)
-    days_of_week = MultiCheckboxField('', choices=[('MO', 'Monday'), ('TU', 'Tuesday'), ('WE', 'Wednesday'), ('TH', 'Thursday'), ('FR', 'Friday'), ('SA', 'Saturday'), ('SU', 'Sunday')], render_kw={'class': "form-check-input"})
+    days_of_week = SelectMultipleField('', choices=[('MO', 'Monday'), ('TU', 'Tuesday'), ('WE', 'Wednesday'), ('TH', 'Thursday'), ('FR', 'Friday'), ('SA', 'Saturday'), ('SU', 'Sunday')], render_kw={'class': "form-check-input"})
     occurrence_number = SelectField(u'The', choices=[(1, 'First'), (2, 'Second'), (3, 'Third'), (4, 'Fourth'), (-1, 'Last')], default=1, render_kw={"class": "form-select"})
 
 
