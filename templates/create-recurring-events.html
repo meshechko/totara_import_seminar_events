@@ -9,7 +9,7 @@
       <div class="row g-3">
         <div class="col-md-6">
           <h4 class="mb-3">Event details</h4>
-          <div class="row g-3">
+          <div class="row mb-5">
             
             {% if custom_fields|length > 0 %}
               {% for field in custom_fields%}
@@ -30,108 +30,123 @@
                 {% endif %}
               
               {% endfor %}
-            {% else %}
-            <div class="col-6">
-              <label class="form-label" for="timestart">Custom fields</label>
-              <a class=" btn btn-light" href="{{ url_for('upload_backup') }}">Add custom fields (optional)</a>
+              {% else %}
+              <div class="col-6">
+                <label class="form-label" for="timestart">Custom fields</label>
+                <a class=" btn btn-light" href="{{ url_for('upload_backup') }}">Add custom fields (optional)</a>
+              </div>
+              {% endif %}
             </div>
-            {% endif %}
-
-            <div class="col-sm-12">
-              {{ form.details.label(class_='form-label') }}
-              {{ form.details() }}
-            </div>
-
-            <div class="col-6">
-              {{ form.timestart.label(class_='form-label') }}
-              {{ form.timestart() }}
-            </div>
-
-            <div class="col-6">
-              {{ form.timefinish.label(class_='form-label') }}
-              {{ form.timefinish() }}
-            </div>
-
-            <div class="col-sm-6">
-              <div class="control-group">
-                
-                {{ form.rooms.label(class_='form-label') }}
-                
-                {% if form.rooms.choices %}                
-                {{ form.rooms() }}
-                {% else %}
-                  <a class="d-block btn btn-light" href="{{ url_for('upload_rooms') }}">Add rooms (optional)</a>
-                {% endif %}
+            <div class="row mb-5">
+              <div class="col-sm-12">
+                {{ form.details.label(class_='form-label') }}
+                {{ form.details() }}
               </div>
             </div>
-            <div class="col-sm-6">
-              {{ form.capacity.label(class_='form-label') }}
-              {{ form.capacity() }}              
+            
+            <div class="row mb-5">
+              <div class="col-6">
+                {{ form.timestart.label(class_='form-label') }}
+                {{ form.timestart() }}
+              </div>
+            
+
+              <div class="col-6">
+                {{ form.timefinish.label(class_='form-label') }}
+                {{ form.timefinish() }}
+              </div>
             </div>
-            <div class="col-sm-12">
-              <div class="row mt-4">
-                <div class="col-sm-12">
-              {{ form.allow_cancellations.label(class_='form-label') }}
-              
-              {% for value, text in form.allow_cancellations.choices %}
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    {% if value == "1" %}
-                    checked
-                    {% endif %}
-                    value="{{ value }}"
-                    name="allow_cancellations[]"
-                    id="{{ value }}"
-                  />
-                  <label class="form-check-label" for="{{ value }}">{{ text }}</label>
-                </div>
-                {% endfor %}
+            
+            <div class="row mb-5">
+              <div class="col-sm-6">
+                <div class="control-group">
+
+                  {{ form.rooms.label(class_='form-label') }}
+
+                  {% if form.rooms.choices %}                
+                  {{ form.rooms() }}
+                  {% else %}
+                    <a class="d-block btn btn-light" href="{{ url_for('upload_rooms') }}">Add rooms (optional)</a>
+                  {% endif %}
                 </div>
               </div>
-              <div class="row mt-4">
-                <div class="col-sm-3">
-                  {{ form.cancellation_cutoff_number() }} 
-                </div>
-                <div class="col-sm-5">
-                  {{ form.cancellation_cutoff_timeunit() }}
-                </div>
-                <div class="col-sm-4">
-                  <small class="text-muted fw-light d-block">before event starts</small>
-                  
-                </div>
-              </div>  
+              <div class="col-sm-6">
+                {{ form.capacity.label(class_='form-label') }}
+                {{ form.capacity() }}              
+              </div>
             </div>
-            <div class="col-sm-6">
-              {{ form.min_capacity.label(class_='form-label') }}
-              {{ form.min_capacity() }}              
+          
+            <div class="row mb-5">
+              <div class="col-sm-12">
+                <div class="row">
+                  <div class="col-sm-12">
+                {{ form.allow_cancellations.label(class_='form-label') }}
+
+                {% for value, text in form.allow_cancellations.choices %}
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      {% if value == "1" %}
+                      checked
+                      {% endif %}
+                      value="{{ value }}"
+                      name="allow_cancellations"
+                      id="allow_cancellations_choice_{{ value }}"
+                    />
+                    <label class="form-check-label" for="allow_cancellations_choice_{{ value }}">{{ text }}</label>
+                  </div>
+                  {% endfor %}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-3">
+                    {{ form.cancellation_cutoff_number() }} 
+                  </div>
+                  <div class="col-sm-5">
+                    {{ form.cancellation_cutoff_timeunit() }}
+                  </div>
+                  <div class="col-sm-4">
+                    <small class="text-muted fw-light d-block">before event starts</small>
+
+                  </div>
+                </div>  
+              </div>
             </div>
-            <div class="col-sm-6">
-              <div class="row">
-                <div class="col-sm-12 mb-2">
-              {{ form.send_capacity_email() }}  
-              {{ form.send_capacity_email.label }} 
-              </div></div>
-              <div class="row">
-                <div class="col-sm-3">
-                  {{ form.send_capacity_email_cutoff_number() }} 
-                </div>
-                <div class="col-sm-5">
-                  {{ form.send_capacity_email_cutoff_timeunit() }} 
-                </div>
-                <div class="col-sm-4">
-                  <small class="text-muted fw-light d-block">before event starts</small>
-                  
-                </div>
-              </div>            
+            
+            <div class="row mb-5">
+              <div class="col-sm-6">
+                {{ form.min_capacity.label(class_='form-label') }}
+                {{ form.min_capacity() }}              
+              </div>
+              <div class="col-sm-6">
+                <div class="row">
+                  <div class="col-sm-12 mb-2">
+                {{ form.send_capacity_email() }}  
+                {{ form.send_capacity_email.label }} 
+                </div></div>
+                <div class="row">
+                  <div class="col-sm-3">
+                    {{ form.send_capacity_email_cutoff_number() }} 
+                  </div>
+                  <div class="col-sm-5">
+                    {{ form.send_capacity_email_cutoff_timeunit() }} 
+                  </div>
+                  <div class="col-sm-4">
+                    <small class="text-muted fw-light d-block">before event starts</small>
+
+                  </div>
+                </div>            
+              </div>
             </div>
-            <div class="col-sm-12">
-              {{ form.normal_cost.label(class_='form-label') }}
-              {{ form.normal_cost() }}              
+            <div class="row mb-5">
+              <div class="col-sm-12">
+                {{ form.normal_cost.label(class_='form-label') }}
+                {{ form.normal_cost() }}              
+              </div>
             </div>
 
-          </div>
+          
         </div>
 
         <div class="col-md-5 offset-md-1">
@@ -139,7 +154,7 @@
             Recurrence
           </h4>
 
-          <div class="row mb-3">
+          <div class="row mb-5">
             <div class="col-6">
               {{ form.datestart.label(class_='form-label') }}
               {{ form.datestart() }}
@@ -151,7 +166,7 @@
           </div>
         </div>
           
-          <div class="row mb-3">
+          <div class="row mb-5">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
               Recurrence pattern
             </h4>
@@ -231,7 +246,7 @@
             
           </div>
 
-          <div class="row mb-3">
+          <div class="row">
           <input class="w-100 btn btn-primary btn-lg" type="submit" value="Generate events">
         </div>
         </div>
@@ -334,9 +349,49 @@
     }
   });
 
-  let frequency = document.getElementById("frequency");
-  frequency.addEventListener("change", function () {
-    document.getElementById('my-input-id').disabled = false;
+  let allow_cancellations_choice_2 = document.getElementById("allow_cancellations_choice_2");
+  let cancellation_cutoff_number = document.getElementById("cancellation_cutoff_number");
+  let cancellation_cutoff_timeunit = document.getElementById("cancellation_cutoff_timeunit");
+  allow_cancellations_choice_2.addEventListener("change", function () {
+    if (allow_cancellations_choice_2.checked){
+      cancellation_cutoff_number.disabled = false;
+      cancellation_cutoff_timeunit.disabled = false;
+    }
+    else{
+      cancellation_cutoff_number.disabled = true;
+      cancellation_cutoff_timeunit.disabled = true;
+    }
+  });
+  
+var allow_cancellations = document.getElementsByName('allow_cancellations');
+  
+  allow_cancellations.forEach((input) => {
+   input.addEventListener("change", function () {
+   if (input.value == 2) {
+    // do whatever you want with the checked radio
+    cancellation_cutoff_number.disabled = false;
+      cancellation_cutoff_timeunit.disabled = false;
+
+  }
+    else{
+    cancellation_cutoff_number.disabled = true;
+      cancellation_cutoff_timeunit.disabled = true;
+    }
+  });
+  
+})
+  
+  
+  let send_capacity_email = document.getElementById("send_capacity_email");
+  send_capacity_email.addEventListener("change", function () {
+    if (send_capacity_email.checked){
+      send_capacity_email_cutoff_number.disabled = false;
+      send_capacity_email_cutoff_timeunit.disabled = false;
+    }
+    else{
+      send_capacity_email_cutoff_number.disabled = true;
+      send_capacity_email_cutoff_timeunit.disabled = true;
+    }
   });
 
 </script>
