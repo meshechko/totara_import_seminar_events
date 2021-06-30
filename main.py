@@ -8,7 +8,7 @@ import dicttoxml
 import xmltodict
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]a/'
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]a'
 
 
 #FILTERS
@@ -43,27 +43,14 @@ def create_recurring_events():
     checkUserSession()
     form = CreateEventForm()
     rooms = models.getRooms()
+    custom_fields = models.getCustomFields(models.readXml())
+    if len(rooms) > 0:
+            form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
     #https://gis.stackexchange.com/questions/202978/converting-xml-dict-xml-using-python
     # out = xmltodict.unparse(models.readXml(), pretty=True)
     # print(out)
-    if len(rooms) > 0:
-        form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
-    
-    custom_fields = models.getCustomFields(models.readXml())
 
-    session_sets = []
-    if 'sessions' in session:
-        session_sets = session['sessions']
-    else:
-        session['sessions'] = []
-    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
-
-
-
-@app.route('/generate-events', methods=['POST'])
-def generate_events():
-    form = CreateEventForm()
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate_on_submit():
         list_of_custom_fields = models.getCustomFields(models.readXml())
         custom_fields_data = []
         for field in list_of_custom_fields:
@@ -119,7 +106,15 @@ def generate_events():
             sessions.append(generated_session)
         session['sessions'] = sessions
         return redirect(url_for('create_recurring_events'))
-    return render_template('create-recurring-events.html')
+    else:
+        
+
+        session_sets = []
+        if 'sessions' in session:
+            session_sets = session['sessions']
+        else:
+            session['sessions'] = []
+    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 @app.route('/delete-session', methods=['POST'])
 def delete_session():
@@ -158,6 +153,7 @@ def upload_rooms():
             flash(f'Successfully upladed {len(models.getRooms())} rooms', 'success')
         else:
             flash('Please upload CSV that contains the following headers: \n id, name, description, capacity, allowconflicts, building, location', 'danger')
+        return redirect(url_for('upload_rooms'))
     return render_template('upload-rooms.html', form=form)
 
 
@@ -175,4 +171,5 @@ def upload_backup():
                 flash(f'Incorrect backup', 'danger')
         else:
             flash('Upload the correct Totara activity backup that ends with .mbz. Scroll down to see a guide how to create Seminar activity backup with custom fields.', 'danger')
+        return redirect(url_for('upload_backup'))
     return render_template('upload-backup.html', form=form)

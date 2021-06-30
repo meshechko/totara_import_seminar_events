@@ -5,7 +5,7 @@ from wtforms.widgets import html5 as h5widgets
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from datetime import datetime, time
 
-from wtforms.widgets.core import CheckboxInput
+from wtforms.widgets.core import CheckboxInput, TextInput
 
 class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
@@ -22,12 +22,19 @@ class UploadBackup(FlaskForm):
         FileRequired()])
     submit = SubmitField('Upload')
 
-class CustomField(FlaskForm):
-    name = StringField()
+# class MyTextInput(TextInput):
+#     def __init__(self, error_class=u'is-invalid'):
+#         super(MyTextInput, self).__init__()
+#         self.error_class = error_class
+
+#     def __call__(self, field, **kwargs):
+#         if field.errors:
+#             c = kwargs.pop('class', '') or kwargs.pop('class_', '')
+#             kwargs['class'] = u'%s %s' % (self.error_class, c)
+#         return super(MyTextInput, self).__call__(field, **kwargs)
 
 class CreateEventForm(FlaskForm):
-    custom_fieldss = FieldList(FormField(CustomField), min_entries=0)
-    details = TextAreaField(u'Details', render_kw={"class": "form-control"})
+    details = TextAreaField(u'Details', [validators.required()], render_kw={"class": "form-control"})
     timestart = DateTimeField(u'Start time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
     timefinish = DateTimeField(u'Finish time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
     capacity = IntegerField(u'Maximum bookings', [validators.required()], widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default="10")
@@ -46,13 +53,13 @@ class CreateEventForm(FlaskForm):
 
     allow_cancellations = RadioField('Allow cancellations', choices=[("1",'At any time'),("0",'Never'),("2",'Until specified period')], default="1")
     cancellation_cutoff_number = IntegerField(u'Time', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control", 'disabled':''}, default=0)
-    cancellation_cutoff_timeunit = SelectField(u'Time unit', choices=[(604800, 'weeks'), (86400, 'days'), (3600, 'hours'), (60, 'minutes'), (1, 'seconds')], default=3600, render_kw={"class": "form-select", 'disabled':''})
+    cancellation_cutoff_timeunit = SelectField(u'Time unit', choices=[("604800", 'weeks'), ("86400", 'days'), ("3600", 'hours'), ("60", 'minutes'), ('1', 'seconds')], default="3600", render_kw={"class": "form-select", 'disabled':''})
 
     min_capacity = IntegerField(u'Minimum bookings ', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default=0)
 
     send_capacity_email = BooleanField("Notify about minimum bookings", render_kw={"class": "form-check-input"})
     send_capacity_email_cutoff_number = IntegerField(u'Time', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control", 'disabled':''}, default=0)
-    send_capacity_email_cutoff_timeunit = SelectField(u'Time unit', choices=[(604800, 'weeks'), (86400, 'days'), (3600, 'hours'), (60, 'minutes'), (1, 'seconds')], default=3600, render_kw={"class": "form-select", 'disabled':''})
+    send_capacity_email_cutoff_timeunit = SelectField(u'Time unit', choices=[('604800', 'weeks'), ('86400', 'days'), ('3600', 'hours'), ('60', 'minutes'), ('1', 'seconds')], default='3600', render_kw={"class": "form-select", 'disabled':''})
 
     normal_cost =IntegerField(u'Normal cost', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default=0)
 

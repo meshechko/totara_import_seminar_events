@@ -4,7 +4,8 @@
 {% block content %}
 <div class="row g-5">
   <div class="col-md-12">
-    <form class="needs-validation" method="POST" action="generate-events" novalidate="">
+    <form class="needs-validation" method="POST" action="" novalidate="">
+      {{ form.hidden_tag() }}
       <div class="row g-3">
         <div class="col-md-6">
           <h4 class="mb-3">Event details</h4>
@@ -62,7 +63,7 @@
 
                   {{ form.rooms.label(class_='form-label') }}
 
-                  {% if form.rooms.choices %}                
+                  {% if form.rooms.choices[0][0] != "default" %}                
                   {{ form.rooms() }}
                   {% else %}
                     <a class="d-block btn btn-light" href="{{ url_for('upload_rooms') }}">Add rooms (optional)</a>
