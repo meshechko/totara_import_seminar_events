@@ -6,6 +6,7 @@
   <div class="col-md-12">
     <form class="needs-validation" method="POST" action="" novalidate="">
       {{ form.hidden_tag() }}
+      {{ form.errors }}
       <div class="row g-3">
         <div class="col-md-6">
           <h4 class="mb-3">Event details</h4>
@@ -48,23 +49,29 @@
               <div class="col-6">
                 {{ form.timestart.label(class_='form-label') }}
                 {{ form.timestart() }}
+                {% for error in form.timestart.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}    
               </div>
             
 
               <div class="col-6">
                 {{ form.timefinish.label(class_='form-label') }}
                 {{ form.timefinish() }}
+                {% for error in form.timefinish.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}    
               </div>
             </div>
             
             <div class="row mb-5">
               <div class="col-sm-6">
                 <div class="control-group">
+                  {{ form.rooms.label(class_='form-label') }}    
+                  {% if form.rooms.choices[0][0] != "None" %}  
+                         
+                    {{ form.rooms() }}
 
-                  {{ form.rooms.label(class_='form-label') }}
-
-                  {% if form.rooms.choices[0][0] != "default" %}                
-                  {{ form.rooms() }}
                   {% else %}
                     <a class="d-block btn btn-light" href="{{ url_for('upload_rooms') }}">Add rooms (optional)</a>
                   {% endif %}
@@ -72,7 +79,10 @@
               </div>
               <div class="col-sm-6">
                 {{ form.capacity.label(class_='form-label') }}
-                {{ form.capacity() }}              
+                {{ form.capacity() }}   
+                {% for error in form.capacity.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}            
               </div>
             </div>
           
@@ -110,6 +120,9 @@
                 <div class="row">
                   <div class="col-sm-3">
                     {{ form.cancellation_cutoff_number() }} 
+                    {% for error in form.cancellation_cutoff_number.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}     
                   </div>
                   <div class="col-sm-5">
                     {{ form.cancellation_cutoff_timeunit() }}
@@ -125,7 +138,10 @@
             <div class="row mb-5">
               <div class="col-sm-6">
                 {{ form.min_capacity.label(class_='form-label') }}
-                {{ form.min_capacity() }}              
+                {{ form.min_capacity() }}
+                {% for error in form.min_capacity.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}               
               </div>
               <div class="col-sm-6">
                 <div class="row">
@@ -139,6 +155,9 @@
                 <div class="row">
                   <div class="col-sm-3">
                     {{ form.send_capacity_email_cutoff_number() }} 
+                    {% for error in form.send_capacity_email_cutoff_number.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %} 
                   </div>
                   <div class="col-sm-5">
                     {{ form.send_capacity_email_cutoff_timeunit() }} 
@@ -153,7 +172,10 @@
             <div class="row mb-5">
               <div class="col-sm-12">
                 {{ form.normal_cost.label(class_='form-label') }}
-                {{ form.normal_cost() }}              
+                {{ form.normal_cost() }}   
+                {% for error in form.normal_cost.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}           
               </div>
             </div>
 
@@ -169,11 +191,20 @@
             <div class="col-6">
               {{ form.datestart.label(class_='form-label') }}
               {{ form.datestart() }}
+              {% for error in form.datestart.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}
             </div>
 
             <div class="col-6">
               {{ form.datefinish.label(class_='form-label') }}
               {{ form.datefinish() }}
+              
+                {% for error in form.datefinish.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}
+
+              
           </div>
         </div>
           
@@ -245,6 +276,9 @@
                         </div>
                     {% endfor %}
               </div>
+              {% for error in form.days_of_week.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}
             </div>
 
               <div class="col-4">
@@ -253,6 +287,9 @@
                 {{ form.interval() }}  
                 <span class="d-inline" id="interval-text">week(s)</span>
               </div>
+              {% for error in form.interval.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}
             </div>
             
           </div>

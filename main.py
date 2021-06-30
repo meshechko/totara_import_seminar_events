@@ -44,12 +44,10 @@ def create_recurring_events():
     form = CreateEventForm()
     rooms = models.getRooms()
     custom_fields = models.getCustomFields(models.readXml())
-    if len(rooms) > 0:
-            form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
+    form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
     #https://gis.stackexchange.com/questions/202978/converting-xml-dict-xml-using-python
     # out = xmltodict.unparse(models.readXml(), pretty=True)
     # print(out)
-
     if request.method == 'POST' and form.validate_on_submit():
         list_of_custom_fields = models.getCustomFields(models.readXml())
         custom_fields_data = []
@@ -70,9 +68,8 @@ def create_recurring_events():
         details = form.details.data
         timestart = form.timestart.data.strftime("%H:%M")
         timefinish = form.timefinish.data.strftime("%H:%M")
-        room = ""
-        if form.rooms:
-            room = form.rooms.data
+        room = form.rooms.data
+            
         capacity = form.capacity.data
 
         #recurrence

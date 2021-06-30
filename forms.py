@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, StringField, TextAreaField, FieldList, FormField, DateTimeField, IntegerField, SelectField, SelectMultipleField, BooleanField, RadioField, validators, widgets
-from wtforms.fields import html5 as h5fields
+from wtforms.validators import ValidationError
 from wtforms.widgets import html5 as h5widgets
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from datetime import datetime, time
@@ -22,24 +22,13 @@ class UploadBackup(FlaskForm):
         FileRequired()])
     submit = SubmitField('Upload')
 
-# class MyTextInput(TextInput):
-#     def __init__(self, error_class=u'is-invalid'):
-#         super(MyTextInput, self).__init__()
-#         self.error_class = error_class
-
-#     def __call__(self, field, **kwargs):
-#         if field.errors:
-#             c = kwargs.pop('class', '') or kwargs.pop('class_', '')
-#             kwargs['class'] = u'%s %s' % (self.error_class, c)
-#         return super(MyTextInput, self).__call__(field, **kwargs)
-
 class CreateEventForm(FlaskForm):
-    details = TextAreaField(u'Details', [validators.required()], render_kw={"class": "form-control"})
+    details = TextAreaField(u'Details', render_kw={"class": "form-control"}, )
     timestart = DateTimeField(u'Start time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
     timefinish = DateTimeField(u'Finish time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
     capacity = IntegerField(u'Maximum bookings', [validators.required()], widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default="10")
 
-    rooms = SelectField(u'Rooms', [validators.required()], render_kw={"class": "form-select"})
+    rooms = SelectField(u'Rooms', render_kw={"class": "form-select"})
 
     # registration_datestart = DateTimeField(u'Date', format='%d/%m/%Y', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
     # registration_timestart = DateTimeField(u'Time', format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
@@ -66,9 +55,24 @@ class CreateEventForm(FlaskForm):
 
     datestart = DateTimeField(u'Start', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input active", "readonly":"readonly"}, default=datetime.today)
     datefinish = DateTimeField(u'End by', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input active", "readonly":"readonly"}, default=datetime.today)
+
+    def validate_datefinish(form, field):
+        #TODO add validtion by date
+        # if isinstance(field.data, datetime) == False:
+        #     raise ValidationError("Please enter the date in a correct format: dd/mm/yyy")
+
+        if field.data < form.datestart.data or field.data == form.datestart.data:
+            raise ValidationError("End date must not be earlier than start date.")
+
+        
+
     frequency = SelectField(u'Frequency', choices=[('WEEKLY', 'Weekly'), ('MONTHLY', 'Monthly')], default='WEEKLY', render_kw={"class": "form-select"})
     interval = IntegerField(u'of every', [validators.required()], widget=h5widgets.NumberInput(min=0, max=50, step=1), render_kw={"class": "form-control d-inline"}, default=1)
     days_of_week = SelectMultipleField('', choices=[('MO', 'Monday'), ('TU', 'Tuesday'), ('WE', 'Wednesday'), ('TH', 'Thursday'), ('FR', 'Friday'), ('SA', 'Saturday'), ('SU', 'Sunday')], render_kw={'class': "form-check-input"})
-    occurrence_number = SelectField(u'The', choices=[(1, 'First'), (2, 'Second'), (3, 'Third'), (4, 'Fourth'), (-1, 'Last')], default=1, render_kw={"class": "form-select"})
+    def validate_days_of_week(form, field):
+        if len(field.data) == 0:
+            raise ValidationError("Select at least one day")
+
+    occurrence_number = SelectField(u'The', [validators.required()], choices=[('1', 'First'), ('2', 'Second'), ('3', 'Third'), ('4', 'Fourth'), ('-1', 'Last')], default=1, render_kw={"class": "form-select"})
 
 
