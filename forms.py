@@ -75,4 +75,5 @@ class CreateEventForm(FlaskForm):
 
     occurrence_number = SelectField(u'The', [validators.required()], choices=[('1', 'First'), ('2', 'Second'), ('3', 'Third'), ('4', 'Fourth'), ('-1', 'Last')], default=1, render_kw={"class": "form-select"})
 
+    submit = SubmitField('Generate events' , render_kw={"class": "w-100 btn btn-primary btn-lg"})
 
