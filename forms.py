@@ -35,7 +35,7 @@ class CreateEventForm(FlaskForm):
     
     capacity = IntegerField(u'Maximum bookings', [validators.required()], widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default="10")
 
-    rooms = SelectField(u'Rooms', render_kw={"class": "form-select"})
+    rooms = SelectField(u'Rooms', render_kw={"class": "form-select"}, validate_choice=False)
 
     # registration_datestart = DateTimeField(u'Date', format='%d/%m/%Y', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
     # registration_timestart = DateTimeField(u'Time', format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
