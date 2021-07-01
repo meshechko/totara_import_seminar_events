@@ -137,6 +137,12 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
     recurance_data = []
 
     sessions = []
+    #String builder - https://jakubroztocil.github.io/rrule/
+    occurrence_number = occurrence_number
+    if frequency == "WEEKLY":
+        occurrence_number = ""
+
+    days_of_week = [occurrence_number + day for day in days_of_week]
 
     if frequency:
         recurance_data.append("FREQ="+frequency)
@@ -146,12 +152,9 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
 
     if interval:
         recurance_data.append(f"INTERVAL={ interval }")
-    
+
     if datefinish:
         recurance_data.append(f"UNTIL={ datefinish }")
-
-    if occurrence_number and frequency == "MONTHLY":
-        recurance_data.append(f"BYSETPOS={ occurrence_number }")
     
     recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
 
