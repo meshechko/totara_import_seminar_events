@@ -24,8 +24,8 @@ class UploadBackup(FlaskForm):
 
 class CreateEventForm(FlaskForm):
     details = TextAreaField(u'Details', render_kw={"class": "form-control"}, )
-    timestart = DateTimeField(u'Start time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(13))
-    timefinish = DateTimeField(u'Finish time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(13))
+    timestart = DateTimeField(u'Start time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input"}, default=time(13))
+    timefinish = DateTimeField(u'Finish time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input"}, default=time(13))
     def validate_timefinish(form, field):
         if isinstance(field.data, datetime) == False or isinstance(form.timestart.data, datetime) == False:
             raise ValidationError("Please enter start and finish date in a correct format: HH:MM")
@@ -60,8 +60,8 @@ class CreateEventForm(FlaskForm):
     normal_cost =IntegerField(u'Normal cost', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default=0)
 
 
-    datestart = DateTimeField(u'Start', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input active", "readonly":"readonly"}, default=datetime.today)
-    datefinish = DateTimeField(u'End by', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input active", "readonly":"readonly"}, default=datetime.today)
+    datestart = DateTimeField(u'Start', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input", "readonly":"readonly"}, default=datetime.today)
+    datefinish = DateTimeField(u'End by', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input", "readonly":"readonly"}, default=datetime.today)
 
     def validate_datefinish(form, field):
         if isinstance(field.data, datetime) == False or isinstance(form.datestart.data, datetime) == False:
