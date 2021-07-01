@@ -4,7 +4,6 @@ from forms import UploadBackup, UploadRooms, CreateEventForm
 import random
 import string
 from datetime import datetime
-import dicttoxml
 import xmltodict
 
 app = Flask(__name__)
