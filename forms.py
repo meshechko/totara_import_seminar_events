@@ -26,6 +26,13 @@ class CreateEventForm(FlaskForm):
     details = TextAreaField(u'Details', render_kw={"class": "form-control"}, )
     timestart = DateTimeField(u'Start time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
     timefinish = DateTimeField(u'Finish time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
+    def validate_timefinish(form, field):
+        if isinstance(field.data, datetime) == False or isinstance(form.timestart.data, datetime) == False:
+            raise ValidationError("Please enter start and finish date in a correct format: HH:MM")
+
+        if field.data < form.timestart.data or field.data == form.timestart.data:
+            raise ValidationError("Event finish time must not be the same or earlier than start time.")
+    
     capacity = IntegerField(u'Maximum bookings', [validators.required()], widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default="10")
 
     rooms = SelectField(u'Rooms', render_kw={"class": "form-select"})
@@ -57,12 +64,11 @@ class CreateEventForm(FlaskForm):
     datefinish = DateTimeField(u'End by', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input active", "readonly":"readonly"}, default=datetime.today)
 
     def validate_datefinish(form, field):
-        #TODO add validtion by date
-        # if isinstance(field.data, datetime) == False:
-        #     raise ValidationError("Please enter the date in a correct format: dd/mm/yyy")
+        if isinstance(field.data, datetime) == False or isinstance(form.datestart.data, datetime) == False:
+            raise ValidationError("Please enter start and finish date in a correct format: dd/mm/yyy")
 
         if field.data < form.datestart.data or field.data == form.datestart.data:
-            raise ValidationError("End date must not be earlier than start date.")
+            raise ValidationError("End date must not be the same or earlier than start date.")
 
         
 
