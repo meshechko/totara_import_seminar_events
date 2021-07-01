@@ -3,3 +3,7 @@ nav .active{
     background: rgba(231, 175, 172, 0.15);
     border-radius: 14px;
 }
+
+.flatpickr-wrapper{
+    width:100%;
+}
