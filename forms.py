@@ -24,8 +24,8 @@ class UploadBackup(FlaskForm):
 
 class CreateEventForm(FlaskForm):
     details = TextAreaField(u'Details', render_kw={"class": "form-control"}, )
-    timestart = DateTimeField(u'Start time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
-    timefinish = DateTimeField(u'Finish time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(12))
+    timestart = DateTimeField(u'Start time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(13))
+    timefinish = DateTimeField(u'Finish time', [validators.required()], format='%H:%M', render_kw={"class": "form-control time flatpickr-input active"}, default=time(13))
     def validate_timefinish(form, field):
         if isinstance(field.data, datetime) == False or isinstance(form.timestart.data, datetime) == False:
             raise ValidationError("Please enter start and finish date in a correct format: HH:MM")
