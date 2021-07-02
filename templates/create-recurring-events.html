@@ -99,20 +99,8 @@
                 <div class="row">
                   <div class="col-sm-12">
                 {{ form.allow_cancellations.label(class_='form-label') }}
-
-                {% for value, text in form.allow_cancellations.choices %}
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      {% if value == "1" %}
-                      checked
-                      {% endif %}
-                      value="{{ value }}"
-                      name="allow_cancellations"
-                      id="allow_cancellations_choice_{{ value }}"
-                    />
-                    <label class="form-check-label" for="allow_cancellations_choice_{{ value }}">{{ text }}</label>
+                {{ form.allow_cancellations() }}
+               
                   </div>
                   {% endfor %}
                   </div>
@@ -384,8 +372,9 @@
   let frequency = document.getElementById("frequency");
   let monthly = document.getElementById("occurrence-number-container");
   let interval_text = document.getElementById("interval-text");
-  frequency.addEventListener("change", function () {
-    checkboxes = document.getElementsByName('days_of_week');
+
+  function monthly_recurrance_fields(){
+       checkboxes = document.getElementsByName('days_of_week');
     for(var i=0, n=checkboxes.length;i<n;i++) {
       checkboxes[i].checked = false;
     }
@@ -398,13 +387,18 @@
       monthly.classList.add("d-none")
       interval_text.innerHTML = "week(s)"
     }
-  });
+  }
 
-  let allow_cancellations_choice_2 = document.getElementById("allow_cancellations_choice_2");
-  let cancellation_cutoff_number = document.getElementById("cancellation_cutoff_number");
-  let cancellation_cutoff_timeunit = document.getElementById("cancellation_cutoff_timeunit");
-  allow_cancellations_choice_2.addEventListener("change", function () {
-    if (allow_cancellations_choice_2.checked){
+  frequency.addEventListener("change", monthly_recurrance_fields);
+
+let allow_cancellations_choice_2 = document.getElementById("allow_cancellations-2");
+
+  function allow_cancellations_choice(){
+
+      let cancellation_cutoff_number = document.getElementById("cancellation_cutoff_number");
+      let cancellation_cutoff_timeunit = document.getElementById("cancellation_cutoff_timeunit");
+
+      if (allow_cancellations_choice_2.checked){
       cancellation_cutoff_number.disabled = false;
       cancellation_cutoff_timeunit.disabled = false;
     }
@@ -412,30 +406,16 @@
       cancellation_cutoff_number.disabled = true;
       cancellation_cutoff_timeunit.disabled = true;
     }
-  });
-  
-var allow_cancellations = document.getElementsByName('allow_cancellations');
-  
-  allow_cancellations.forEach((input) => {
-   input.addEventListener("change", function () {
-   if (input.value == 2) {
-    // do whatever you want with the checked radio
-    cancellation_cutoff_number.disabled = false;
-      cancellation_cutoff_timeunit.disabled = false;
-
   }
-    else{
-    cancellation_cutoff_number.disabled = true;
-      cancellation_cutoff_timeunit.disabled = true;
-    }
-  });
-  
-})
-  
-  
-  let send_capacity_email = document.getElementById("send_capacity_email");
-  send_capacity_email.addEventListener("change", function () {
-    if (send_capacity_email.checked){
+  allow_cancellations_choice_2.addEventListener("change", allow_cancellations_choice);
+
+
+
+
+ function send_email_capacity_fields(){
+     let send_capacity_email = document.getElementById("send_capacity_email");
+
+     if (send_capacity_email.checked){
       send_capacity_email_cutoff_number.disabled = false;
       send_capacity_email_cutoff_timeunit.disabled = false;
     }
@@ -443,7 +423,33 @@ var allow_cancellations = document.getElementsByName('allow_cancellations');
       send_capacity_email_cutoff_number.disabled = true;
       send_capacity_email_cutoff_timeunit.disabled = true;
     }
-  });
+ }
+
+
+send_capacity_email.addEventListener("change", send_email_capacity_fields);
+
+ window.addEventListener("load", function(){
+    allow_cancellations_choice();
+    monthly_recurrance_fields();
+    monthly_recurrance_fields();
+    send_email_capacity_fields();
+
+    var allow_cancellations = document.getElementsByName('allow_cancellations');
+    allow_cancellations.forEach((input) => {
+        input.addEventListener("change", function(){
+            if (input.value == 2) {
+                cancellation_cutoff_number.disabled = false;
+                cancellation_cutoff_timeunit.disabled = false;
+            }
+            else{
+                cancellation_cutoff_number.disabled = true;
+                cancellation_cutoff_timeunit.disabled = true;
+            }
+        })
+    });
+
+
+});
 
 </script>
 {% endblock %}
