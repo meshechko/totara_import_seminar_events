@@ -7,3 +7,7 @@ nav .active{
 .flatpickr-wrapper{
     width:100%;
 }
+
+#allow_cancellations{
+list-style-type: none;
+}
