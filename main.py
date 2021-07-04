@@ -5,9 +5,10 @@ import random
 import string
 from datetime import datetime
 import xmltodict
+import json
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]a'
+app.secret_key = b'_5#y2L"F4Q8z\wn\xec]av'
 
 
 #FILTERS
@@ -27,6 +28,7 @@ def datetime_format(value, format="%d/%m/%y"):
 
 @app.route('/')
 def index():
+    checkUserSession()
     return render_template('index.html')
 
 def checkUserSession():
@@ -34,7 +36,8 @@ def checkUserSession():
         letters = string.ascii_lowercase
         randomString = ''.join(random.choice(letters) for i in range(10))
         session['userID'] = randomString
-
+        seminarFolder = models.getSeminarFolder(session["userID"])
+        models.createFolder(seminarFolder)
 
 
 @app.route('/create-recurring-events', methods=['GET', 'POST'])
@@ -42,27 +45,18 @@ def create_recurring_events():
     checkUserSession()
     form = CreateEventForm()
     rooms = models.getRooms()
-    custom_fields = models.getCustomFields(models.readXml())
+    custom_fields = models.getCustomFieldsFromXML(models.readXml())
+    
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
     #https://gis.stackexchange.com/questions/202978/converting-xml-dict-xml-using-python
     # out = xmltodict.unparse(models.readXml(), pretty=True)
     # print(out)
     if request.method == 'POST' and form.validate_on_submit():
-        list_of_custom_fields = models.getCustomFields(models.readXml())
-        custom_fields_data = []
-        for field in list_of_custom_fields:
-            if field["field_type"] == "text":
-                new_field = {
-                    "@id": "",
-                    "field_name": field['field_name'],
-                    "field_type": "text",
-                    "field_data": request.form[field['field_name']],
-                    "paramdatavalue": "$@NULL@$",
-                }
-                custom_fields_data.append(new_field)
-        # custom_fields = ""
-        # if "custom_fields" in request.form:
-        #     custom_fields = request.form.getlist('custom_fields')
+        for field in custom_fields:
+            try:
+                field["field_data"] = request.form[field['field_name']]
+            except:
+                pass
 
         details = form.details.data
         timestart = form.timestart.data.strftime("%H:%M")
@@ -72,8 +66,6 @@ def create_recurring_events():
         capacity = form.capacity.data
 
         #recurrence
-        
-        
         datestart = form.datestart.data.strftime("%Y%m%d")
         datefinish = form.datefinish.data.strftime("%Y%m%d")
         
@@ -95,8 +87,8 @@ def create_recurring_events():
         send_capacity_email_cutoff_timeunit = int(form.send_capacity_email_cutoff_timeunit.data)
         normal_cost = form.normal_cost.data
 
-        generated_session = models.generate_recurring_sessions(custom_fields_data=custom_fields_data, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurrence_number=occurrence_number, days_of_week=days_of_week, interval=interval, allow_overbook=allow_overbook, allow_cancellations=allow_cancellations, cancellation_cutoff_number=cancellation_cutoff_number, cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, min_capacity=min_capacity, send_capacity_email=send_capacity_email, send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,normal_cost=normal_cost)
-        
+        generated_session = models.generate_recurring_sessions(custom_fields_data=custom_fields, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurrence_number=occurrence_number, days_of_week=days_of_week, interval=interval, allow_overbook=allow_overbook, allow_cancellations=allow_cancellations, cancellation_cutoff_number=cancellation_cutoff_number, cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, min_capacity=min_capacity, send_capacity_email=send_capacity_email, send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,normal_cost=normal_cost)
+
         sessions = session['sessions']
         if len(generated_session) > 0:
             sessions.append(generated_session)
@@ -111,6 +103,15 @@ def create_recurring_events():
         else:
             session['sessions'] = []
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
+
+@app.route('/download', methods=['GET','POST'])
+def download():
+    models.copyDefaultToUserFolder()
+    events = "Nothing is here"
+    if request.method == 'POST':
+        
+        events = models.appendEventsToXml()
+    return render_template('download.html', events=events)
 
 @app.route('/delete-session', methods=['POST'])
 def delete_session():
@@ -159,6 +160,7 @@ def upload_backup():
     form = UploadBackup()
     
     if request.method == 'POST':
+        
         file = form.file.data
         if models.validateBackup(file):
             if models.unzipBackup(file):
@@ -168,4 +170,5 @@ def upload_backup():
         else:
             flash('Upload the correct Totara activity backup that ends with .mbz. Scroll down to see a guide how to create Seminar activity backup with custom fields.', 'danger')
         return redirect(url_for('upload_backup'))
-    return render_template('upload-backup.html', form=form)
+    xmldata = models.readXml()
+    return render_template('upload-backup.html', form=form, xmldata=xmldata)

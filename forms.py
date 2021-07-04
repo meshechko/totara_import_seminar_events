@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, StringField, TextAreaField, FieldList, FormField, DateTimeField, IntegerField, SelectField, SelectMultipleField, BooleanField, RadioField, validators, widgets
+from wtforms import SubmitField, StringField, TextAreaField, FieldList, FormField, DateTimeField, IntegerField, SelectMultipleField, BooleanField, RadioField, validators, widgets
 from wtforms.validators import ValidationError
 from wtforms.widgets import html5 as h5widgets
+from wtforms.fields import SelectField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from datetime import datetime, time
 
@@ -16,6 +17,8 @@ class UploadRooms(FlaskForm):
         FileRequired(), FileAllowed(['csv'], 'You can upload CSV only')])
     submit = SubmitField('Upload')
 
+class DownloadFileForm(FlaskForm):
+    download = SubmitField('Download')
 
 class UploadBackup(FlaskForm):
     file = FileField("Upload Totara Seminar activity backup", validators=[

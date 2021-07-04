@@ -289,6 +289,11 @@
 
       
     </form>
+    {% if session_sets|length > 0 %}
+      <form action="download" method="POST">
+        <input class="w-100 btn btn-success btn-lg" id="download" name="submit" type="submit" value="Download">
+      </form>
+    {% endif %}
   </div>
 </div>
 
@@ -314,11 +319,15 @@
       </thead>
       <tbody>
         {% for session in sessions %}
+        {{session}}
         <tr>
           <td scope="row">
-            {% for custom_field in session.custom_fields_data %}
+            {% for custom_field in session.custom_fields %}
+            {% if custom_field.field_type == 'text'%}
               {{ custom_field.field_name }} : {{ custom_field.field_data }} <br>
+              {% endif %}
             {% endfor %}
+            
           </td>
           <td>{{ session.capacity }}</td>
           <td>{{ session.details }}</td>
