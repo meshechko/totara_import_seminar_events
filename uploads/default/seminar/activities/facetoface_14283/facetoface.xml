@@ -674,8 +674,8 @@ Location: [session:room:cf_location]&lt;br /&gt;
       </notification>
     </notifications>
     <sessions>
-      <session id="6850">
-        <capacity>10</capacity>
+      <session id="">
+        <capacity>0</capacity>
         <allowoverbook>0</allowoverbook>
         <waitlisteveryone>0</waitlisteveryone>
         <details></details>
@@ -696,66 +696,6 @@ Location: [session:room:cf_location]&lt;br /&gt;
         <session_roles>
         </session_roles>
         <custom_fields>
-          <custom_field id="7096">
-            <field_name>msf</field_name>
-            <field_type>multiselect</field_type>
-            <field_data>{"7662711d09f262785aedd0f7c519a97a":{"option":"MS Option 3","icon":"","default":1,"delete":0}}</field_data>
-            <paramdatavalue>7662711d09f262785aedd0f7c519a97a</paramdatavalue>
-          </custom_field>
-          <custom_field id="6892">
-            <field_name>Presenter</field_name>
-            <field_type>text</field_type>
-            <field_data>James Smith</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7091">
-            <field_name>dtf</field_name>
-            <field_type>datetime</field_type>
-            <field_data>0</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7092">
-            <field_name>cbf</field_name>
-            <field_type>checkbox</field_type>
-            <field_data>0</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7093">
-            <field_name>ff</field_name>
-            <field_type>file</field_type>
-            <field_data>7093</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7094">
-            <field_name>lf</field_name>
-            <field_type>location</field_type>
-            <field_data>{"address":"","size":"","view":"","display":"","zoom":"12","location":{"latitude":"0","longitude":"0"}}</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7095">
-            <field_name>mdcf</field_name>
-            <field_type>menu</field_type>
-            <field_data>Option 2</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7097">
-            <field_name>taf</field_name>
-            <field_type>textarea</field_type>
-            <field_data></field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7098">
-            <field_name>uf</field_name>
-            <field_type>url</field_type>
-            <field_data>{"url":"https:\/\/www.google.com","text":"def text","target":1}</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7099">
-            <field_name>pin</field_name>
-            <field_type>text</field_type>
-            <field_data>1234</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
         </custom_fields>
         <sessioncancel_fields>
         </sessioncancel_fields>
@@ -788,129 +728,6 @@ Location: [session:room:cf_location]&lt;br /&gt;
                   <field_name>location</field_name>
                   <field_type>location</field_type>
                   <field_data>{"address":"79 Springfield Road, Edgeware","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}</field_data>
-                  <paramdatavalue>$@NULL@$</paramdatavalue>
-                </room_field>
-              </room_fields>
-            </room>
-            <assets>
-            </assets>
-          </sessions_date>
-        </sessions_dates>
-      </session>
-      <session id="7016">
-        <capacity>10</capacity>
-        <allowoverbook>0</allowoverbook>
-        <waitlisteveryone>0</waitlisteveryone>
-        <details></details>
-        <normalcost>0</normalcost>
-        <discountcost>0</discountcost>
-        <allowcancellations>1</allowcancellations>
-        <cancellationcutoff>0</cancellationcutoff>
-        <timecreated>1623813930</timecreated>
-        <timemodified>1623841169</timemodified>
-        <usermodified>19239</usermodified>
-        <selfapproval>0</selfapproval>
-        <mincapacity>0</mincapacity>
-        <cutoff>0</cutoff>
-        <sendcapacityemail>0</sendcapacityemail>
-        <registrationtimestart>0</registrationtimestart>
-        <registrationtimefinish>0</registrationtimefinish>
-        <cancelledstatus>0</cancelledstatus>
-        <session_roles>
-        </session_roles>
-        <custom_fields>
-          <custom_field id="7088">
-            <field_name>msf</field_name>
-            <field_type>multiselect</field_type>
-            <field_data>{"7662711d09f262785aedd0f7c519a97a":{"option":"MS Option 3","icon":"","default":"1","delete":0}}</field_data>
-            <paramdatavalue>7662711d09f262785aedd0f7c519a97a</paramdatavalue>
-          </custom_field>
-          <custom_field id="7082">
-            <field_name>Presenter</field_name>
-            <field_type>text</field_type>
-            <field_data>TBA</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7083">
-            <field_name>dtf</field_name>
-            <field_type>datetime</field_type>
-            <field_data>0</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7084">
-            <field_name>cbf</field_name>
-            <field_type>checkbox</field_type>
-            <field_data>0</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7085">
-            <field_name>ff</field_name>
-            <field_type>file</field_type>
-            <field_data>7085</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7086">
-            <field_name>lf</field_name>
-            <field_type>location</field_type>
-            <field_data>{"address":"","size":"","view":"","display":"","zoom":"12","location":{"latitude":"0","longitude":"0"}}</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7087">
-            <field_name>mdcf</field_name>
-            <field_type>menu</field_type>
-            <field_data>Option 2</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7089">
-            <field_name>taf</field_name>
-            <field_type>textarea</field_type>
-            <field_data></field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7090">
-            <field_name>uf</field_name>
-            <field_type>url</field_type>
-            <field_data>{"url":"https:\/\/www.google.com","text":"def text","target":1}</field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-          <custom_field id="7100">
-            <field_name>pin</field_name>
-            <field_type>text</field_type>
-            <field_data></field_data>
-            <paramdatavalue>$@NULL@$</paramdatavalue>
-          </custom_field>
-        </custom_fields>
-        <sessioncancel_fields>
-        </sessioncancel_fields>
-        <signups>
-        </signups>
-        <sessions_dates>
-          <sessions_date id="12963">
-            <sessiontimezone>99</sessiontimezone>
-            <timestart>1623873600</timestart>
-            <timefinish>1623902400</timefinish>
-            <room id="1361">
-              <name>Brass Band Hall, Steer Street Blaketown, Greymouth</name>
-              <description></description>
-              <capacity>20</capacity>
-              <allowconflicts>0</allowconflicts>
-              <custom>0</custom>
-              <hidden>0</hidden>
-              <usercreated>14500</usercreated>
-              <usermodified>14500</usermodified>
-              <timecreated>1528410637</timecreated>
-              <timemodified>1528410637</timemodified>
-              <room_fields>
-                <room_field id="1837">
-                  <field_name>building</field_name>
-                  <field_type>text</field_type>
-                  <field_data>Brass Band Hall</field_data>
-                  <paramdatavalue>$@NULL@$</paramdatavalue>
-                </room_field>
-                <room_field id="1838">
-                  <field_name>location</field_name>
-                  <field_type>location</field_type>
-                  <field_data>{"address":"Steer Street Blaketown, Greymouth","size":"medium","view":"map","display":"both","zoom":12,"location":{"latitude":-36.86666,"longitude":174.76666}}</field_data>
                   <paramdatavalue>$@NULL@$</paramdatavalue>
                 </room_field>
               </room_fields>

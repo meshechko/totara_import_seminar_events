@@ -8,7 +8,7 @@ import xmltodict
 import json
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\wn\xec]av'
+app.secret_key = b'_5#y2L"F4Q8z\wn\xecy]'
 
 
 #FILTERS
@@ -46,7 +46,7 @@ def create_recurring_events():
     form = CreateEventForm()
     rooms = models.getRooms()
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
-    
+    # print(models.readXml())
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
     #https://gis.stackexchange.com/questions/202978/converting-xml-dict-xml-using-python
     # out = xmltodict.unparse(models.readXml(), pretty=True)
@@ -78,13 +78,13 @@ def create_recurring_events():
         interval = form.interval.data
         allow_overbook = form.allow_overbook.data
 
-        allow_cancellations = int(form.allow_cancellations.data)
+        allow_cancellations = form.allow_cancellations.data
         cancellation_cutoff_number = form.cancellation_cutoff_number.data
-        cancellation_cutoff_timeunit = int(form.cancellation_cutoff_timeunit.data)
+        cancellation_cutoff_timeunit = form.cancellation_cutoff_timeunit.data
         min_capacity = form.min_capacity.data
         send_capacity_email = form.send_capacity_email.data
         send_capacity_email_cutoff_number = form.send_capacity_email_cutoff_number.data
-        send_capacity_email_cutoff_timeunit = int(form.send_capacity_email_cutoff_timeunit.data)
+        send_capacity_email_cutoff_timeunit = form.send_capacity_email_cutoff_timeunit.data
         normal_cost = form.normal_cost.data
 
         generated_session = models.generate_recurring_sessions(custom_fields_data=custom_fields, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurrence_number=occurrence_number, days_of_week=days_of_week, interval=interval, allow_overbook=allow_overbook, allow_cancellations=allow_cancellations, cancellation_cutoff_number=cancellation_cutoff_number, cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, min_capacity=min_capacity, send_capacity_email=send_capacity_email, send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,normal_cost=normal_cost)

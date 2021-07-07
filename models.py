@@ -15,7 +15,7 @@ from dateutil.rrule import rrulestr
 from datetime import datetime
 import os.path
 from os import path
-
+import time
 # CONFIG data
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads/')
@@ -186,23 +186,46 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
         finish = f"{ str(date.date()) } { timefinish }"
         finish = int(datetime.strptime(finish, '%Y-%m-%d %H:%M').timestamp())
 
+        if not all_custom_fields:
+            all_custom_fields = None
+        
         session = {
+            # 'id':
+            'capacity': capacity,
+            'allowoverbook': allow_overbook,
+            # 'waitlisteveryone': 
+            'details': details,
+            'normalcost': normal_cost,
+            "discountcost": "0", # this value is from event settings. so set it to 0 by default so far
+            'allowcancellations': allow_cancellations,
+            'cancellationcutoff': str(int(cancellation_cutoff_number) * int(cancellation_cutoff_timeunit)),
+            "timecreated": str(int(time.time())),
+            "timemodified": str(int(time.time())),
+            "usermodified": "", # dont know user, leave blank
+            "selfapproval": "0", # this value is from event settings. Check what will happen if after loading backup to Totara change this value in settings in Totara, will it affect generated backup and session created in Totara?
+            'mincapacity': min_capacity,
+            'cutoff':str(int(send_capacity_email_cutoff_number) * int(send_capacity_email_cutoff_timeunit)),
+            'room': room, 
+            'sendcapacityemail': send_capacity_email,
+            'registrationtimestart': "0", # this value is from event settings. so set it to 0 by default so far
+            'registrationtimefinish': "0", # this value is from event settings. so set it to 0 by default so far
+            'cancelledstatus': "0",
+            'session_roles': None, # TODO add value from backup uploaded by the user in the fufure
             'custom_fields': all_custom_fields,
+            'sessioncancel_fields': None, # TODO add value from backup uploaded by the user in the fufure
+            'signups': None, # TODO add value from backup uploaded by the user in the fufure
+            "sessions_dates":{
+                        "sessions_date": {
+                            "@id": "",
+                            "sessiontimezone": "99",
+                            "timestart": "1633633200", #TODO convert exisitng values to UNIX
+                            "timefinish": "1633662000",
+                            "assets": None,
+                        }
+            },
             'date': date,
             'timestart': timestart,
             'timefinish': timefinish,
-            'details': details,
-            'room': room,
-            'capacity': capacity,
-            'allow_overbook': allow_overbook,        'allow_cancellations': allow_cancellations,
-            'cancellation_cutoff_number': cancellation_cutoff_number,
-            'cancellation_cutoff_timeunit':        cancellation_cutoff_timeunit,
-            'min_capacity': min_capacity,
-            'send_capacity_email': send_capacity_email,
-            'send_capacity_email_cutoff_number': send_capacity_email_cutoff_number,
-            'send_capacity_email_cutoff_timeunit': send_capacity_email_cutoff_timeunit,
-            'normal_cost': normal_cost
-
         }
         sessions.append(session)
     return sessions
@@ -211,16 +234,14 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
 def getCustomFieldsFromXML(file):
     custom_fields = []
     sessions = file["activity"]["facetoface"]["sessions"]
-    # try:
-    if isinstance(sessions, list):
-        
-        custom_fields = sessions[0]["custom_fields"]["custom_field"]
-    else:
-        # print(sessions)
-
-        custom_fields = sessions["session"]["custom_fields"]["custom_field"]
-    # except:
-    #     custom_fields = []
+    try:
+        # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
+        if isinstance(sessions, list): 
+            custom_fields = sessions[0]["custom_fields"]["custom_field"]
+        else:
+            custom_fields = sessions["session"]["custom_fields"]["custom_field"]
+    except:
+        custom_fields = []
     return custom_fields
 
 
