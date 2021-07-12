@@ -332,8 +332,8 @@
           </td>
           <td>{{ session.capacity }}</td>
           <td>{{ session.details }}</td>
-          <td>{{ session.date.strftime('%A, %d %b %Y') }}</td>
-          <td>{{ session.timestart }} - {{ session.timefinish }}</td>
+          <td>{{ session.sessions_dates.sessions_date.timestart|date_format }}</td>
+          <td>{{ session.sessions_dates.sessions_date.timestart|time_format }} - {{ session.sessions_dates.sessions_date.timefinish|time_format }}</td>
           <td>{{ session.room }}</td>
           <td>
             {% set session_index = loop.index %}

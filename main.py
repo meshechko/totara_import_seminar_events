@@ -8,7 +8,7 @@ import xmltodict
 import json
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\wn\xecy]'
+app.secret_key = b'_5#y2L"F4Q8z\n\xe7c]'
 
 
 #FILTERS
@@ -19,7 +19,7 @@ def datetime_format(value, format="%H:%M"):
     return proper_date.strftime(format)
 
 @app.template_filter('date_format')
-def datetime_format(value, format="%d/%m/%y"):
+def datetime_format(value, format="%A, %d %B %Y"):
     proper_date = datetime.fromtimestamp(int(value))
     return proper_date.strftime(format)
 
@@ -61,7 +61,7 @@ def create_recurring_events():
         details = form.details.data
         timestart = form.timestart.data.strftime("%H:%M")
         timefinish = form.timefinish.data.strftime("%H:%M")
-        room = form.rooms.data
+        room_id = form.rooms.data
             
         capacity = form.capacity.data
 
@@ -87,7 +87,28 @@ def create_recurring_events():
         send_capacity_email_cutoff_timeunit = form.send_capacity_email_cutoff_timeunit.data
         normal_cost = form.normal_cost.data
 
-        generated_session = models.generate_recurring_sessions(custom_fields_data=custom_fields, details=details, timestart=timestart, timefinish=timefinish, room=room, capacity=capacity, datestart=datestart, datefinish=datefinish, frequency=frequency, occurrence_number=occurrence_number, days_of_week=days_of_week, interval=interval, allow_overbook=allow_overbook, allow_cancellations=allow_cancellations, cancellation_cutoff_number=cancellation_cutoff_number, cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, min_capacity=min_capacity, send_capacity_email=send_capacity_email, send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,normal_cost=normal_cost)
+        generated_session = models.generate_recurring_sessions(
+            custom_fields_data=custom_fields, 
+            details=details, 
+            timestart=timestart, 
+            timefinish=timefinish, 
+            room_id=room_id, 
+            capacity=capacity, 
+            datestart=datestart, 
+            datefinish=datefinish, 
+            frequency=frequency, 
+            occurrence_number=occurrence_number, 
+            days_of_week=days_of_week, 
+            interval=interval, 
+            allow_overbook=allow_overbook, 
+            allow_cancellations=allow_cancellations, 
+            cancellation_cutoff_number=cancellation_cutoff_number, 
+            cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, 
+            min_capacity=min_capacity, 
+            send_capacity_email=send_capacity_email, 
+            send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,
+            send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,
+            normal_cost=normal_cost)
 
         sessions = session['sessions']
         if len(generated_session) > 0:

@@ -70,6 +70,7 @@ def getRooms():
     else:
         rooms = open((UPLOAD_FOLDER + "default/rooms.json"), "rb").read()
         rooms = json.loads(rooms)
+
     return rooms
 
 
@@ -142,7 +143,7 @@ def readXml(xml_attribs=True):
 # "DTSTART:20210902T090000 RRULE:FREQ=WEEKLY;COUNT=5;INTERVAL=10;UNTIL=20230102T090000"
 
 
-def generate_recurring_sessions(custom_fields_data, details, timestart, timefinish, room, capacity, datestart, datefinish, frequency, occurrence_number, days_of_week, interval, allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number, send_capacity_email_cutoff_timeunit, normal_cost):
+def generate_recurring_sessions(custom_fields_data, details, timestart, timefinish, room_id, capacity, datestart, datefinish, frequency, occurrence_number, days_of_week, interval, allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number, send_capacity_email_cutoff_timeunit, normal_cost):
     recurance_data = []
 
     sessions = []
@@ -168,18 +169,55 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
     recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
 
     dates = list(rrulestr(recurrance_data_string))
+    if room_id != None:
+        room = next((item for item in getRooms() if item['id'] == room_id), None)
+        print(room)
+        room = {
+                "@id": room["id"],
+                "name": room["name"],
+                "description": room["description"],
+                "capacity": room["capacity"],
+                "allowconflicts": "0",
+                "custom": "0",
+                "hidden": "0",
+                "usercreated": "$@NULL@$",
+                "usermodified": "$@NULL@$",
+                            "timecreated": "",
+                            "timemodified": "",
+                            "room_fields": {
+                                "room_field": [
+                                    {
+                                        "@id": "",
+                                        "field_name": "building",
+                                        "field_type": "text",
+                                        "field_data": room["building"],
+                                        "paramdatavalue": "$@NULL@$",
+                                    },
+                                    {
+                                        "@id": "",
+                                        "field_name": "location",
+                                        "field_type": "location",
+                                        "field_data": '{"address":"' + room["location"] + '","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
+                                        "paramdatavalue": "$@NULL@$",
+                                    },
+                                ]
+                            },
+            }
+    else:
+        room = None
+
 
     all_custom_fields = []
     for custom_field in custom_fields_data:
         field_dict = {
-                    '@id': '',
-                    'field_name': custom_field["field_name"],
-                    'field_type': custom_field["field_type"],
-                    'field_data': custom_field["field_data"],
-                    'paramdatavalue': '$@NULL@$',
-                    }
+            '@id': '',
+            'field_name': custom_field["field_name"],
+            'field_type': custom_field["field_type"],
+            'field_data': custom_field["field_data"],
+            'paramdatavalue': '$@NULL@$',
+        }
         all_custom_fields.append(field_dict)
-    
+
     for date in dates:
         start = f"{ str(date.date()) } { timestart }"
         start = int(datetime.strptime(start, '%Y-%m-%d %H:%M').timestamp())
@@ -188,47 +226,61 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
 
         if not all_custom_fields:
             all_custom_fields = None
-        
+
         session = {
-            # 'id':
-            'capacity': capacity,
+            'id': "",
+            'capacity': str(capacity),
             'allowoverbook': allow_overbook,
-            # 'waitlisteveryone': 
+            'waitlisteveryone': "0",
             'details': details,
-            'normalcost': normal_cost,
-            "discountcost": "0", # this value is from event settings. so set it to 0 by default so far
+            'normalcost': str(normal_cost),
+            "discountcost": "0",  # this value is from event settings. so set it to 0 by default so far
             'allowcancellations': allow_cancellations,
             'cancellationcutoff': str(int(cancellation_cutoff_number) * int(cancellation_cutoff_timeunit)),
             "timecreated": str(int(time.time())),
             "timemodified": str(int(time.time())),
-            "usermodified": "", # dont know user, leave blank
-            "selfapproval": "0", # this value is from event settings. Check what will happen if after loading backup to Totara change this value in settings in Totara, will it affect generated backup and session created in Totara?
-            'mincapacity': min_capacity,
-            'cutoff':str(int(send_capacity_email_cutoff_number) * int(send_capacity_email_cutoff_timeunit)),
-            'room': room, 
+            "usermodified": "",  # dont know user, leave blank
+            "selfapproval": "0",  # this value is from event settings. Check what will happen if after loading backup to Totara change this value in settings in Totara, will it affect generated backup and session created in Totara?
+            'mincapacity': str(min_capacity),
+            'cutoff': str(int(send_capacity_email_cutoff_number) * int(send_capacity_email_cutoff_timeunit)),
+            'room': room,
             'sendcapacityemail': send_capacity_email,
-            'registrationtimestart': "0", # this value is from event settings. so set it to 0 by default so far
-            'registrationtimefinish': "0", # this value is from event settings. so set it to 0 by default so far
+            # this value is from event settings. so set it to 0 by default so far
+            'registrationtimestart': "0",
+            # this value is from event settings. so set it to 0 by default so far
+            'registrationtimefinish': "0",
             'cancelledstatus': "0",
-            'session_roles': None, # TODO add value from backup uploaded by the user in the fufure
+            'session_roles': None,  # TODO add value from backup uploaded by the user in the fufure
             'custom_fields': all_custom_fields,
-            'sessioncancel_fields': None, # TODO add value from backup uploaded by the user in the fufure
-            'signups': None, # TODO add value from backup uploaded by the user in the fufure
-            "sessions_dates":{
-                        "sessions_date": {
-                            "@id": "",
-                            "sessiontimezone": "99",
-                            "timestart": "1633633200", #TODO convert exisitng values to UNIX
-                            "timefinish": "1633662000",
-                            "assets": None,
-                        }
-            },
-            'date': date,
-            'timestart': timestart,
-            'timefinish': timefinish,
+            # TODO add value from backup uploaded by the user in the fufure
+            'sessioncancel_fields': None,
+            'signups': None,  # TODO add value from backup uploaded by the user in the fufure
+            "sessions_dates": {
+                "sessions_date": {
+                    "@id": "",
+                    "sessiontimezone": "",  # TODO do we need timezone or Totara add it automatically?
+                    "timestart": str(start),
+                    "timefinish": str(finish),
+                    "assets": None,
+                }
+            }
         }
         sessions.append(session)
     return sessions
+
+# import functools
+
+# def haskey(d, path):
+#     try:
+#         functools.reduce(lambda x, y: x[y], path.split("."), d)
+#         return True
+#     except:
+#         return False
+
+#  from https://stackoverflow.com/a/65782539
+
+
+
 
 
 def getCustomFieldsFromXML(file):
@@ -236,7 +288,7 @@ def getCustomFieldsFromXML(file):
     sessions = file["activity"]["facetoface"]["sessions"]
     try:
         # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
-        if isinstance(sessions, list): 
+        if isinstance(sessions, list):
             custom_fields = sessions[0]["custom_fields"]["custom_field"]
         else:
             custom_fields = sessions["session"]["custom_fields"]["custom_field"]
@@ -259,76 +311,76 @@ def appendEventsToXml():
     return facetoface_dict
 
 
-def convertGeneratedToXmlDict(session_data):
-    room = ""
-    if session_data["room"] != None:
-        room = {
-            "@id": "636",
-            "name": None,
-            "description": "<p>Marae for Tikanga Maori use only</p>",
-            "capacity": "18",
-            "allowconflicts": "0",
-            "custom": "0",
-            "hidden": "0",
-            "usercreated": "$@NULL@$",
-            "usermodified": "$@NULL@$",
-                            "timecreated": "1478480518",
-                            "timemodified": "1478480518",
-                            "room_fields": {
-                                "room_field": [
-                                    {
-                                        "@id": "582",
-                                        "field_name": "building",
-                                        "field_type": "text",
-                                        "field_data": "Rehua Marae",
-                                        "paramdatavalue": "$@NULL@$",
-                                    },
-                                    {
-                                        "@id": "581",
-                                        "field_name": "location",
-                                        "field_type": "location",
-                                        "field_data": '{"address":"79 Springfield Road, Edgeware","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
-                                        "paramdatavalue": "$@NULL@$",
-                                    },
-                                ]
-                            },
-        }
+# def convertGeneratedToXmlDict(session_data):
+#     room = ""
+#     if session_data["room"] != None:
+#         room = {
+#             "@id": "636",
+#             "name": None,
+#             "description": "<p>Marae for Tikanga Maori use only</p>",
+#             "capacity": "18",
+#             "allowconflicts": "0",
+#             "custom": "0",
+#             "hidden": "0",
+#             "usercreated": "$@NULL@$",
+#             "usermodified": "$@NULL@$",
+#                             "timecreated": "",
+#                             "timemodified": "",
+#                             "room_fields": {
+#                                 "room_field": [
+#                                     {
+#                                         "@id": "582",
+#                                         "field_name": "building",
+#                                         "field_type": "text",
+#                                         "field_data": "Rehua Marae",
+#                                         "paramdatavalue": "$@NULL@$",
+#                                     },
+#                                     {
+#                                         "@id": "581",
+#                                         "field_name": "location",
+#                                         "field_type": "location",
+#                                         "field_data": '{"address":"79 Springfield Road, Edgeware","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
+#                                         "paramdatavalue": "$@NULL@$",
+#                                     },
+#                                 ]
+#                             },
+#         }
 
-    session = {"@id": "",
-               "capacity": session_data["capacity"],
-               "allowoverbook": session_data["data"],
-               "waitlisteveryone": session_data["allow_overbook"],
-               "details": session_data["details"],
-               "normalcost": session_data["normal_cost"],
-               "discountcost": "0",
-               "allowcancellations": session_data["allow_cancellations"],
-               "cancellationcutoff": "ADD_DATA",
-               "timecreated": "ADD_DATA-UNIXTIMESTAMP",
-               "timemodified": "ADD_DATA-UNIXTIMESTAMP",
-               "usermodified": "",
-               "selfapproval": "0",
-               "mincapacity": session_data["min_capacity"],
-               "cutoff": "ADD_DATA",
-               "sendcapacityemail": session_data["send_capacity_email"],
-               "registrationtimestart": "0",
-               "registrationtimefinish": "0",
-               "cancelledstatus": "0",
-               "session_roles": None,
-               "custom_fields": {
-                   "custom_field": session_data["custom_fields_data"]
-               },
-               "sessioncancel_fields": None,
-               "signups": None,
-               "sessions_dates": {
-                   "sessions_date": {
-                       "@id": "",
-                       "sessiontimezone": "99",
-                       "timestart": session_data["timestart"],
-                       "timefinish": session_data["timefinish"],
-                       "room": rooms,
-                       "assets": None,
-                   }
-               }
-               }
+#     session = {"@id": "",
+#                "capacity": session_data["capacity"],
+#                "allowoverbook": session_data["data"],
+#                "waitlisteveryone": session_data["allow_overbook"],
+#                "details": session_data["details"],
+#                "normalcost": session_data["normal_cost"],
+#                "discountcost": "0",
+#                "allowcancellations": session_data["allow_cancellations"],
+#                "cancellationcutoff": "ADD_DATA",
+#                "timecreated": "ADD_DATA-UNIXTIMESTAMP",
+#                "timemodified": "ADD_DATA-UNIXTIMESTAMP",
+#                "usermodified": "",
+#                "selfapproval": "0",
+#                "mincapacity": session_data["min_capacity"],
+#                "cutoff": "ADD_DATA",
+#                "sendcapacityemail": session_data["send_capacity_email"],
+#                "registrationtimestart": "0",
+#                "registrationtimefinish": "0",
+#                "cancelledstatus": "0",
+#                "session_roles": None,
+#                "custom_fields": {
+#                    "custom_field": session_data["custom_fields_data"]
+#                },
+#                "sessioncancel_fields": None,
+#                "signups": None,
+#                "sessions_dates": {
+#                    "sessions_date": {
+#                        "@id": "",
+#                        "sessiontimezone": "99",
+#                        "timestart": session_data["timestart"],
+#                        "timefinish": session_data["timefinish"],
+#                        "room": rooms,
+#                        "assets": None,
+#                    }
+#                }
+#                }
 
-    return session
+#     return session
