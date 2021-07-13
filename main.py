@@ -128,10 +128,12 @@ def create_recurring_events():
 @app.route('/download', methods=['GET','POST'])
 def download():
     models.copyDefaultToUserFolder()
-    events = "Nothing is here"
+    # events = "Nothing is here"
+    events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
     if request.method == 'POST':
         
-        events = models.appendEventsToXml()
+        # events = models.appendEventsToXml()
+        events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
     return render_template('download.html', events=events)
 
 @app.route('/delete-session', methods=['POST'])
