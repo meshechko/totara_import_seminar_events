@@ -44,10 +44,10 @@ def checkUserSession():
 def create_recurring_events():
     checkUserSession()
     form = CreateEventForm()
-    rooms = models.getRooms()
+    rooms = models.getFromJsonFile("rooms")
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
     # print(models.readXml())
-    form.rooms.choices = [(room["id"], room["name"]) for room in models.getRooms()]
+    form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
     #https://gis.stackexchange.com/questions/202978/converting-xml-dict-xml-using-python
     # out = xmltodict.unparse(models.readXml(), pretty=True)
     # print(out)
@@ -110,25 +110,21 @@ def create_recurring_events():
             send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,
             normal_cost=normal_cost)
 
-        sessions = session['sessions']
+        sessions = models.getFromJsonFile("sessions")
         if len(generated_session) > 0:
             sessions.append(generated_session)
-        session['sessions'] = sessions
+        models.saveToJsonFile(sessions, "sessions")
         return redirect(url_for('create_recurring_events'))
     else:
-        
-
         session_sets = []
-        if 'sessions' in session:
-            session_sets = session['sessions']
-        else:
-            session['sessions'] = []
+        session_sets = models.getFromJsonFile("sessions")
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 @app.route('/download', methods=['GET','POST'])
 def download():
     models.copyDefaultToUserFolder()
     # events = "Nothing is here"
+    #sum(listoflists,[]) #TODO add this to merge list of lists for events
     events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
     if request.method == 'POST':
         
@@ -139,24 +135,24 @@ def download():
 @app.route('/delete-session', methods=['POST'])
 def delete_session():
     if request.method == 'POST':
-        sessions = session['sessions']
+        sessions = models.getFromJsonFile("sessions")
         set_index = int(request.form['session_set_index'])
         session_index = int(request.form['session_index'])
         if len(sessions[set_index]) == 1:
             del sessions[set_index]
         else:
             del sessions[set_index][session_index]
-        session['sessions'] = sessions
+        models.saveToJsonFile(sessions, "sessions")
         return redirect(url_for('create_recurring_events'))
     return render_template('create-recurring-events.html')
 
 @app.route('/delete-sessions-set', methods=['POST'])
 def delete_sessions_set():
     if request.method == 'POST':
-        sessions = session['sessions']
+        sessions = models.getFromJsonFile("sessions")
         set_index = int(request.form['session_set_index'])
         del sessions[set_index]
-        session['sessions'] = sessions
+        models.saveToJsonFile(sessions, "sessions")
         return redirect(url_for('create_recurring_events'))
     return render_template('create-recurring-events.html')
 
@@ -169,8 +165,8 @@ def upload_rooms():
         CSV = form.file.data
         rooms_list = models.covertCsvToList(CSV)
         if models.validateCsvHeaders(rooms_list):
-            models.saveRooms(rooms_list)
-            flash(f'Successfully upladed {len(models.getRooms())} rooms', 'success')
+            models.saveToJsonFile(rooms_list, "rooms")
+            flash(f'Successfully upladed {len(models.getFromJsonFile("rooms"))} rooms', 'success')
         else:
             flash('Please upload CSV that contains the following headers: \n id, name, description, capacity, allowconflicts, building, location', 'danger')
         return redirect(url_for('upload_rooms'))

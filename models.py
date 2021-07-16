@@ -82,6 +82,25 @@ def saveRooms(rooms_list):
         toJson = json.dumps(rooms_list)
         file.write(toJson)
 
+def saveToJsonFile(list, file_name):
+    userFolder = getUserFolder(session["userID"])
+    if os.path.isdir(userFolder) == False:
+        createFolder(userFolder)
+    with open(os.path.join(userFolder, file_name+".json"), 'w') as file:
+        toJson = json.dumps(list)
+        file.write(toJson)
+
+def getFromJsonFile(file_name):
+    list = []
+    userFile = getUserFolder(session["userID"])+"/"+file_name+".json"
+
+    if path.exists(userFile):
+        list = open(userFile, "rb").read()
+        list = json.loads(list)
+    else:
+        list = open((UPLOAD_FOLDER + "default/"+file_name+".json"), "rb").read()
+        list = json.loads(list)
+    return list
 
 # BACKUP upload
 
@@ -171,7 +190,6 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
     dates = list(rrulestr(recurrance_data_string))
     if room_id != None:
         room = next((item for item in getRooms() if item['id'] == room_id), None)
-        print(room)
         room = {
                 "@id": room["id"],
                 "name": room["name"],
@@ -306,8 +324,7 @@ def copyDefaultToUserFolder():
 
 def appendEventsToXml():
     facetoface_dict = readXml()
-    if 'sessions' in session:
-        facetoface_dict["activity"]["facetoface"]["sessions"] = session['sessions']
+    facetoface_dict["activity"]["facetoface"]["sessions"] = getFromJsonFile("sessions")
     return facetoface_dict
 
 
