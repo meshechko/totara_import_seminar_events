@@ -59,29 +59,6 @@ def validateCsvHeaders(rooms_list):
     if len(difference) == 0:
         return True
 
-
-# def getRooms():
-#     rooms = []
-#     userFile = getUserFolder(session["userID"])+"/rooms.json"
-
-#     if path.exists(userFile):
-#         rooms = open(userFile, "rb").read()
-#         rooms = json.loads(rooms)
-#     else:
-#         rooms = open((UPLOAD_FOLDER + "default/rooms.json"), "rb").read()
-#         rooms = json.loads(rooms)
-
-#     return rooms
-
-
-# def saveRooms(rooms_list):
-#     userFolder = getUserFolder(session["userID"])
-#     if os.path.isdir(userFolder) == False:
-#         createFolder(userFolder)
-#     with open(os.path.join(userFolder, "rooms.json"), 'w') as file:
-#         toJson = json.dumps(rooms_list)
-#         file.write(toJson)
-
 def saveToJsonFile(list, file_name):
     userFolder = getUserFolder(session["userID"])
     if os.path.isdir(userFolder) == False:
@@ -148,8 +125,30 @@ def getf2fxml():
         userActivitiesFolder) if f.is_dir()]
     for folder in list(subfolders):
         if "facetoface" in folder:
+            print(folder+"/facetoface.xml")
             return folder+"/facetoface.xml"
 
+def saveToF2fXml(data):
+     with open(getf2fxml(), "w") as f:
+         f.write(data)
+         return True
+
+def make_zipfile(output_filename, source_dir):
+    relroot = os.path.abspath(os.path.join(source_dir, os.pardir))
+    with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip:
+        for root, dirs, files in os.walk(source_dir):
+            # add directory (needed for empty dirs)
+            zip.write(root, os.path.relpath(root, relroot))
+            for file in files:
+                filename = os.path.join(root, file)
+                if os.path.isfile(filename): # regular files only
+                    arcname = os.path.join(os.path.relpath(root, relroot), file)
+                    zip.write(filename, arcname)
+
+def zipGeneratedSessions():
+    userActivitiesFolder = getSeminarFolder(session["userID"])+"/"
+    userFolder = getUserFolder(session["userID"])
+    make_zipfile("testtest.zip", userActivitiesFolder)
 
 def readXml(xml_attribs=True):
     with open(getf2fxml(), "rb") as f:

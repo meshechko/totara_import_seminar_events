@@ -8,7 +8,7 @@ import xmltodict
 import json
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xe7c]ii'
+app.secret_key = b'_5#y2L"F4Q8z\n\xe7c]'
 
 
 #FILTERS
@@ -126,6 +126,8 @@ def download():
         
         # events = models.appendEventsToXml()
         events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
+        models.saveToF2fXml(events)
+        models.zipGeneratedSessions()
     return render_template('download.html', events=events)
 
 @app.route('/delete-session', methods=['POST'])
