@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash
+from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file
 import models
 from forms import UploadBackup, UploadRooms, CreateEventForm
 import random
@@ -128,6 +128,8 @@ def download():
         events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
         models.saveToF2fXml(events)
         models.zipGeneratedSessions()
+        userFolder = models.getUserFolder(session["userID"])+"/"
+        return send_file(f"{userFolder}{models.GENERATED_ZIP_BACKUP_FILE_NAME}")
     return render_template('download.html', events=events)
 
 @app.route('/delete-session', methods=['POST'])

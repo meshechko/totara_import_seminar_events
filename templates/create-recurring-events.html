@@ -319,9 +319,10 @@
       </thead>
       <tbody>
         {% for session in sessions %}
-        {{session}}
+        {#session#}
         <tr>
           <td scope="row">
+            {{custom_fields}}
             {% if custom_fields%}
               {% for custom_field in session.custom_fields %}
                 {% if custom_field.field_type == 'text'%}

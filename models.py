@@ -133,22 +133,24 @@ def saveToF2fXml(data):
          f.write(data)
          return True
 
-def make_zipfile(output_filename, source_dir):
-    relroot = os.path.abspath(os.path.join(source_dir, os.pardir))
-    with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as zip:
-        for root, dirs, files in os.walk(source_dir):
-            # add directory (needed for empty dirs)
-            zip.write(root, os.path.relpath(root, relroot))
-            for file in files:
-                filename = os.path.join(root, file)
-                if os.path.isfile(filename): # regular files only
-                    arcname = os.path.join(os.path.relpath(root, relroot), file)
-                    zip.write(filename, arcname)
-
+GENERATED_ZIP_BACKUP_FILE_NAME = "backup-totara-activity-facetoface.mbz"
+import urllib.request
+from urllib.parse import urlparse
 def zipGeneratedSessions():
-    userActivitiesFolder = getSeminarFolder(session["userID"])+"/"
-    userFolder = getUserFolder(session["userID"])
-    make_zipfile("testtest.zip", userActivitiesFolder)
+    base_dir = getSeminarFolder(session["userID"])
+    userFolder = getUserFolder(session["userID"])+"/"
+    with zipfile.ZipFile(userFolder + GENERATED_ZIP_BACKUP_FILE_NAME, "w",
+                     compression=zipfile.ZIP_DEFLATED) as zf:
+        base_path = os.path.normpath(base_dir)
+        for dirpath, dirnames, filenames in os.walk(base_dir):
+            for name in sorted(dirnames):
+                path = os.path.normpath(os.path.join(dirpath, name))
+                zf.write(path, os.path.relpath(path, base_path))
+            for name in filenames:
+                path = os.path.normpath(os.path.join(dirpath, name))
+                if os.path.isfile(path):
+                    zf.write(path, os.path.relpath(path, base_path))
+    # urllib.request.urlretrieve(urlparse(str(userFolder + GENERATED_ZIP_BACKUP_FILE_NAME)))
 
 def readXml(xml_attribs=True):
     with open(getf2fxml(), "rb") as f:
@@ -188,7 +190,7 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
 
     dates = list(rrulestr(recurrance_data_string))
     if room_id != None:
-        room = next((item for item in getRooms() if item['id'] == room_id), None)
+        room = next((item for item in getFromJsonFile("rooms") if item['id'] == room_id), None)
         room = {
                 "@id": room["id"],
                 "name": room["name"],
@@ -226,12 +228,13 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
 
     all_custom_fields = []
     for custom_field in custom_fields_data:
-        field_dict = {
-            '@id': '',
-            'field_name': custom_field["field_name"],
-            'field_type': custom_field["field_type"],
-            'field_data': custom_field["field_data"],
-            'paramdatavalue': '$@NULL@$',
+        field_dict = {"custom_field":{
+                '@id': '',
+                'field_name': custom_field["field_name"],
+                'field_type': custom_field["field_type"],
+                'field_data': custom_field["field_data"],
+                'paramdatavalue': '$@NULL@$',
+            }
         }
         all_custom_fields.append(field_dict)
 
@@ -328,78 +331,3 @@ def appendEventsToXml():
     facetoface_dict = readXml()
     facetoface_dict["activity"]["facetoface"]["sessions"]["session"] = sum(getFromJsonFile("sessions"),[]) # sum is required to merge multiple sets of generated events into one set to ensure each session is properly printed in <sessions> xml tag
     return facetoface_dict
-
-
-# def convertGeneratedToXmlDict(session_data):
-#     room = ""
-#     if session_data["room"] != None:
-#         room = {
-#             "@id": "636",
-#             "name": None,
-#             "description": "<p>Marae for Tikanga Maori use only</p>",
-#             "capacity": "18",
-#             "allowconflicts": "0",
-#             "custom": "0",
-#             "hidden": "0",
-#             "usercreated": "$@NULL@$",
-#             "usermodified": "$@NULL@$",
-#                             "timecreated": "",
-#                             "timemodified": "",
-#                             "room_fields": {
-#                                 "room_field": [
-#                                     {
-#                                         "@id": "582",
-#                                         "field_name": "building",
-#                                         "field_type": "text",
-#                                         "field_data": "Rehua Marae",
-#                                         "paramdatavalue": "$@NULL@$",
-#                                     },
-#                                     {
-#                                         "@id": "581",
-#                                         "field_name": "location",
-#                                         "field_type": "location",
-#                                         "field_data": '{"address":"79 Springfield Road, Edgeware","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
-#                                         "paramdatavalue": "$@NULL@$",
-#                                     },
-#                                 ]
-#                             },
-#         }
-
-#     session = {"@id": "",
-#                "capacity": session_data["capacity"],
-#                "allowoverbook": session_data["data"],
-#                "waitlisteveryone": session_data["allow_overbook"],
-#                "details": session_data["details"],
-#                "normalcost": session_data["normal_cost"],
-#                "discountcost": "0",
-#                "allowcancellations": session_data["allow_cancellations"],
-#                "cancellationcutoff": "ADD_DATA",
-#                "timecreated": "ADD_DATA-UNIXTIMESTAMP",
-#                "timemodified": "ADD_DATA-UNIXTIMESTAMP",
-#                "usermodified": "",
-#                "selfapproval": "0",
-#                "mincapacity": session_data["min_capacity"],
-#                "cutoff": "ADD_DATA",
-#                "sendcapacityemail": session_data["send_capacity_email"],
-#                "registrationtimestart": "0",
-#                "registrationtimefinish": "0",
-#                "cancelledstatus": "0",
-#                "session_roles": None,
-#                "custom_fields": {
-#                    "custom_field": session_data["custom_fields_data"]
-#                },
-#                "sessioncancel_fields": None,
-#                "signups": None,
-#                "sessions_dates": {
-#                    "sessions_date": {
-#                        "@id": "",
-#                        "sessiontimezone": "99",
-#                        "timestart": session_data["timestart"],
-#                        "timefinish": session_data["timefinish"],
-#                        "room": rooms,
-#                        "assets": None,
-#                    }
-#                }
-#                }
-
-#     return session
