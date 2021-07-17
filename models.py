@@ -60,27 +60,27 @@ def validateCsvHeaders(rooms_list):
         return True
 
 
-def getRooms():
-    rooms = []
-    userFile = getUserFolder(session["userID"])+"/rooms.json"
+# def getRooms():
+#     rooms = []
+#     userFile = getUserFolder(session["userID"])+"/rooms.json"
 
-    if path.exists(userFile):
-        rooms = open(userFile, "rb").read()
-        rooms = json.loads(rooms)
-    else:
-        rooms = open((UPLOAD_FOLDER + "default/rooms.json"), "rb").read()
-        rooms = json.loads(rooms)
+#     if path.exists(userFile):
+#         rooms = open(userFile, "rb").read()
+#         rooms = json.loads(rooms)
+#     else:
+#         rooms = open((UPLOAD_FOLDER + "default/rooms.json"), "rb").read()
+#         rooms = json.loads(rooms)
 
-    return rooms
+#     return rooms
 
 
-def saveRooms(rooms_list):
-    userFolder = getUserFolder(session["userID"])
-    if os.path.isdir(userFolder) == False:
-        createFolder(userFolder)
-    with open(os.path.join(userFolder, "rooms.json"), 'w') as file:
-        toJson = json.dumps(rooms_list)
-        file.write(toJson)
+# def saveRooms(rooms_list):
+#     userFolder = getUserFolder(session["userID"])
+#     if os.path.isdir(userFolder) == False:
+#         createFolder(userFolder)
+#     with open(os.path.join(userFolder, "rooms.json"), 'w') as file:
+#         toJson = json.dumps(rooms_list)
+#         file.write(toJson)
 
 def saveToJsonFile(list, file_name):
     userFolder = getUserFolder(session["userID"])

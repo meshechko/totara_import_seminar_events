@@ -8,7 +8,7 @@ import xmltodict
 import json
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xe7c]'
+app.secret_key = b'_5#y2L"F4Q8z\n\xe7c]ii'
 
 
 #FILTERS
@@ -156,7 +156,7 @@ def delete_sessions_set():
 def upload_rooms():
     checkUserSession()
     form = UploadRooms()
-    
+    requiredHeaders = models.requiredHeaders
     if request.method == 'POST' and form.validate():
         CSV = form.file.data
         rooms_list = models.covertCsvToList(CSV)
@@ -166,7 +166,7 @@ def upload_rooms():
         else:
             flash('Please upload CSV that contains the following headers: \n id, name, description, capacity, allowconflicts, building, location', 'danger')
         return redirect(url_for('upload_rooms'))
-    return render_template('upload-rooms.html', form=form)
+    return render_template('upload-rooms.html', form=form, requiredHeaders=requiredHeaders)
 
 
 @app.route('/upload-backup', methods=['POST', 'GET'])
@@ -179,6 +179,12 @@ def upload_backup():
         file = form.file.data
         if models.validateBackup(file):
             if models.unzipBackup(file):
+                #TODO think if its necessary to import exisitng backup or it will just complicate things. Maybe this app should b used for creatin new sessions only rather than modifying exisitng ones.
+                # facetoface_dict = models.readXml()
+                # facetoface_dict = facetoface_dict["activity"]["facetoface"]["sessions"]['session']
+                # sessions = models.getFromJsonFile("sessions")
+                # sessions.insert(0, facetoface_dict)
+                # models.saveToJsonFile(sessions, "sessions")
                 flash(f'Backup file uploaded successfully', 'success')
             else:
                 flash(f'Incorrect backup', 'danger')
