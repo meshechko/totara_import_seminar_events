@@ -334,7 +334,7 @@
           <td>{{ session.details }}</td>
           <td>{{ session.sessions_dates.sessions_date.timestart|date_format }}</td>
           <td>{{ session.sessions_dates.sessions_date.timestart|time_format }} - {{ session.sessions_dates.sessions_date.timefinish|time_format }}</td>
-          <td>{{ session.room }}</td>
+          <td>{% if session.sessions_dates.sessions_date.room %}{{ session.sessions_dates.sessions_date.room.name }}{% endif %}</td>
           <td>
             {% set session_index = loop.index %}
             <form method="POST" action="delete-session" onSubmit="return confirm('Are you sure you wish to delete this event?');">

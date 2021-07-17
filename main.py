@@ -46,11 +46,7 @@ def create_recurring_events():
     form = CreateEventForm()
     rooms = models.getFromJsonFile("rooms")
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
-    # print(models.readXml())
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
-    #https://gis.stackexchange.com/questions/202978/converting-xml-dict-xml-using-python
-    # out = xmltodict.unparse(models.readXml(), pretty=True)
-    # print(out)
     if request.method == 'POST' and form.validate_on_submit():
         for field in custom_fields:
             try:

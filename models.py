@@ -38,8 +38,8 @@ def fileAllowed(filename, allowedExtension):
 # ROOMS upload
 
 
-requiredHeaders = ['id', 'name', 'description',
-                   'capacity', 'location', 'building', 'published']
+requiredHeaders = ['id', 'name', 'description', 'timecreated',
+                   'capacity', 'location', 'building', 'allowconflicts']
 
 
 def createFolder(folder):
@@ -246,9 +246,9 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
             all_custom_fields = None
 
         session = {
-            'id': "",
+            '@id': "",
             'capacity': str(capacity),
-            'allowoverbook': allow_overbook,
+            'allowoverbook': str(int(allow_overbook)),
             'waitlisteveryone': "0",
             'details': details,
             'normalcost': str(normal_cost),
@@ -261,8 +261,7 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
             "selfapproval": "0",  # this value is from event settings. Check what will happen if after loading backup to Totara change this value in settings in Totara, will it affect generated backup and session created in Totara?
             'mincapacity': str(min_capacity),
             'cutoff': str(int(send_capacity_email_cutoff_number) * int(send_capacity_email_cutoff_timeunit)),
-            'room': room,
-            'sendcapacityemail': send_capacity_email,
+            'sendcapacityemail': str(int(send_capacity_email)),
             # this value is from event settings. so set it to 0 by default so far
             'registrationtimestart': "0",
             # this value is from event settings. so set it to 0 by default so far
@@ -279,10 +278,14 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
                     "sessiontimezone": "",  # TODO do we need timezone or Totara add it automatically?
                     "timestart": str(start),
                     "timefinish": str(finish),
+                    
                     "assets": None,
                 }
             }
         }
+        if room:
+            session["sessions_dates"]["sessions_date"]["room"] = room
+
         sessions.append(session)
     return sessions
 
@@ -324,7 +327,7 @@ def copyDefaultToUserFolder():
 
 def appendEventsToXml():
     facetoface_dict = readXml()
-    facetoface_dict["activity"]["facetoface"]["sessions"] = getFromJsonFile("sessions")
+    facetoface_dict["activity"]["facetoface"]["sessions"]["session"] = sum(getFromJsonFile("sessions"),[]) # sum is required to merge multiple sets of generated events into one set to ensure each session is properly printed in <sessions> xml tag
     return facetoface_dict
 
 
