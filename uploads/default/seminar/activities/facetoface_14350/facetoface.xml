@@ -674,6 +674,38 @@ Location: [session:room:cf_location]&lt;br /&gt;
       </notification>
     </notifications>
     <sessions>
+       <session id="">
+                <capacity>10</capacity>
+                <allowoverbook>0</allowoverbook>
+                <waitlisteveryone>0</waitlisteveryone>
+                <details></details>
+                <normalcost>0</normalcost>
+                <discountcost>0</discountcost>
+                <allowcancellations>1</allowcancellations>
+                <cancellationcutoff>0</cancellationcutoff>
+                <timecreated>1626504628</timecreated>
+                <timemodified>1626504628</timemodified>
+                <usermodified></usermodified>
+                <selfapproval>0</selfapproval>
+                <mincapacity>0</mincapacity>
+                <cutoff>0</cutoff>
+                <sendcapacityemail>0</sendcapacityemail>
+                <registrationtimestart>0</registrationtimestart>
+                <registrationtimefinish>0</registrationtimefinish>
+                <cancelledstatus>0</cancelledstatus>
+                <session_roles></session_roles>
+                <custom_fields></custom_fields>
+                <sessioncancel_fields></sessioncancel_fields>
+                <signups></signups>
+                <sessions_dates>
+                        <sessions_date id="">
+                                <sessiontimezone></sessiontimezone>
+                                <timestart>1627693200</timestart>
+                                <timefinish>1627694100</timefinish>
+                                <assets></assets>
+                        </sessions_date>
+                </sessions_dates>
+        </session>
     </sessions>
     <interests>
     </interests>
