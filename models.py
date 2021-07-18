@@ -134,8 +134,7 @@ def saveToF2fXml(data):
          return True
 
 GENERATED_ZIP_BACKUP_FILE_NAME = "backup-totara-activity-facetoface.mbz"
-import urllib.request
-from urllib.parse import urlparse
+
 def zipGeneratedSessions():
     base_dir = getSeminarFolder(session["userID"])
     userFolder = getUserFolder(session["userID"])+"/"

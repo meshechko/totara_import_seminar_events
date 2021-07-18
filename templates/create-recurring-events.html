@@ -4,18 +4,25 @@
 {% block content %}
 <div class="row g-5">
   <div class="col-md-12">
+    <form id="delete-backup" method="POST" action="delete-backup" onSubmit="return confirm('Are you sure you wish to delete your backup file?');"></form>
+    <form id="delete-rooms" method="POST" action="delete-rooms" onSubmit="return confirm('Are you sure you wish to delete your rooms?');"></form>
     <form class="needs-validation" method="POST" action="" novalidate="">
       {{ form.hidden_tag() }}
-      {{ form.errors }}
       <div class="row g-3">
         <div class="col-md-6">
           <h4 class="mb-3">Event details</h4>
           <div class="row mb-5">
             
             {% if custom_fields|length > 0 %}
+            <div class="control-group">
+            <label class="form-label">Custom fields</label><button type="hidden" class="btn pt-0 pb-0" form="delete-backup" data-toggle="tooltip" data-placement="top" title="Delete backup"><i class="bi bi-trash"></i></button>
+            </div>
               {% for field in custom_fields%}
                 {% if field.field_type == "text"%}
                 <div class="col-6">
+
+                  
+
                   <label class="form-label" for="{{ field.field_name }}">{{ field.field_name }}</label>
 
                   <input
@@ -69,7 +76,7 @@
                 <div class="control-group">
                   {{ form.rooms.label(class_='form-label') }}    
                   {% if form.rooms.choices[0][0] != "None" %}  
-                         
+                  <button type="hidden" class="btn pt-0 pb-0" form="delete-rooms" data-toggle="tooltip" data-placement="top" title="Delete rooms"><i class="bi bi-trash"></i></button>
                     {{ form.rooms() }}
 
                   {% else %}
@@ -322,11 +329,11 @@
         {#session#}
         <tr>
           <td scope="row">
-            {{custom_fields}}
+            
             {% if custom_fields%}
-              {% for custom_field in session.custom_fields %}
-                {% if custom_field.field_type == 'text'%}
-                  {{ custom_field.field_name }} : {{ custom_field.field_data }} <br>
+              {% for field in session.custom_fields %}
+                {% if field.custom_field.field_type == 'text'%}
+                  {{ field.custom_field.field_name }} : {{ field.custom_field.field_data }} <br>
                 {% endif %}
               {% endfor %}
             {% endif %}

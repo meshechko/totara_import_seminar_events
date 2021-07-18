@@ -4,8 +4,6 @@
 
 {% block content %}
 
-XML DATA: {{ xmldata }}
-
 <div class="row p-4 p-md-5 mb-4 text-white rounded bg-dark">
    <div class="col-md-8 px-0">
       <large class="text-muted fw-light d-block">Step 2 (optional)</large>
@@ -18,17 +16,18 @@ XML DATA: {{ xmldata }}
             {{ form.hidden_tag() }}
             {{ form.file.label }} {{ form.file(class="form-control mb-3 btn btn-lg btn-light") }}
 		 <div class="btn-group w-100">
-            {{ form.submit(class="btn btn-lg btn-primary active") }}<a class="btn btn-lg btn-outline-light"  href="{{ url_for('create_recurring_events') }}">Skip this step</a>
+            {{ form.submit(class="btn btn-lg btn-primary active") }}
+            <a class="btn btn-lg btn-outline-light"  href="{{ url_for('create_recurring_events') }}">Go to next step</a>
 			 </div>
          </form>
+
+
+         
 
          
          <div class="message">
             {% for category, message in get_flashed_messages(with_categories=True) %}
 		    <div class="alert alert-{{category}} mt-3" role="alert">{{ message }}</div>
-		    {% if category == 'success'%}
-		    	<a class="mb-3 btn btn-lg btn-light" href="{{ url_for('create_recurring_events') }}">Go to next step</a>
-		    {% endif %}
             {% endfor %} 
          </div>
       </div>

@@ -6,6 +6,8 @@ import string
 from datetime import datetime
 import xmltodict
 import json
+import os
+import shutil
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xe7c]'
@@ -197,3 +199,17 @@ def upload_backup():
         return redirect(url_for('upload_backup'))
     xmldata = models.readXml()
     return render_template('upload-backup.html', form=form, xmldata=xmldata)
+
+
+@app.route('/delete-backup', methods=['POST'])
+def delete_backup():
+    if request.method == 'POST':
+        seminarFolder = models.getSeminarFolder(session["userID"])
+        shutil.rmtree(seminarFolder)
+    return redirect(url_for('create_recurring_events'))
+
+@app.route('/delete-rooms', methods=['POST'])
+def delete_rooms():
+    if request.method == 'POST':
+        os.remove(models.getUserFolder(session["userID"])+'/rooms.json')
+    return redirect(url_for('create_recurring_events'))
