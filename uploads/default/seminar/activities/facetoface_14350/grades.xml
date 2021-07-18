@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <activity_gradebook>
   <grade_items>
-    <grade_item id="5010">
-      <categoryid>387</categoryid>
-      <itemname>Weekly handover</itemname>
+    <grade_item id="5058">
+      <categoryid>734</categoryid>
+      <itemname>SEMINAR ACTIVITY</itemname>
       <itemtype>mod</itemtype>
       <itemmodule>facetoface</itemmodule>
-      <iteminstance>436</iteminstance>
+      <iteminstance>493</iteminstance>
       <itemnumber>0</itemnumber>
       <iteminfo>$@NULL@$</iteminfo>
       <idnumber></idnumber>
@@ -22,15 +22,15 @@
       <aggregationcoef>0.00000</aggregationcoef>
       <aggregationcoef2>0.00000</aggregationcoef2>
       <weightoverride>0</weightoverride>
-      <sortorder>4</sortorder>
+      <sortorder>12</sortorder>
       <display>0</display>
       <decimals>$@NULL@$</decimals>
       <hidden>0</hidden>
       <locked>0</locked>
       <locktime>0</locktime>
       <needsupdate>0</needsupdate>
-      <timecreated>1615156270</timecreated>
-      <timemodified>1615156270</timemodified>
+      <timecreated>1626593111</timecreated>
+      <timemodified>1626593111</timemodified>
       <grade_grades>
       </grade_grades>
     </grade_item>

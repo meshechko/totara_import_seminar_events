@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <moodle_backup>
   <information>
-    <name>backup-totara-activity-14283-facetoface14283-20210616-2301-nu.mbz</name>
+    <name>backup-totara-activity-facetoface.mbz</name>
     <moodle_version>2017051509</moodle_version>
     <moodle_release>3.3.9 (Build: 20181112)</moodle_release>
     <totara_version>12.30</totara_version>
@@ -9,22 +9,22 @@
     <totara_release>12.30 (Build: 20210428.00)</totara_release>
     <backup_version>2017051500</backup_version>
     <backup_release>3.3</backup_release>
-    <backup_date>1623841262</backup_date>
+    <backup_date>1626593199</backup_date>
     <mnet_remoteusers>0</mnet_remoteusers>
     <include_files>1</include_files>
     <include_file_references_to_external_content>0</include_file_references_to_external_content>
-    <original_wwwroot>https://healthlearn.haunt.digital</original_wwwroot>
-    <original_site_identifier_hash>4503e41bc9f334bb4fc9013e8bf87955</original_site_identifier_hash>
-    <original_course_id>399</original_course_id>
+    <original_wwwroot>https://totara.pythonanywhere.com</original_wwwroot>
+    <original_site_identifier_hash>4503e41bc9f334bb4fc9013e8bf48391</original_site_identifier_hash>
+    <original_course_id>758</original_course_id>
     <original_course_format>topics</original_course_format>
-    <original_course_fullname>Youth in Hospital  </original_course_fullname>
-    <original_course_shortname>RGCH006</original_course_shortname>
-    <original_course_startdate>1476874800</original_course_startdate>
+    <original_course_fullname>COURSE NAME</original_course_fullname>
+    <original_course_shortname>COURSE_SHORT_NAME</original_course_shortname>
+    <original_course_startdate>1529928000</original_course_startdate>
     <original_course_enddate>0</original_course_enddate>
-    <original_course_contextid>41446</original_course_contextid>
+    <original_course_contextid>107473</original_course_contextid>
     <original_system_contextid>1</original_system_contextid>
     <details>
-      <detail backup_id="f86c9db7f7450f785642b04533743315">
+      <detail backup_id="3d44dc5ffebde75d30b0f689c07d1d44">
         <type>activity</type>
         <format>moodle2</format>
         <interactive>1</interactive>
@@ -36,11 +36,11 @@
     <contents>
       <activities>
         <activity>
-          <moduleid>14283</moduleid>
-          <sectionid>3905</sectionid>
+          <moduleid>14350</moduleid>
+          <sectionid>7302</sectionid>
           <modulename>facetoface</modulename>
-          <title>Weekly handover</title>
-          <directory>activities/facetoface_14283</directory>
+          <title>SEMINAR ACTIVITY</title>
+          <directory>activities/facetoface_14350</directory>
         </activity>
       </activities>
     </contents>
@@ -48,7 +48,7 @@
       <setting>
         <level>root</level>
         <name>filename</name>
-        <value>backup-totara-activity-14283-facetoface14283-20210616-2301-nu.mbz</value>
+        <value>backup-totara-activity-facetoface.mbz</value>
       </setting>
       <setting>
         <level>root</level>
@@ -73,12 +73,12 @@
       <setting>
         <level>root</level>
         <name>blocks</name>
-        <value>1</value>
+        <value>0</value>
       </setting>
       <setting>
         <level>root</level>
         <name>filters</name>
-        <value>1</value>
+        <value>0</value>
       </setting>
       <setting>
         <level>root</level>
@@ -127,14 +127,14 @@
       </setting>
       <setting>
         <level>activity</level>
-        <activity>facetoface_14283</activity>
-        <name>facetoface_14283_included</name>
+        <activity>facetoface_14350</activity>
+        <name>facetoface_14350_included</name>
         <value>1</value>
       </setting>
       <setting>
         <level>activity</level>
-        <activity>facetoface_14283</activity>
-        <name>facetoface_14283_userinfo</name>
+        <activity>facetoface_14350</activity>
+        <name>facetoface_14350_userinfo</name>
         <value>0</value>
       </setting>
     </settings>
