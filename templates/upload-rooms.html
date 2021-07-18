@@ -6,13 +6,13 @@ content %}
    <div class="col-md-8 px-0">
       <large class="text-muted fw-light d-block">Step 1 (optional)</large>
       <h1 class="display-4">Upload rooms</h1>
-      <p class="fs-5 text-muted">Upload csv file with your Totra instance room details. Ensure that csv has the following headings: id, name, description, capacity, allowconflicts, building, location
+      <p class="fs-5 text-muted">Upload CSV file with your Totra instance room details. Ensure that CSV has the following headings: {{ required_headings }}
       </p>
-      <p class="fs-5 text-muted">Below I have added a quick guide how to create this report and generate csv file with rooms in Totara.</p>
+      <p class="fs-5 text-muted">Below there's a quick guide how to create this report and generate CSV file with rooms in Totara.</p>
       <div>
          <form method="POST" action="" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
-            {{ form.file.label }} {{ form.file(class="form-control mb-3 btn btn-lg btn-light") }}
+            {{ form.file(class="form-control mb-3 btn btn-lg btn-light") }}
 		 <div class="btn-group w-100">
             {{ form.submit(class="btn btn-lg btn-primary active") }}<a class="btn btn-lg btn-outline-light"  href="{{ url_for('upload_backup') }}">Go to next step</a>
 			 </div>
@@ -38,7 +38,7 @@ content %}
    <li class="list-group-item">Go to Reports.</li>
    <li class="list-group-item">Click on "Create report.</li>
    <li class="list-group-item">Enter report name, select source - "Seminar Rooms" and click "Create report" button.</li>
-   <li class="list-group-item">Add all required columns and customise their headings as per screenshot: id, name, description, capacity, allowconflicts, building, location</li>
+   <li class="list-group-item">Add all required columns and customise their headings as following: {{ required_headings }}</li>
    <li class="list-group-item">Open this report</li>
    <li class="list-group-item">Export report as csv file</li>
 </ol>

@@ -162,7 +162,7 @@ def delete_sessions_set():
 def upload_rooms():
     checkUserSession()
     form = UploadRooms()
-    requiredHeaders = models.requiredHeaders
+    required_headings = ', '.join(models.requiredHeaders)
     if request.method == 'POST' and form.validate():
         CSV = form.file.data
         rooms_list = models.covertCsvToList(CSV)
@@ -170,9 +170,9 @@ def upload_rooms():
             models.saveToJsonFile(rooms_list, "rooms")
             flash(f'Successfully upladed {len(models.getFromJsonFile("rooms"))} rooms', 'success')
         else:
-            flash('Please upload CSV that contains the following headers: \n id, name, description, capacity, allowconflicts, building, location', 'danger')
+            flash(f'Please upload CSV that contains the following headers: \n { required_headings }', 'danger')
         return redirect(url_for('upload_rooms'))
-    return render_template('upload-rooms.html', form=form, requiredHeaders=requiredHeaders)
+    return render_template('upload-rooms.html', form=form, required_headings=required_headings)
 
 
 @app.route('/upload-backup', methods=['POST', 'GET'])
