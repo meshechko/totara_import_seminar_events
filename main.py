@@ -195,7 +195,7 @@ def upload_backup():
             else:
                 flash(f'Incorrect backup', 'danger')
         else:
-            flash('Upload the correct Totara activity backup that ends with .mbz. Scroll down to see a guide how to create Seminar activity backup with custom fields.', 'danger')
+            flash('Upload the correct Totara activity backup that ends with .mbz. Scroll down to see a guide on how to create a Seminar activity backup with custom fields.', 'danger')
         return redirect(url_for('upload_backup'))
     xmldata = models.readXml()
     return render_template('upload-backup.html', form=form, xmldata=xmldata)
