@@ -115,12 +115,13 @@ def create_recurring_events():
                 normal_cost=normal_cost)
 
             sessions = models.getFromJsonFile("sessions")
-            
+            print("len(generated_session):" + str(len(generated_session)))
             if len(generated_session) > 0:
                 sessions.append(generated_session)
+                flash(f'{ len(recurring_dates) } events have been successfully generated.', 'success')
             
             models.saveToJsonFile(sessions, "sessions")
-            flash(f'{ len(recurring_dates) } events have been successfully generated.', 'success')
+            
             return redirect(url_for('create_recurring_events'))
         else:
             flash(f'You have requested to many events. Maximum number of events you can create is { max_generated_events }.', 'danger')
@@ -128,7 +129,6 @@ def create_recurring_events():
     else:
         session_sets = []
         session_sets = models.getFromJsonFile("sessions")
-        flash(f'Ooop, something went wrong. Please fix the error below.', 'danger')
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 @app.route('/download', methods=['GET','POST'])
