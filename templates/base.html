@@ -35,7 +35,7 @@
 
           {% for href, id, caption, superscript in navigation_bar %}
           <a class="me-3 py-2 px-3 text-dark text-decoration-none {% if id == active_page %} active{% endif
-            %}" href="{{ url_for( href|e ) }}"><small class="text-muted fw-light d-block">{{ superscript|safe }}</small>{{ caption|e }}</a>
+            %}" href="{{ url_for( href|e ) }}"><small class="d-none text-muted fw-light d-block">{{ superscript|safe }}</small>{{ caption|e }}</a>
           {% endfor %}
           </nav>
         </div>
