@@ -4,6 +4,7 @@
 {% block content %}
 <div class="row g-5">
   <div class="col-md-12">
+    <form id="clear-all" method="POST" action="clear-all" onSubmit="return confirm('Are you sure you wish to clear everything and start over again?');"></form>
     <form id="delete-backup" method="POST" action="delete-backup" onSubmit="return confirm('Are you sure you wish to delete your backup file?');"></form>
     <form id="delete-rooms" method="POST" action="delete-rooms" onSubmit="return confirm('Are you sure you wish to delete your rooms?');"></form>
     <form class="needs-validation" method="POST" action="" novalidate="">
@@ -11,6 +12,8 @@
       <div class="row g-3">
         <div class="col-md-6">
           <h4 class="mb-3">Event details</h4>
+          <button type="hidden" class="btn pt-0 pb-0" form="clear-all" data-toggle="tooltip" data-placement="top" title="Clear all and start again">Clear all<i class="bi bi-trash"></i></button>
+
           <div class="row mb-5">
             
             {% if custom_fields|length > 0 %}
