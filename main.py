@@ -49,6 +49,7 @@ def create_recurring_events():
     rooms = models.getFromJsonFile("rooms")
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
+    max_generated_events = 500
     if request.method == 'POST' and form.validate_on_submit():
         for field in custom_fields:
             try:
@@ -85,34 +86,46 @@ def create_recurring_events():
         send_capacity_email_cutoff_timeunit = form.send_capacity_email_cutoff_timeunit.data
         normal_cost = form.normal_cost.data
 
-        generated_session = models.generate_recurring_sessions(
-            custom_fields_data=custom_fields, 
-            details=details, 
-            timestart=timestart, 
-            timefinish=timefinish, 
-            room_id=room_id, 
-            capacity=capacity, 
+        recurring_dates = models.generateRecurringDates(
             datestart=datestart, 
             datefinish=datefinish, 
             frequency=frequency, 
             occurrence_number=occurrence_number, 
             days_of_week=days_of_week, 
-            interval=interval, 
-            allow_overbook=allow_overbook, 
-            allow_cancellations=allow_cancellations, 
-            cancellation_cutoff_number=cancellation_cutoff_number, 
-            cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, 
-            min_capacity=min_capacity, 
-            send_capacity_email=send_capacity_email, 
-            send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,
-            send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,
-            normal_cost=normal_cost)
+            interval=interval)
 
-        sessions = models.getFromJsonFile("sessions")
-        if len(generated_session) > 0:
-            sessions.append(generated_session)
-        models.saveToJsonFile(sessions, "sessions")
-        return redirect(url_for('create_recurring_events'))
+        if (len(recurring_dates) + models.countGeneratedEvents()) <= max_generated_events:
+
+            generated_session = models.generate_recurring_sessions(
+                custom_fields_data=custom_fields, 
+                details=details, 
+                timestart=timestart, 
+                timefinish=timefinish, 
+                room_id=room_id, 
+                capacity=capacity, 
+                recurring_dates=recurring_dates,
+                allow_overbook=allow_overbook, 
+                allow_cancellations=allow_cancellations, 
+                cancellation_cutoff_number=cancellation_cutoff_number, 
+                cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, 
+                min_capacity=min_capacity, 
+                send_capacity_email=send_capacity_email, 
+                send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,
+                send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,
+                normal_cost=normal_cost)
+
+            sessions = models.getFromJsonFile("sessions")
+            print("len(generated_session):" + str(len(generated_session)))
+            if len(generated_session) > 0:
+                sessions.append(generated_session)
+                flash(f'{ len(recurring_dates) } events have been successfully generated.', 'success')
+            
+            models.saveToJsonFile(sessions, "sessions")
+            
+            return redirect(url_for('create_recurring_events'))
+        else:
+            flash(f'You have requested to many events. Maximum number of events you can create is { max_generated_events }.', 'danger')
+            return redirect(url_for('create_recurring_events'))
     else:
         session_sets = []
         session_sets = models.getFromJsonFile("sessions")
