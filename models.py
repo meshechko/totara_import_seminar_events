@@ -161,11 +161,8 @@ def readXml(xml_attribs=True):
 
 # "DTSTART:20210902T090000 RRULE:FREQ=WEEKLY;COUNT=5;INTERVAL=10;UNTIL=20230102T090000"
 
-
-def generate_recurring_sessions(custom_fields_data, details, timestart, timefinish, room_id, capacity, datestart, datefinish, frequency, occurrence_number, days_of_week, interval, allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number, send_capacity_email_cutoff_timeunit, normal_cost):
+def generateRecurringDates(datestart, datefinish,frequency, occurrence_number, days_of_week, interval):
     recurance_data = []
-
-    sessions = []
     # String builder - https://jakubroztocil.github.io/rrule/
     occurrence_number = occurrence_number
     if frequency == "WEEKLY":
@@ -188,6 +185,13 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
     recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
 
     dates = list(rrulestr(recurrance_data_string))
+    return dates
+
+def generate_recurring_sessions(recurring_dates, custom_fields_data, details, timestart, timefinish, room_id, capacity,  allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number, send_capacity_email_cutoff_timeunit, normal_cost):
+
+
+    sessions = []
+    
     if room_id != None:
         room = next((item for item in getFromJsonFile("rooms") if item['id'] == room_id), None)
         room = {
@@ -237,7 +241,7 @@ def generate_recurring_sessions(custom_fields_data, details, timestart, timefini
         }
         all_custom_fields.append(field_dict)
 
-    for date in dates:
+    for date in recurring_dates:
         start = f"{ str(date.date()) } { timestart }"
         start = int(datetime.strptime(start, '%Y-%m-%d %H:%M').timestamp())
         finish = f"{ str(date.date()) } { timefinish }"
