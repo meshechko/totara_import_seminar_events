@@ -3,21 +3,17 @@
     $('[data-toggle="tooltip"]').tooltip()
   })
 
-  window.addEventListener(
-    "scroll",
-    function () {
-      //When scroll change, you save it on localStorage.
-      localStorage.setItem("scrollPosition", window.scrollY);
-    },
-    false
-  );
-  
-  window.addEventListener(
-    "load",
-    function () {
-      if (localStorage.getItem("scrollPosition") !== null)
-        window.scrollTo(0, localStorage.getItem("scrollPosition"));
-    },
-    false
-  );
+var page_y = $( document ).scrollTop();
+window.location.href = window.location.href + '?page_y=' + page_y;
+
+$(function() {
+    if ( window.location.href.indexOf( 'page_y' ) != -1 ) {
+        //gets the number from end of url
+        var match = window.location.href.split('?')[1].match( /\d+$/ );
+        var page_y = match[0];
+
+        //sets the page offset 
+        $( 'html, body' ).scrollTop( page_y );
+    }
+});
   
