@@ -334,5 +334,6 @@ def copyDefaultToUserFolder():
 
 def appendEventsToXml():
     facetoface_dict = readXml()
+    #TODO currenty it doenst work if xml from backup doesnt have any events. Address this later
     facetoface_dict["activity"]["facetoface"]["sessions"]["session"] = sum(getFromJsonFile("sessions"),[]) # sum is required to merge multiple sets of generated events into one set to ensure each session is properly printed in <sessions> xml tag
     return facetoface_dict

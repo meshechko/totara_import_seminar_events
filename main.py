@@ -137,7 +137,7 @@ def download():
     # events = "Nothing is here"
     #sum(listoflists,[]) #TODO add this to merge list of lists for events
     events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
-    if request.method == 'POST':
+    if request.method == 'POST': #TODO add validation if user is trying to click download when there are no events generated (e.g. user deleted events in one browser tab and then goes to another tab and tries to download file with 0 events)
         
         # events = models.appendEventsToXml()
         events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
