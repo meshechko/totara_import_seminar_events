@@ -2,16 +2,6 @@
 {% set active_page = "create-recurring-events" %}
 {% block title %}Create event recurrance{% endblock title %}
 {% block content %}
-
-  {% for category, message in get_flashed_messages(with_categories=True) %}
-<div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
-  {{ message }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-
-  {% endfor %} 
-
 <div class="row g-5">
   <div class="col-md-12">
     <form id="delete-backup" method="POST" action="delete-backup" onSubmit="return confirm('Are you sure you wish to delete your backup file?');"></form>
@@ -299,6 +289,14 @@
           <div class="row">
           {{ form.submit() }} 
         </div>
+           {% for category, message in get_flashed_messages(with_categories=True) %}
+          <div class="row mt-3">
+            <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          </div>
+        {% endfor %} 
         </div>
       </div>
 
