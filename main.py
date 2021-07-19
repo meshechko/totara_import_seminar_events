@@ -85,37 +85,48 @@ def create_recurring_events():
         send_capacity_email_cutoff_timeunit = form.send_capacity_email_cutoff_timeunit.data
         normal_cost = form.normal_cost.data
 
-        generated_session = models.generate_recurring_sessions(
-            custom_fields_data=custom_fields, 
-            details=details, 
-            timestart=timestart, 
-            timefinish=timefinish, 
-            room_id=room_id, 
-            capacity=capacity, 
+        recurring_dates = models.generateRecurringDates(
             datestart=datestart, 
             datefinish=datefinish, 
             frequency=frequency, 
             occurrence_number=occurrence_number, 
             days_of_week=days_of_week, 
-            interval=interval, 
-            allow_overbook=allow_overbook, 
-            allow_cancellations=allow_cancellations, 
-            cancellation_cutoff_number=cancellation_cutoff_number, 
-            cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, 
-            min_capacity=min_capacity, 
-            send_capacity_email=send_capacity_email, 
-            send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,
-            send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,
-            normal_cost=normal_cost)
+            interval=interval)
 
-        sessions = models.getFromJsonFile("sessions")
-        if len(generated_session) > 0:
-            sessions.append(generated_session)
-        models.saveToJsonFile(sessions, "sessions")
-        return redirect(url_for('create_recurring_events'))
+        if (len(recurring_dates) + models.countGeneratedEvents()) < 500:
+            generated_session = models.generate_recurring_sessions(
+                custom_fields_data=custom_fields, 
+                details=details, 
+                timestart=timestart, 
+                timefinish=timefinish, 
+                room_id=room_id, 
+                capacity=capacity, 
+                recurring_dates=recurring_dates,
+                allow_overbook=allow_overbook, 
+                allow_cancellations=allow_cancellations, 
+                cancellation_cutoff_number=cancellation_cutoff_number, 
+                cancellation_cutoff_timeunit=cancellation_cutoff_timeunit, 
+                min_capacity=min_capacity, 
+                send_capacity_email=send_capacity_email, 
+                send_capacity_email_cutoff_number=send_capacity_email_cutoff_number,
+                send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,
+                normal_cost=normal_cost)
+
+            sessions = models.getFromJsonFile("sessions")
+            
+            if len(generated_session) > 0:
+                sessions.append(generated_session)
+            
+            models.saveToJsonFile(sessions, "sessions")
+            flash(f'{ len(recurring_dates) } events have been successfully generated.', 'success')
+            return redirect(url_for('create_recurring_events'))
+        else:
+            flash(f'You have requested to many events. Maximum number of events you can create is 500.', 'danger')
+            return redirect(url_for('create_recurring_events'))
     else:
         session_sets = []
         session_sets = models.getFromJsonFile("sessions")
+        
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 @app.route('/download', methods=['GET','POST'])
