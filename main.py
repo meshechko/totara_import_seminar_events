@@ -49,6 +49,7 @@ def create_recurring_events():
     rooms = models.getFromJsonFile("rooms")
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
+    max_generated_events = 500
     if request.method == 'POST' and form.validate_on_submit():
         for field in custom_fields:
             try:
@@ -93,7 +94,8 @@ def create_recurring_events():
             days_of_week=days_of_week, 
             interval=interval)
 
-        if (len(recurring_dates) + models.countGeneratedEvents()) < 500:
+        if (len(recurring_dates) + models.countGeneratedEvents()) <= max_generated_events:
+
             generated_session = models.generate_recurring_sessions(
                 custom_fields_data=custom_fields, 
                 details=details, 
@@ -121,12 +123,12 @@ def create_recurring_events():
             flash(f'{ len(recurring_dates) } events have been successfully generated.', 'success')
             return redirect(url_for('create_recurring_events'))
         else:
-            flash(f'You have requested to many events. Maximum number of events you can create is 500.', 'danger')
+            flash(f'You have requested to many events. Maximum number of events you can create is { max_generated_events }.', 'danger')
             return redirect(url_for('create_recurring_events'))
     else:
         session_sets = []
         session_sets = models.getFromJsonFile("sessions")
-        
+        flash(f'Ooop, something went wrong. Please fix the error below.', 'danger')
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
 @app.route('/download', methods=['GET','POST'])
