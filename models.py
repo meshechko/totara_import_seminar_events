@@ -327,8 +327,13 @@ def getCustomFieldsFromXML(file):
 
 def copyDefaultToUserFolder():
     seminarFolder = getSeminarFolder(session["userID"])
+    # print(f'len(os.listdir(seminarFolder) ) == 0: {len(os.listdir(seminarFolder) ) == 0}')
     if path.exists(seminarFolder) == False:
         shutil.copytree(UPLOAD_FOLDER + "default/seminar/", seminarFolder)
+    elif len(os.listdir(seminarFolder) ) == 0:
+        shutil.rmtree(seminarFolder)
+        shutil.copytree(UPLOAD_FOLDER + "default/seminar/", seminarFolder)
+        
     return True
 
 

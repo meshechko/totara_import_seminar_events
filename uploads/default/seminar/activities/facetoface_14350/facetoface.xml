@@ -682,40 +682,8 @@ Location: [session:room:cf_location]&lt;br /&gt;
 				<discountcost>0</discountcost>
 				<allowcancellations>1</allowcancellations>
 				<cancellationcutoff>0</cancellationcutoff>
-				<timecreated>1626689234</timecreated>
-				<timemodified>1626689234</timemodified>
-				<usermodified></usermodified>
-				<selfapproval>0</selfapproval>
-				<mincapacity>0</mincapacity>
-				<cutoff>0</cutoff>
-				<sendcapacityemail>0</sendcapacityemail>
-				<registrationtimestart>0</registrationtimestart>
-				<registrationtimefinish>0</registrationtimefinish>
-				<cancelledstatus>0</cancelledstatus>
-				<session_roles></session_roles>
-				<custom_fields></custom_fields>
-				<sessioncancel_fields></sessioncancel_fields>
-				<signups></signups>
-				<sessions_dates>
-					<sessions_date id="">
-						<sessiontimezone></sessiontimezone>
-						<timestart>1626656400</timestart>
-						<timefinish>1626660000</timefinish>
-						<assets></assets>
-					</sessions_date>
-				</sessions_dates>
-			</session>
-			<session id="">
-				<capacity>10</capacity>
-				<allowoverbook>0</allowoverbook>
-				<waitlisteveryone>0</waitlisteveryone>
-				<details></details>
-				<normalcost>0</normalcost>
-				<discountcost>0</discountcost>
-				<allowcancellations>1</allowcancellations>
-				<cancellationcutoff>0</cancellationcutoff>
-				<timecreated>1626689234</timecreated>
-				<timemodified>1626689234</timemodified>
+				<timecreated>1626727247</timecreated>
+				<timemodified>1626727247</timemodified>
 				<usermodified></usermodified>
 				<selfapproval>0</selfapproval>
 				<mincapacity>0</mincapacity>
@@ -746,8 +714,8 @@ Location: [session:room:cf_location]&lt;br /&gt;
 				<discountcost>0</discountcost>
 				<allowcancellations>1</allowcancellations>
 				<cancellationcutoff>0</cancellationcutoff>
-				<timecreated>1626689234</timecreated>
-				<timemodified>1626689234</timemodified>
+				<timecreated>1626727247</timecreated>
+				<timemodified>1626727247</timemodified>
 				<usermodified></usermodified>
 				<selfapproval>0</selfapproval>
 				<mincapacity>0</mincapacity>
@@ -763,8 +731,8 @@ Location: [session:room:cf_location]&lt;br /&gt;
 				<sessions_dates>
 					<sessions_date id="">
 						<sessiontimezone></sessiontimezone>
-						<timestart>1626915600</timestart>
-						<timefinish>1626919200</timefinish>
+						<timestart>1626829200</timestart>
+						<timefinish>1626832800</timefinish>
 						<assets></assets>
 					</sessions_date>
 				</sessions_dates>
@@ -778,8 +746,8 @@ Location: [session:room:cf_location]&lt;br /&gt;
 				<discountcost>0</discountcost>
 				<allowcancellations>1</allowcancellations>
 				<cancellationcutoff>0</cancellationcutoff>
-				<timecreated>1626689234</timecreated>
-				<timemodified>1626689234</timemodified>
+				<timecreated>1626727247</timecreated>
+				<timemodified>1626727247</timemodified>
 				<usermodified></usermodified>
 				<selfapproval>0</selfapproval>
 				<mincapacity>0</mincapacity>
@@ -810,8 +778,8 @@ Location: [session:room:cf_location]&lt;br /&gt;
 				<discountcost>0</discountcost>
 				<allowcancellations>1</allowcancellations>
 				<cancellationcutoff>0</cancellationcutoff>
-				<timecreated>1626689234</timecreated>
-				<timemodified>1626689234</timemodified>
+				<timecreated>1626727247</timecreated>
+				<timemodified>1626727247</timemodified>
 				<usermodified></usermodified>
 				<selfapproval>0</selfapproval>
 				<mincapacity>0</mincapacity>
@@ -842,8 +810,8 @@ Location: [session:room:cf_location]&lt;br /&gt;
 				<discountcost>0</discountcost>
 				<allowcancellations>1</allowcancellations>
 				<cancellationcutoff>0</cancellationcutoff>
-				<timecreated>1626689234</timecreated>
-				<timemodified>1626689234</timemodified>
+				<timecreated>1626727247</timecreated>
+				<timemodified>1626727247</timemodified>
 				<usermodified></usermodified>
 				<selfapproval>0</selfapproval>
 				<mincapacity>0</mincapacity>
@@ -859,8 +827,8 @@ Location: [session:room:cf_location]&lt;br /&gt;
 				<sessions_dates>
 					<sessions_date id="">
 						<sessiontimezone></sessiontimezone>
-						<timestart>1627520400</timestart>
-						<timefinish>1627524000</timefinish>
+						<timestart>1627434000</timestart>
+						<timefinish>1627437600</timefinish>
 						<assets></assets>
 					</sessions_date>
 				</sessions_dates>
