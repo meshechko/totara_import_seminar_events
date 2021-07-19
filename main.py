@@ -226,3 +226,9 @@ def delete_rooms():
     if request.method == 'POST':
         os.remove(models.getUserFolder(session["userID"])+'/rooms.json')
     return redirect(url_for('create_recurring_events'))
+
+@app.route('/clear-all', methods=['POST'])
+def clear_all():
+    if request.method == 'POST':
+        session.pop(session["userID"], None)
+    return redirect(url_for('create_recurring_events'))
