@@ -11,9 +11,14 @@
       {{ form.hidden_tag() }}
       <div class="row g-3">
         <div class="col-md-6">
-          <h4 class="mb-3">Event details</h4>
-          <button type="hidden" class="btn pt-0 pb-0" form="clear-all" data-toggle="tooltip" data-placement="top" title="Clear all and start again">Clear all<i class="bi bi-trash"></i></button>
-
+          <div class="row">
+            <div class="col-md-8">
+              <h4 class="mb-3">Event details</h4>
+            </div>
+            <div class="col-md-4 text-end">
+              <button type="hidden" class="btn btn-outline-secondary" form="clear-all" data-toggle="tooltip" data-placement="top" title="Clear all and start over again"><i class="bi bi-trash mr-1"></i>Clear all</button>
+            </div>
+            </div>
           <div class="row mb-5">
             
             {% if custom_fields|length > 0 %}
