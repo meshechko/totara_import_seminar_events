@@ -4,6 +4,10 @@ nav .active{
     border-radius: 14px;
 }
 
+nav a:hover{
+    color:#CE412D !important;
+}
+
 .flatpickr-wrapper{
     width:100%;
 }
