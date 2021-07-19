@@ -49,7 +49,7 @@ def create_recurring_events():
     rooms = models.getFromJsonFile("rooms")
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
-    max_generated_events = 500
+    max_generated_events = 1000
     if request.method == 'POST' and form.validate_on_submit():
         for field in custom_fields:
             try:
@@ -115,7 +115,7 @@ def create_recurring_events():
                 normal_cost=normal_cost)
 
             sessions = models.getFromJsonFile("sessions")
-            print("len(generated_session):" + str(len(generated_session)))
+
             if len(generated_session) > 0:
                 sessions.append(generated_session)
                 flash(f'{ len(recurring_dates) } events have been successfully generated.', 'success')
