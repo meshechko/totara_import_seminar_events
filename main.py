@@ -230,5 +230,5 @@ def delete_rooms():
 @app.route('/clear-all', methods=['POST'])
 def clear_all():
     if request.method == 'POST':
-        session.pop(session["userID"], None)
+        session.pop("userID", None)
     return redirect(url_for('create_recurring_events'))
