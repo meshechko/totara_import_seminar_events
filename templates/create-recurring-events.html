@@ -325,7 +325,7 @@
 
     {% for sessions in session_sets %}
     {% set set_index = loop.index %}
-    <table class="table">
+    <table class="table" id="recurrence-{{ loop.index }}">
       <thead>
         <tr>
           <th>Custom fields</th>
