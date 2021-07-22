@@ -118,7 +118,7 @@ def create_recurring_events():
 
             if len(generated_session) > 0:
                 sessions.append(generated_session)
-                flash(f'<span class="btn btn-link p-0" data-tableid="recurrence-{ (len(sessions) -1) }" onclick="scrollSmoothTo(this.getAttribute(\'data-tableid\'));">{ len(recurring_dates) } events</span> have been successfully generated.', 'success')
+                flash(f'<span class="btn btn-link p-0 align-baseline" data-tableid="recurrence-{ (len(sessions) -1) }" onclick="scrollSmoothTo(this.getAttribute(\'data-tableid\'));">{ len(recurring_dates) } events</span> have been successfully generated.', 'success')
             
             models.saveToJsonFile(sessions, "sessions")
             
