@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, Markup
+from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file
 import models
 from forms import UploadBackup, UploadRooms, CreateEventForm
 import random
@@ -118,7 +118,7 @@ def create_recurring_events():
 
             if len(generated_session) > 0:
                 sessions.append(generated_session)
-                flash(Markup(f'{ len(recurring_dates) } events have been successfully generated. <a href="#recurrence-{ (len(generated_session) -1) }">Click here</a> to view', 'success'))
+                flash(f'{ len(recurring_dates) } events have been successfully generated. <a href="#recurrence-{ (len(generated_session) - 1) }">Click here</a> to view', 'success')
             
             models.saveToJsonFile(sessions, "sessions")
             
