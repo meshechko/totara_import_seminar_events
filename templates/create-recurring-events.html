@@ -481,6 +481,14 @@ send_capacity_email.addEventListener("change", send_email_capacity_fields);
 
 
 });
+  
+function scrollSmoothTo(elementId) {
+  var element = document.getElementById(elementId);
+  element.scrollIntoView({
+    block: 'start',
+    behavior: 'smooth'
+  });
+}
 
 </script>
 {% endblock %}
