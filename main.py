@@ -171,8 +171,8 @@ def delete_sessions_set():
         return redirect(url_for('create_recurring_events'))
     return render_template('create-recurring-events.html')
 
-@app.route('/upload-rooms', methods=['POST', 'GET'])
-def upload_rooms():
+@app.route('/add-rooms', methods=['POST', 'GET'])
+def add_rooms():
     checkUserSession()
     form = UploadRooms()
     required_headings = ', '.join(models.requiredHeaders)
@@ -185,7 +185,7 @@ def upload_rooms():
         else:
             flash(f'Please upload CSV that contains the following headers: \n { required_headings }', 'danger')
         return redirect(url_for('upload_rooms'))
-    return render_template('upload-rooms.html', form=form, required_headings=required_headings)
+    return render_template('add-rooms.html', form=form, required_headings=required_headings)
 
 
 @app.route('/upload-backup', methods=['POST', 'GET'])
