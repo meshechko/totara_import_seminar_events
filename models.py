@@ -125,7 +125,6 @@ def getf2fxml():
         userActivitiesFolder) if f.is_dir()]
     for folder in list(subfolders):
         if "facetoface" in folder:
-            print(folder+"/facetoface.xml")
             return folder+"/facetoface.xml"
 
 def saveToF2fXml(data):
@@ -312,8 +311,8 @@ def countGeneratedEvents():
 
 def getCustomFieldsFromXML(file):
     custom_fields = []
-    sessions = file["activity"]["facetoface"]["sessions"]
     try:
+        sessions = file["activity"]["facetoface"]["sessions"]
         # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
         if isinstance(sessions, list):
             custom_fields = sessions[0]["custom_fields"]["custom_field"]
@@ -324,13 +323,12 @@ def getCustomFieldsFromXML(file):
     return custom_fields
 
 def getSessionsFromXML(file):
-    sessions = file["activity"]["facetoface"]["sessions"]
+    sessions = []
     try:
+        sessions = file["activity"]["facetoface"]["sessions"]["session"]
         # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
-        if isinstance(sessions, list):
-            sessions = sessions[0]
-        else:
-            sessions = sessions["session"]
+        if isinstance(sessions, list) == False:
+            sessions = [sessions]
     except:
         sessions = []
     return sessions

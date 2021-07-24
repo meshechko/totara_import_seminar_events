@@ -207,6 +207,7 @@ def upload_backup():
                     sessions = models.getFromJsonFile("sessions")
                     sessions.insert(0, backup_sessions)
                     models.saveToJsonFile(sessions, "sessions")
+             
                 flash(f'Backup file uploaded successfully', 'success')
             else:
                 flash(f'Incorrect backup', 'danger')
