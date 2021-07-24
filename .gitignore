@@ -10,3 +10,4 @@ workspace.code-workspace
 
 uploads/*
 !uploads/default
+.DS_Store

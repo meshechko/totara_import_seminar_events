@@ -276,14 +276,13 @@ def generate_recurring_sessions(recurring_dates, custom_fields_data, details, ti
             'custom_fields': all_custom_fields,
             # TODO add value from backup uploaded by the user in the fufure
             'sessioncancel_fields': None,
-            'signups': None,  # TODO add value from backup uploaded by the user in the fufure
+            'signups': None,  
             "sessions_dates": {
                 "sessions_date": {
                     "@id": "",
-                    "sessiontimezone": "",  # TODO do we need timezone or Totara add it automatically?
+                    "sessiontimezone": "99",  # TODO do we need timezone or Totara add it automatically?
                     "timestart": str(start),
                     "timefinish": str(finish),
-                    
                     "assets": None,
                 }
             }
@@ -323,6 +322,18 @@ def getCustomFieldsFromXML(file):
     except:
         custom_fields = []
     return custom_fields
+
+def getSessionsFromXML(file):
+    sessions = file["activity"]["facetoface"]["sessions"]
+    try:
+        # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
+        if isinstance(sessions, list):
+            sessions = sessions[0]
+        else:
+            sessions = sessions["session"]
+    except:
+        sessions = []
+    return sessions
 
 
 def copyDefaultToUserFolder():

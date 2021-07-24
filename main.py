@@ -131,20 +131,23 @@ def create_recurring_events():
         session_sets = models.getFromJsonFile("sessions")
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
 
-@app.route('/download', methods=['GET','POST'])
+@app.route('/download', methods=['POST'])
 def download():
     models.copyDefaultToUserFolder()
     # events = "Nothing is here"
     #sum(listoflists,[]) #TODO add this to merge list of lists for events
     events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
     if request.method == 'POST': #TODO add validation if user is trying to click download when there are no events generated (e.g. user deleted events in one browser tab and then goes to another tab and tries to download file with 0 events)
-        
-        # events = models.appendEventsToXml()
-        events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
-        models.saveToF2fXml(events)
-        models.zipGeneratedSessions()
-        userFolder = models.getUserFolder(session["userID"])+"/"
-        return send_file(f"{userFolder}{models.GENERATED_ZIP_BACKUP_FILE_NAME}")
+        if models.countGeneratedEvents() > 0:
+            # events = models.appendEventsToXml()
+            # events = xmltodict.unparse(models.appendEventsToXml(), pretty=True)
+            models.saveToF2fXml(events)
+            models.zipGeneratedSessions()
+            userFolder = models.getUserFolder(session["userID"])+"/"
+            return send_file(f"{userFolder}{models.GENERATED_ZIP_BACKUP_FILE_NAME}")
+        else:
+            flash(f"Ooops, looks like you don't have any events. Create some events first and try to downlad again.", 'danger')
+            return redirect(url_for('create_recurring_events'))
     return render_template('download.html', events=events)
 
 @app.route('/delete-session', methods=['POST'])
@@ -184,7 +187,7 @@ def add_rooms():
             flash(f'Successfully upladed {len(models.getFromJsonFile("rooms"))} rooms', 'success')
         else:
             flash(f'Please upload CSV that contains the following headers: \n { required_headings }', 'danger')
-        return redirect(url_for('upload_rooms'))
+        return redirect(url_for('add_rooms'))
     return render_template('add-rooms.html', form=form, required_headings=required_headings)
 
 
@@ -194,16 +197,16 @@ def upload_backup():
     form = UploadBackup()
     
     if request.method == 'POST':
-        
         file = form.file.data
         if models.validateBackup(file):
             if models.unzipBackup(file):
                 #TODO think if its necessary to import exisitng backup or it will just complicate things. Maybe this app should b used for creatin new sessions only rather than modifying exisitng ones.
-                # facetoface_dict = models.readXml()
-                # facetoface_dict = facetoface_dict["activity"]["facetoface"]["sessions"]['session']
-                # sessions = models.getFromJsonFile("sessions")
-                # sessions.insert(0, facetoface_dict)
-                # models.saveToJsonFile(sessions, "sessions")
+                facetoface_dict = models.readXml()
+                backup_sessions = models.getSessionsFromXML(facetoface_dict)
+                if len(backup_sessions) > 0:
+                    sessions = models.getFromJsonFile("sessions")
+                    sessions.insert(0, backup_sessions)
+                    models.saveToJsonFile(sessions, "sessions")
                 flash(f'Backup file uploaded successfully', 'success')
             else:
                 flash(f'Incorrect backup', 'danger')
