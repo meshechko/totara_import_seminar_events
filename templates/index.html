@@ -48,12 +48,74 @@
    </div>
    
 </div>
-<h2 class="display-6 text-center mb-4">Limitations of this tool</h2>
-<ol class="list-group list-group-numbered">
-   <li class="list-group-item">You can generate only events with one session. If there's a need I'm happy to add functionality to generate multiple sessions for one event. Email me at olexiycdhb@gmail.com.</li>
-   <li class="list-group-item">Only "text" type custom fields are supported. And again, if there's a need to include other field types, I'm happy to work on it. Email your requests to olexiycdhb@gmail.com.</li>
-   <li class="list-group-item">This tool was made for Totara 12, but I assume it should work on the other versions starting from 9. I suggest you always test it in your Totara test environment first.</li>
-</ol>
+
+<h2 class="display-6 text-center mb-4">FAQs</h2>
+<div class="row">
+   <div class="col">
+      <div class="accordion" id="faqs">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        Which version of Totara can I use this tool for?
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse " aria-labelledby="headingOne" data-bs-parent="#faqs">
+      <div class="accordion-body">
+        This tool was made for Totara 12. I assume it will work on the other versions starting from 9. I suggest you always test it in your Totara test environment first. 
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingTwo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        Can I use custom fields when creating recurring events?
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqs">
+      <div class="accordion-body">
+       Yes, you can. To do that you need to create a backup of the seminar activity in your Totara instance and upload it on <a href="{{ url_for('upload_backup') }}">this page</a. Custom fields (if any) from your backup file will be imported and you will be able to add these fields to recurring events. Ensure your backup has at least one event, otherwise custom fields will not be imported. Note, only "text" type custom fields are supported.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingThree">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        How can I add rooms to recurring events?
+      </button>
+    </h2>
+    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqs">
+      <div class="accordion-body">
+        <a href="{{ url_for('upload_rooms') }}">Upload</a> CSV file with your Totra instance room details. Ensure that CSV has the following headings: id, name, description, timecreated, capacity, location, building, allowconflicts. On <a href="{{ url_for('upload_rooms') }}">this page</a> you can find a quick guide on how to create this report in Totara LMS.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingFour">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+        Can I create a recurring event with multiple sessions?
+      </button>
+    </h2>
+    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqs">
+      <div class="accordion-body">
+        Not at this stage. You can generate only events with one session.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingFive">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+        Can I add recurring sessions to the existing seminar activity?
+      </button>
+    </h2>
+    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqs">
+      <div class="accordion-body">
+		Yes, you can upload a backup of your existing seminar activity on <a href="{{ url_for('upload_backup') }}">this page</a> and create recurring events. After generating recurring events and downloading the file, all settings, user signups, rooms, attendance, and other data from your original backup will remain and new recurring events will be added to a list of your exiting events.
+	  </div>
+    </div>
+  </div>
+</div>
+   </div>
+</div>
 {% endblock content %} 
 
 {% block body_bottom_js %}{% endblock body_bottom_js %}
