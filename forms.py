@@ -20,7 +20,7 @@ class UploadRooms(FlaskForm):
     submit = SubmitField('Upload')
 
 class DownloadFileForm(FlaskForm):
-    download = SubmitField('Download')
+    download = SubmitField('Download Totara backup with recurrine events')
 
 class UploadBackup(FlaskForm):
     file = FileField("Upload Totara Seminar activity backup", validators=[
