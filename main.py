@@ -8,6 +8,7 @@ import xmltodict
 import json
 import os
 import shutil
+import time
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8rzrer'
@@ -46,7 +47,7 @@ def checkUserSession():
         session["timezone"] = "None"
 
     os.environ["TZ"] = str(session["timezone"])
-    
+    time.tzset()
 
 
 @app.route('/create-recurring-events', methods=['GET', 'POST'])
