@@ -182,7 +182,7 @@ def generateRecurringDates(datestart, datefinish,frequency, occurrence_number, d
         recurance_data.append(f"UNTIL={ datefinish }")
 
     recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
-
+    print(recurrance_data_string)
     dates = list(rrulestr(recurrance_data_string))
     return dates
 

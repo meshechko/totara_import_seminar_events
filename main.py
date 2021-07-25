@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file
 import models
-from forms import UploadBackup, UploadRooms, CreateEventForm
+from forms import UploadBackup, UploadRooms, CreateEventForm, TimeZoneForm
 import random
 import string
 from datetime import datetime
@@ -10,7 +10,7 @@ import os
 import shutil
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xe7c]'
+app.secret_key = b'_5#y2L"F4Q8rzrer'
 
 
 #FILTERS
@@ -41,16 +41,25 @@ def checkUserSession():
         seminarFolder = models.getSeminarFolder(session["userID"])
         models.createFolder(seminarFolder)
 
+    if 'timezone' not in session:
+        
+        session["timezone"] = "None"
+
+    os.environ["TZ"] = str(session["timezone"])
+    
+
 
 @app.route('/create-recurring-events', methods=['GET', 'POST'])
 def create_recurring_events():
     checkUserSession()
+    
     form = CreateEventForm()
+    timezone_form = TimeZoneForm()
     rooms = models.getFromJsonFile("rooms")
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
     max_generated_events = 1000
-    if request.method == 'POST' and form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit() and session["timezone"] != "None":
         for field in custom_fields:
             try:
                 field["field_data"] = request.form[field['field_name']]
@@ -85,6 +94,7 @@ def create_recurring_events():
         send_capacity_email_cutoff_number = form.send_capacity_email_cutoff_number.data
         send_capacity_email_cutoff_timeunit = form.send_capacity_email_cutoff_timeunit.data
         normal_cost = form.normal_cost.data
+        # session["timezone"] = form.timezone.data
 
         recurring_dates = models.generateRecurringDates(
             datestart=datestart, 
@@ -129,7 +139,7 @@ def create_recurring_events():
     else:
         session_sets = []
         session_sets = models.getFromJsonFile("sessions")
-    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields)
+    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields, timezone=os.environ["TZ"], timezone_form = timezone_form)
 
 @app.route('/download', methods=['POST'])
 def download():
@@ -235,4 +245,12 @@ def delete_rooms():
 def clear_all():
     if request.method == 'POST':
         session.pop("userID", None)
+        session.pop("timezone", None)
+    return redirect(url_for('create_recurring_events'))
+
+@app.route('/save-timezone', methods=['POST'])
+def save_timezone():
+    form = TimeZoneForm()
+    if request.method == 'POST':
+        session["timezone"] = form.timezone.data
     return redirect(url_for('create_recurring_events'))

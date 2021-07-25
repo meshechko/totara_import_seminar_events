@@ -5,6 +5,8 @@ from wtforms.widgets import html5 as h5widgets
 from wtforms.fields import SelectField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from datetime import datetime, time
+import pytz
+from flask import session
 
 from wtforms.widgets.core import CheckboxInput, TextInput
 
@@ -24,6 +26,12 @@ class UploadBackup(FlaskForm):
     file = FileField("Upload Totara Seminar activity backup", validators=[
         FileRequired()])
     submit = SubmitField('Upload')
+
+class TimeZoneForm(FlaskForm):
+    timezones = [(x, x) for x in pytz.common_timezones]
+    # timezones.insert(0,("None","None"))
+    timezone = SelectField(u'Time zone',choices=timezones)
+    submit = SubmitField('Save', render_kw={"class": "btn btn-primary","data-bs-dismiss": "modal", "form":"save-timezone"})
 
 class CreateEventForm(FlaskForm):
     details = TextAreaField(u'Details', render_kw={"class": "form-control"}, )
@@ -61,6 +69,8 @@ class CreateEventForm(FlaskForm):
     send_capacity_email_cutoff_timeunit = SelectField(u'Time unit', choices=[('604800', 'weeks'), ('86400', 'days'), ('3600', 'hours'), ('60', 'minutes'), ('1', 'seconds')], default='3600', render_kw={"class": "form-select", 'disabled':''})
 
     normal_cost =IntegerField(u'Normal cost', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default=0)
+
+   
 
 
     datestart = DateTimeField(u'Start', [validators.required()], format='%d/%m/%Y', render_kw={"class": "form-control cal flatpickr-input", "readonly":"readonly"}, default=datetime.today)
