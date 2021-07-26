@@ -7,7 +7,7 @@
       <h1 class="display-4">Recurring events generator for Totara</h1>
       <p class="fs-5 text-muted">Creating recurring events in Totara can be a little  daunting. It's ok if you need just a small number of events, but if, for example, you have a training session that is running twice a week every Monday and Wednesday for 12 months, it can take a while to create 52 weeks X 2 events/week = 104 events.</p>
       <p class="fs-5 text-muted">That's when this tool comes in handy.</p>
-      <p class="lead mb-0"><a href="{{ url_for('create_recurring_events') }}" class="text-white fw-bold">Generate recurring events</a></p>
+      <p class="lead mb-0"><a href="{{ url_for('create_recurring_events') }}" class="btn btn-lg btn-outline-light">Generate recurring events</a></p>
    </div>
    <div class="col-md-4"><img class="img-fluid" src="{{ url_for('static', filename='img/recurring-events-icon.png') }}"></div>
 </div>
@@ -19,8 +19,8 @@
             <h4 class="my-0 fw-normal">Generate recurring events</h4>
          </div>
          <div class="card-body">
-            <p>Create as many recurring events as you like, download the Seminar activity backup and upload it to your Totara instance. That's it!</p>
-            <a href="{{ url_for('create_recurring_events') }}" class="w-100 btn btn-lg btn-outline-primary">Go to this step</a>
+            <p>Create as many recurring events as you like, download the Seminar activity backup and upload it to your Totara instance.</p>
+            <a href="{{ url_for('create_recurring_events') }}" class="w-100 btn btn-lg btn-outline-primary">Generate events</a>
          </div>
       </div>
    </div>

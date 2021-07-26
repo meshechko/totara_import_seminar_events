@@ -182,7 +182,6 @@ def generateRecurringDates(datestart, datefinish,frequency, occurrence_number, d
         recurance_data.append(f"UNTIL={ datefinish }")
 
     recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
-    print(recurrance_data_string)
     dates = list(rrulestr(recurrance_data_string))
     return dates
 
@@ -348,6 +347,9 @@ def copyDefaultToUserFolder():
 
 def appendEventsToXml():
     facetoface_dict = readXml()
-    #TODO currenty it doenst work if xml from backup doesnt have any events. Address this later
-    facetoface_dict["activity"]["facetoface"]["sessions"]["session"] = sum(getFromJsonFile("sessions"),[]) # sum is required to merge multiple sets of generated events into one set to ensure each session is properly printed in <sessions> xml tag
+    generated_sessions = sum(getFromJsonFile("sessions"),[])# sum is required to merge multiple sets of generated events into one set to ensure each session is properly printed in <sessions> xml tag
+    try:
+        facetoface_dict["activity"]["facetoface"]["sessions"]["session"] =  generated_sessions
+    except:
+        facetoface_dict["activity"]["facetoface"]["sessions"] = {"sessions": generated_sessions}
     return facetoface_dict
