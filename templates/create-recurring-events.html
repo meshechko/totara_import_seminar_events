@@ -571,7 +571,17 @@ function backToTop() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
-  
+
+$(window).scroll(function() {
+  sessionStorage.scrollTop = $(this).scrollTop();
+});
+
+$(document).ready(function() {
+  if (sessionStorage.scrollTop != "undefined") {
+    $(window).scrollTop(sessionStorage.scrollTop);
+  }
+});
+
 </script>
 
 <script>
@@ -583,5 +593,7 @@ function backToTop() {
         timezone_modal.modal('show');
     }
 });
+
+
 </script>
 {% endblock %}
