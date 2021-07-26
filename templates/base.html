@@ -27,7 +27,7 @@
            {% set navigation_bar = [
               ('index', 'index', 'Home', '&nbsp;'),
               ('add_rooms', 'add-rooms', 'Add rooms', 'Step 1 (optional)'),
-              ('upload_backup', 'upload-backup', 'Add custom fields', 'Step 2 (optional)'),
+              ('upload_backup', 'upload-backup', 'Upload backup', 'Step 2 (optional)'),
               ('create_recurring_events', 'create-recurring-events', 'Generate events', 'Step 3'),
           ] -%}
           {% set active_page = active_page|default('index') -%}
@@ -46,8 +46,8 @@
       <footer class="pt-4 my-md-5 pt-md-5 border-top">
         <div class="row">
           <div class="col-12 col-md">
-            <a href="/" class="d-flex align-middle text-decoration-none">
-              <img src="/static/img/logo.png" style="height: 24px;" class="me-3">
+            <a href=""{{ url_for('index') }}" class="d-flex align-middle text-decoration-none">
+              <img src=""{{ url_for('static', filename='img/logo.png') }}g" style="height: 24px;" class="me-3">
               <small class="text-muted align-middle">Totara recurring events generator</small>
             </a>
           </div>
