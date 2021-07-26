@@ -351,5 +351,5 @@ def appendEventsToXml():
     try:
         facetoface_dict["activity"]["facetoface"]["sessions"]["session"] =  generated_sessions
     except:
-        facetoface_dict["activity"]["facetoface"]["sessions"] = {"sessions": generated_sessions}
+        facetoface_dict["activity"]["facetoface"]["sessions"] = {"session": generated_sessions}
     return facetoface_dict
