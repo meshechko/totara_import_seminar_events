@@ -255,3 +255,7 @@ def save_timezone():
     if request.method == 'POST':
         session["timezone"] = form.timezone.data
     return redirect(url_for('create_recurring_events'))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
