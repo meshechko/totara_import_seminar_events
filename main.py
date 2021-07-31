@@ -202,7 +202,7 @@ def add_rooms():
         rooms_list = models.covertCsvToList(CSV)
         if models.validateCsvHeaders(rooms_list):
             models.saveToJsonFile(rooms_list, "rooms")
-            flash(f'Successfully upladed {len(models.getFromJsonFile("rooms"))} rooms', 'success')
+            flash(f'Successfully uploaded {len(models.getFromJsonFile("rooms"))} rooms', 'success')
         else:
             flash(f'Please upload CSV that contains the following headers: \n { required_headings }', 'danger')
         return redirect(url_for('add_rooms'))
