@@ -291,6 +291,12 @@ def generate_recurring_sessions(recurring_dates, custom_fields_data, details, ti
         sessions.append(session)
     return sessions
 
+def strDatesToDatetimeList(dates):
+    if isinstance(dates, str):
+        dates = dates.replace(' ','').split(",")
+        dates = sorted([datetime.strptime(date, '%d/%m/%Y') for date in dates])
+        return dates
+
 # import functools
 
 # def haskey(d, path):

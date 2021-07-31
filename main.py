@@ -1,3 +1,4 @@
+import re
 from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file
 import models
 from forms import UploadBackup, UploadRooms, CreateEventForm, TimeZoneForm
@@ -53,13 +54,13 @@ def checkUserSession():
 @app.route('/create-recurring-events', methods=['GET', 'POST'])
 def create_recurring_events():
     checkUserSession()
-    
     form = CreateEventForm()
     timezone_form = TimeZoneForm()
     rooms = models.getFromJsonFile("rooms")
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
     max_generated_events = 1000
+    recurrence_type = request.args.get('recurrence_type')
     if request.method == 'POST' and form.validate_on_submit() and session["timezone"] != "None":
         for field in custom_fields:
             try:
@@ -81,9 +82,7 @@ def create_recurring_events():
         frequency = form.frequency.data
         if form.occurrence_number:
             occurrence_number = form.occurrence_number.data
-        days_of_week = ""
-        if form.days_of_week:
-            days_of_week = request.form.getlist('days_of_week')
+        
         interval = form.interval.data
         allow_overbook = form.allow_overbook.data
 
@@ -96,14 +95,22 @@ def create_recurring_events():
         send_capacity_email_cutoff_timeunit = form.send_capacity_email_cutoff_timeunit.data
         normal_cost = form.normal_cost.data
         # session["timezone"] = form.timezone.data
-
-        recurring_dates = models.generateRecurringDates(
-            datestart=datestart, 
-            datefinish=datefinish, 
-            frequency=frequency, 
-            occurrence_number=occurrence_number, 
-            days_of_week=days_of_week, 
-            interval=interval)
+        
+        recurring_dates = ""
+        if recurrence_type == "manual":
+            recurring_dates = models.strDatesToDatetimeList(form.manual_dates.data)
+            session["recurrence_type"] = "manual"
+        else:
+            days_of_week = ""
+            if form.days_of_week:
+                days_of_week = request.form.getlist('days_of_week')
+            recurring_dates = models.generateRecurringDates(
+                datestart=datestart, 
+                datefinish=datefinish, 
+                frequency=frequency, 
+                occurrence_number=occurrence_number, 
+                days_of_week=days_of_week, 
+                interval=interval)
 
         if (len(recurring_dates) + models.countGeneratedEvents()) <= max_generated_events:
 
@@ -133,14 +140,14 @@ def create_recurring_events():
             
             models.saveToJsonFile(sessions, "sessions")
             
-            return redirect(url_for('create_recurring_events'))
+            return redirect(url_for('create_recurring_events', recurrence_type=request.args.get('recurrence_type')))
         else:
             flash(f'You have requested to many events. Maximum number of events you can create is { max_generated_events }.', 'danger')
             return redirect(url_for('create_recurring_events'))
     else:
         session_sets = []
         session_sets = models.getFromJsonFile("sessions")
-    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields, timezone=os.environ["TZ"], timezone_form = timezone_form)
+    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
 
 @app.route('/download', methods=['POST'])
 def download():

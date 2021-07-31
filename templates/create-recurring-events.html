@@ -12,13 +12,12 @@
 </div>
 <div class="row g-5">
   <div class="col-md-12">
-    
+    {% set rr = recurrence_type %}
     <form id="clear-all" method="POST" action="clear-all" onSubmit="return confirm('Are you sure you wish to clear everything and start over again?');"></form>
     <form id="delete-backup" method="POST" action="delete-backup" onSubmit="return confirm('Are you sure you wish to delete your backup file?');"></form>
     <form id="delete-rooms" method="POST" action="delete-rooms" onSubmit="return confirm('Are you sure you wish to delete your rooms?');"></form>
     <form class="needs-validation" method="POST" action="" novalidate="">
       {{ form.hidden_tag() }}
-
 
       <div class="row g-3">
         <div class="col-md-6">
@@ -194,31 +193,60 @@
         </div>
 
         <div class="col-md-5 offset-md-1">
+          <div class="row mt-5">
+            <div class="col-6">
           <h4 class="d-flex justify-content-between align-items-center mb-3">
             Recurrence
+            
           </h4>
+          </div>
+          <div class="col-6 text-end">
+            {% set set_recurrence_type = "recurring" %}
+            
+            {% set set_recurrence_type_text = "Create recurring events" %}
+            {% if recurrence_type == "recurring" or recurrence_type == None %}
+              {% set set_recurrence_type = "manual" %}
+              {% set set_recurrence_type_text = "Select dates manually" %}
+            {% endif %}
 
+            <a href="{{ url_for('create_recurring_events', recurrence_type=set_recurrence_type) }}" class="btn btn-sm btn btn-outline-secondary">{{ set_recurrence_type_text }}</a>
+              
+
+            </a>
+          </div>
+          </div>
           <div class="row mb-5">
             <div class="col-6">
-              {{ form.datestart.label(class_='form-label') }}
-              {{ form.datestart() }}
-              {% for error in form.datestart.errors %}
+              {% if recurrence_type != "manual" %}
+                {{ form.datestart.label(class_='form-label')}}
+                {{ form.datestart() }}
+                {% for error in form.datestart.errors %}
                   <small class="text-danger">{{ error }}</small>
                 {% endfor %}
+              {% else %}
+                {{ form.manual_dates.label(class_='form-label') }}
+                {{ form.manual_dates() }}
+                {% for error in form.manual_dates.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}
+              {% endif %}
+              
+              
             </div>
-
-            <div class="col-6">
-              {{ form.datefinish.label(class_='form-label') }}
-              {{ form.datefinish() }}
+            {% if recurrence_type != "manual" %}
+              <div class="col-6">
+                {{ form.datefinish.label(class_='form-label') }}
+                {{ form.datefinish() }}
+                
+                  {% for error in form.datefinish.errors %}
+                    <small class="text-danger">{{ error }}</small>
+                  {% endfor %}
               
-                {% for error in form.datefinish.errors %}
-                  <small class="text-danger">{{ error }}</small>
-                {% endfor %}
-
-              
-          </div>
+                
+              </div>
+            {% endif %}
         </div>
-          
+        {% if recurrence_type != "manual" %}
           <div class="row mb-5">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
               Recurrence pattern
@@ -304,7 +332,7 @@
             </div>
             
           </div>
-
+          {% endif %}
           <div class="row">
           {{ form.submit() }} 
         </div>
@@ -451,11 +479,16 @@
     altFormat: "j F Y",
     static: true,
     locale: {
-        firstDayOfWeek: 2
-    }
+        firstDayOfWeek: 1
+    },
+{% if recurrence_type == "manual" %}
+    mode: "multiple",
+    inline: true,
+{% endif %}
   });
+  
 </script>
-
+{% if recurrence_type != "manual" %}
 <script>
   let frequency = document.getElementById("frequency");
   let monthly = document.getElementById("occurrence-number-container");
@@ -479,6 +512,14 @@
 
   frequency.addEventListener("change", monthly_recurrance_fields);
 
+  window.addEventListener("load", function(){
+    monthly_recurrance_fields();
+    monthly_recurrance_fields();
+  });
+
+</script>
+{% endif %}
+<script>
 let allow_cancellations_choice_2 = document.getElementById("allow_cancellations-2");
 
   function allow_cancellations_choice(){
@@ -518,8 +559,6 @@ send_capacity_email.addEventListener("change", send_email_capacity_fields);
 
  window.addEventListener("load", function(){
     allow_cancellations_choice();
-    monthly_recurrance_fields();
-    monthly_recurrance_fields();
     send_email_capacity_fields();
 
     var allow_cancellations = document.getElementsByName('allow_cancellations');
