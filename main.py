@@ -57,7 +57,6 @@ def create_recurring_events():
     form = CreateEventForm()
     timezone_form = TimeZoneForm()
     rooms = models.getFromJsonFile("rooms")
-    # print(models.readXml()["activity"]["facetoface"]["sessions"]["session"][0]["custom_fields"]["custom_field"])
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
     
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
@@ -224,9 +223,11 @@ def upload_backup():
                 backup_sessions = models.getSessionsFromXML(facetoface_dict)
                 if len(backup_sessions) > 0:
                     for backup_session in backup_sessions:
-                        if isinstance(backup_session["custom_fields"]["custom_field"], list) == False:
-                            backup_session["custom_fields"]["custom_field"] = [backup_session["custom_fields"]["custom_field"]]
-                            # print(backup_session)
+                        try:
+                            if isinstance(backup_session["custom_fields"]["custom_field"], list) == False:
+                                backup_session["custom_fields"]["custom_field"] = [backup_session["custom_fields"]["custom_field"]]
+                        except:
+                            pass
                     sessions = models.getFromJsonFile("sessions")
                     sessions.insert(0, backup_sessions)
                     models.saveToJsonFile(sessions, "sessions")
