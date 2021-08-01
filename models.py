@@ -225,20 +225,21 @@ def generate_recurring_sessions(recurring_dates, custom_fields_data, details, ti
             }
     else:
         room = None
-
-
+    print("custom_fields_data")
+    print(custom_fields_data)
     all_custom_fields = []
     for custom_field in custom_fields_data:
-        field_dict = {"custom_field":{
+        field_dict = {
                 '@id': '',
                 'field_name': custom_field["field_name"],
                 'field_type': custom_field["field_type"],
                 'field_data': custom_field["field_data"],
                 'paramdatavalue': '$@NULL@$',
             }
-        }
+        
         all_custom_fields.append(field_dict)
-
+    print("all_custom_fields")
+    print(all_custom_fields)
     for date in recurring_dates:
         start = f"{ str(date.date()) } { timestart }"
         start = int(datetime.strptime(start, '%Y-%m-%d %H:%M').timestamp())
@@ -271,7 +272,9 @@ def generate_recurring_sessions(recurring_dates, custom_fields_data, details, ti
             'registrationtimefinish': "0",
             'cancelledstatus': "0",
             'session_roles': None,  # TODO add value from backup uploaded by the user in the fufure
-            'custom_fields': all_custom_fields,
+            'custom_fields': {
+                "custom_field": all_custom_fields
+                },
             # TODO add value from backup uploaded by the user in the fufure
             'sessioncancel_fields': None,
             'signups': None,  
@@ -316,15 +319,24 @@ def countGeneratedEvents():
 
 def getCustomFieldsFromXML(file):
     custom_fields = []
+
     try:
-        sessions = file["activity"]["facetoface"]["sessions"]
+        sessions = file["activity"]["facetoface"]["sessions"]["session"]
         # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
         if isinstance(sessions, list):
+            print('IS LIST')
+            print(type(sessions))
             custom_fields = sessions[0]["custom_fields"]["custom_field"]
         else:
-            custom_fields = sessions["session"]["custom_fields"]["custom_field"]
+            print('IS NOT A LIST')
+            print(type(sessions))
+            # print(sessions["session"][0])
+            custom_fields = sessions["custom_fields"]["custom_field"]
     except:
         custom_fields = []
+
+    if isinstance(custom_fields, list) == False:
+        custom_fields = [custom_fields]
     return custom_fields
 
 def getSessionsFromXML(file):

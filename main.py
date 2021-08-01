@@ -57,7 +57,9 @@ def create_recurring_events():
     form = CreateEventForm()
     timezone_form = TimeZoneForm()
     rooms = models.getFromJsonFile("rooms")
+    # print(models.readXml()["activity"]["facetoface"]["sessions"]["session"][0]["custom_fields"]["custom_field"])
     custom_fields = models.getCustomFieldsFromXML(models.readXml())
+    
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
     max_generated_events = 1000
     recurrence_type = request.args.get('recurrence_type')
@@ -67,7 +69,7 @@ def create_recurring_events():
                 field["field_data"] = request.form[field['field_name']]
             except:
                 pass
-
+                  
         details = form.details.data
         timestart = form.timestart.data.strftime("%H:%M")
         timefinish = form.timefinish.data.strftime("%H:%M")
@@ -147,7 +149,7 @@ def create_recurring_events():
     else:
         session_sets = []
         session_sets = models.getFromJsonFile("sessions")
-    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields=custom_fields, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
+    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields={"custom_field":custom_fields}, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
 
 @app.route('/download', methods=['POST'])
 def download():
@@ -218,10 +220,13 @@ def upload_backup():
         file = form.file.data
         if models.validateBackup(file):
             if models.unzipBackup(file):
-                #TODO think if its necessary to import exisitng backup or it will just complicate things. Maybe this app should b used for creatin new sessions only rather than modifying exisitng ones.
                 facetoface_dict = models.readXml()
                 backup_sessions = models.getSessionsFromXML(facetoface_dict)
                 if len(backup_sessions) > 0:
+                    for backup_session in backup_sessions:
+                        if isinstance(backup_session["custom_fields"]["custom_field"], list) == False:
+                            backup_session["custom_fields"]["custom_field"] = [backup_session["custom_fields"]["custom_field"]]
+                            # print(backup_session)
                     sessions = models.getFromJsonFile("sessions")
                     sessions.insert(0, backup_sessions)
                     models.saveToJsonFile(sessions, "sessions")

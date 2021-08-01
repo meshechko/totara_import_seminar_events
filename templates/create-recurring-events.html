@@ -18,7 +18,7 @@
     <form id="delete-rooms" method="POST" action="delete-rooms" onSubmit="return confirm('Are you sure you wish to delete your rooms?');"></form>
     <form class="needs-validation" method="POST" action="" novalidate="">
       {{ form.hidden_tag() }}
-
+      {% set custom_fields = custom_fields.custom_field%}
       <div class="row g-3">
         <div class="col-md-6">
           <div class="row">
@@ -58,7 +58,7 @@
               {% endfor %}
               {% else %}
               <div class="col-6">
-                <label class="form-label" for="timestart">Custom fields</label>
+                <label class="form-label">Custom fields</label>
                 <a class=" btn btn-light" href="{{ url_for('upload_backup') }}">Add custom fields (optional)</a>
               </div>
               {% endif %}
@@ -381,14 +381,12 @@
       </thead>
       <tbody>
         {% for session in sessions %}
-        {#session#}
         <tr>
           <td scope="row">
-            
             {% if custom_fields%}
-              {% for field in session.custom_fields %}
-                {% if field.custom_field.field_type == 'text'%}
-                  {{ field.custom_field.field_name }} : {{ field.custom_field.field_data }} <br>
+              {% for field in session.custom_fields.custom_field %}
+                {% if field.field_type == 'text'%}
+                  {{ field.field_name }}: {{ field.field_data }} <br>
                 {% endif %}
               {% endfor %}
             {% endif %}
