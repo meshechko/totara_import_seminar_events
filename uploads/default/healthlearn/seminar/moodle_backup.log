@@ -1,0 +1,46 @@
+[Sun Jul 18 19:25:34 2021] [info] instantiating backup controller 3d44dc5ffebde75d30b0f689c07d1d44
+[Sun Jul 18 19:25:34 2021] [debug] setting controller status to 100
+[Sun Jul 18 19:25:34 2021] [debug] loading controller plan
+[Sun Jul 18 19:25:34 2021] [debug] setting controller status to 300
+[Sun Jul 18 19:25:34 2021] [debug] applying plan defaults
+[Sun Jul 18 19:25:34 2021] [debug] setting controller status to 400
+[Sun Jul 18 19:25:34 2021] [debug] setting file inclusion to 1
+[Sun Jul 18 19:25:34 2021] [info] checking plan security
+[Sun Jul 18 19:25:34 2021] [debug] setting controller status to 500
+[Sun Jul 18 19:25:34 2021] [info] checking plan security
+[Sun Jul 18 19:25:34 2021] [info] checking plan security
+[Sun Jul 18 19:25:34 2021] [info] checking plan security
+[Sun Jul 18 19:25:34 2021] [debug] saving controller to db
+[Sun Jul 18 19:25:34 2021] [debug] calculating controller checksum 32954556bbd2de3184c9d3382154c53a
+[Sun Jul 18 19:25:58 2021] [debug] loading controller from db
+[Sun Jul 18 19:25:58 2021] [info] checking plan security
+[Sun Jul 18 19:25:58 2021] [info] checking plan security
+[Sun Jul 18 19:25:58 2021] [info] checking plan security
+[Sun Jul 18 19:25:58 2021] [debug] saving controller to db
+[Sun Jul 18 19:25:58 2021] [debug] calculating controller checksum bfb82615ffc5732c5c38ae0a24949a1f
+[Sun Jul 18 19:26:05 2021] [debug] loading controller from db
+[Sun Jul 18 19:26:05 2021] [info] checking plan security
+[Sun Jul 18 19:26:05 2021] [info] checking plan security
+[Sun Jul 18 19:26:05 2021] [debug] saving controller to db
+[Sun Jul 18 19:26:05 2021] [debug] calculating controller checksum bfb82615ffc5732c5c38ae0a24949a1f
+[Sun Jul 18 19:26:24 2021] [debug] loading controller from db
+[Sun Jul 18 19:26:24 2021] [info] checking plan security
+[Sun Jul 18 19:26:24 2021] [info] checking plan security
+[Sun Jul 18 19:26:24 2021] [info] checking plan security
+[Sun Jul 18 19:26:24 2021] [debug] saving controller to db
+[Sun Jul 18 19:26:24 2021] [debug] calculating controller checksum bfb82615ffc5732c5c38ae0a24949a1f
+[Sun Jul 18 19:26:34 2021] [debug] loading controller from db
+[Sun Jul 18 19:26:34 2021] [info] checking plan security
+[Sun Jul 18 19:26:34 2021] [info] checking plan security
+[Sun Jul 18 19:26:34 2021] [info] checking plan security
+[Sun Jul 18 19:26:34 2021] [debug] saving controller to db
+[Sun Jul 18 19:26:34 2021] [debug] calculating controller checksum bfb82615ffc5732c5c38ae0a24949a1f
+[Sun Jul 18 19:26:39 2021] [debug] loading controller from db
+[Sun Jul 18 19:26:39 2021] [info] checking plan security
+[Sun Jul 18 19:26:39 2021] [info] checking plan security
+[Sun Jul 18 19:26:39 2021] [debug] setting controller status to 700
+[Sun Jul 18 19:26:39 2021] [debug] saving controller to db
+[Sun Jul 18 19:26:39 2021] [debug] calculating controller checksum bc6490545ad9b6aaa2f88d714f28aefd
+[Sun Jul 18 19:26:39 2021] [debug] loading controller from db
+[Sun Jul 18 19:26:39 2021] [debug] notifying plan about excluded activities by type
+[Sun Jul 18 19:26:39 2021] [debug] setting controller status to 800

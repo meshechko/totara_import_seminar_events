@@ -75,7 +75,11 @@ def getFromJsonFile(file_name):
         list = open(userFile, "rb").read()
         list = json.loads(list)
     else:
-        list = open((UPLOAD_FOLDER + "default/"+file_name+".json"), "rb").read()
+        folder = "default/"
+        if 'pin' in session:
+            folder = "default/" + session['pin'] + '/'
+
+        list = open((UPLOAD_FOLDER + folder + file_name+".json"), "rb").read()
         list = json.loads(list)
     return list
 
@@ -120,7 +124,11 @@ def unzipBackup(file):
 def getf2fxml():
     userActivitiesFolder = getSeminarFolder(session["userID"])+"activities/"
     if path.exists(userActivitiesFolder) == False:
+        # if 'pin' in session:
+        #     userActivitiesFolder = UPLOAD_FOLDER + "default/" + session['pin'] + '/seminar/activities/'
+        # else:
         userActivitiesFolder = UPLOAD_FOLDER + "default/seminar/activities/"
+
     subfolders = [f.path for f in os.scandir(
         userActivitiesFolder) if f.is_dir()]
     for folder in list(subfolders):
@@ -337,6 +345,7 @@ def getCustomFieldsFromXML(file):
 
     if isinstance(custom_fields, list) == False:
         custom_fields = [custom_fields]
+
     return custom_fields
 
 def getSessionsFromXML(file):

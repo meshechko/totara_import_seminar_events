@@ -38,9 +38,6 @@
               {% for field in custom_fields%}
                 {% if field.field_type == "text"%}
                 <div class="col-6">
-
-                  
-
                   <label class="form-label" for="{{ field.field_name }}">{{ field.field_name }}</label>
 
                   <input
@@ -434,7 +431,7 @@
             </div>
             <div class="modal-body">
               <input type="hidden" id="timezone" value={{ timezone }}>
-              <form id="save-timezone" class="needs-validation" method="POST" action="save-timezone" novalidate="">
+              <form id="save-timezone" class="needs-validation" method="POST" action="{{ url_for('save_timezone') }}" novalidate="">
                 {{ timezone_form.hidden_tag() }}
                 <select class="form-select" id="timezone" name="timezone" required="">
                 {% for value, text in timezone_form.timezone.choices %}

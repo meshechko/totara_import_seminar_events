@@ -28,6 +28,10 @@ class UploadBackup(FlaskForm):
         FileRequired()])
     submit = SubmitField('Upload')
 
+class PinFrom(FlaskForm):
+    pin = StringField('pin')
+    submit = SubmitField('Enter')
+
 class TimeZoneForm(FlaskForm):
     timezones = [(x, x) for x in pytz.common_timezones]
     # timezones.insert(0,("None","None"))

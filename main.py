@@ -46,19 +46,30 @@ def checkUserSession():
     if 'timezone' not in session:
         
         session["timezone"] = "None"
-#test
+
     os.environ["TZ"] = str(session["timezone"])
     time.tzset()
 
-
+@app.route('/create-recurring-events/<pin>')
 @app.route('/create-recurring-events', methods=['GET', 'POST'])
-def create_recurring_events():
+def create_recurring_events(pin=None):
     checkUserSession()
+    if pin == 'healthlearn':
+        session['pin'] = 'healthlearn'
     form = CreateEventForm()
     timezone_form = TimeZoneForm()
     rooms = models.getFromJsonFile("rooms")
-    custom_fields = models.getCustomFieldsFromXML(models.readXml())
+    custom_fields = [] 
     
+
+    if 'pin' in session:
+        custom_fields = [{'@id': '', 'field_name': 'Presenter', 'field_type': 'text', 'field_data': '', 'paramdatavalue': '$@NULL@$'}]
+        
+        models.saveToJsonFile(rooms, "rooms")
+    else:
+        custom_fields = models.getCustomFieldsFromXML(models.readXml())
+        print('custom_fields')
+        print(custom_fields)
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
     max_generated_events = 1000
     recurrence_type = request.args.get('recurrence_type')
@@ -148,6 +159,8 @@ def create_recurring_events():
     else:
         session_sets = []
         session_sets = models.getFromJsonFile("sessions")
+    
+    
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields={"custom_field":custom_fields}, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
 
 @app.route('/download', methods=['POST'])
@@ -255,11 +268,14 @@ def delete_rooms():
         os.remove(models.getUserFolder(session["userID"])+'/rooms.json')
     return redirect(url_for('create_recurring_events'))
 
+
+
 @app.route('/clear-all', methods=['POST'])
 def clear_all():
     if request.method == 'POST':
         session.pop("userID", None)
-        session.pop("timezone", None)
+        if session.get('pin') is None:
+            session.pop("timezone", None)
     return redirect(url_for('create_recurring_events'))
 
 @app.route('/save-timezone', methods=['POST'])
@@ -267,6 +283,21 @@ def save_timezone():
     form = TimeZoneForm()
     if request.method == 'POST':
         session["timezone"] = form.timezone.data
+       
+    return redirect(url_for('create_recurring_events'))
+
+@app.route('/login', methods=['POST'])
+def login():
+    if request.method == 'POST':
+        userID = request.form["pin"]
+        if userID == "healthlearn":
+            session["pin"] = userID
+            session["timezone"] = 'Pacific/Auckland'
+    return redirect(url_for('create_recurring_events'))
+
+@app.route('/logout')
+def logout():
+    session.pop("pin", None)
     return redirect(url_for('create_recurring_events'))
 
 @app.errorhandler(404)

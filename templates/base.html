@@ -45,13 +45,30 @@
       </main>
       <footer class="pt-4 my-md-5 pt-md-5 border-top">
         <div class="row">
-          <div class="col-12 col-md">
+          <div class="col-10 col-md">
             <a href="{{ url_for('index') }}" class="d-flex align-middle text-decoration-none">
               <img src="{{ url_for('static', filename='img/logo.png') }}" style="height: 24px;" class="me-3">
               <small class="text-muted align-middle">Totara recurring events generator</small>
             </a>
           </div>
+          <div class="col-2 col-md">
+
+            {% if session['pin']%}
+                  <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-secondary" type="submit">Logout from {{ session['pin'] }}</a>
+            {% else %}
+            <form id="login" class="needs-validation" method="POST" action="login" novalidate="">
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" name="pin" placeholder="Enter PIN" aria-label="Enter PIN" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="submit">Enter</button>
+                </div>
+              </div>
+          </form>
+          {% endif %}
+          </div>
         </div>
+
+        
       </footer>
       
       <script
