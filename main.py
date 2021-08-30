@@ -46,7 +46,7 @@ def checkUserSession():
     if 'timezone' not in session:
         
         session["timezone"] = "None"
-
+#test
     os.environ["TZ"] = str(session["timezone"])
     time.tzset()
 
