@@ -8,9 +8,10 @@ import os
 import shutil
 import time
 import db
+import csv
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4krjkj'
+app.secret_key = b'_5#y2L"F4kjnrjkj'
 
 
 #FILTERS
@@ -52,18 +53,19 @@ def create_recurring_events(pin=None):
         session['pin'] = 'healthlearn'
     form = CreateEventForm()
     timezone_form = TimeZoneForm()
-    rooms = models.getFromJsonFile("rooms")
+    rooms = g.user.rooms
+
     custom_fields = [] 
     
 
     if 'pin' in session:
         custom_fields = [{'@id': '', 'field_name': 'Presenter', 'field_type': 'text', 'field_data': '', 'paramdatavalue': '$@NULL@$'}]
         
-        models.saveToJsonFile(rooms, "rooms")
+        # models.saveToJsonFile(rooms, "rooms")
     else:
         custom_fields = models.getCustomFieldsFromXML(models.readXml())
 
-    form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
+    form.rooms.choices = [(room["id"], room["name"]) for room in rooms]
     max_generated_events = 1000
     recurrence_type = request.args.get('recurrence_type')
     if request.method == 'POST' and form.validate_on_submit() and g.user.timezone:
@@ -202,16 +204,40 @@ def delete_sessions_set():
 @app.route('/add-rooms', methods=['POST', 'GET'])
 def add_rooms():
     form = UploadRooms()
+
     required_headings = ', '.join(models.requiredHeaders)
     if request.method == 'POST' and form.validate():
         CSV = form.file.data
-        rooms_list = models.covertCsvToList(CSV)
-        if models.validateCsvHeaders(rooms_list):
-            models.saveToJsonFile(rooms_list, "rooms")
-            flash(f'Successfully uploaded {len(models.getFromJsonFile("rooms"))} rooms', 'success')
+
+        decoded_file = CSV.read().decode('utf-8').splitlines()
+        reader = csv.DictReader(decoded_file)
+        rooms = list(reader)
+
+        roomsFileHeaders = list(rooms[0].keys())
+        difference = [i for i in models.requiredHeaders +
+                    roomsFileHeaders if i not in models.requiredHeaders or i not in roomsFileHeaders]
+
+        if len(difference) == 0:
+            g.user.delete_rooms() # delete and re-write user rooms in DB. 
+            for room in rooms:
+                room = models.Room(
+                        id = room['id'],
+                        name=room['name'],
+                        description=room['description'],
+                        timecreated=room['timecreated'],
+                        capacity=room['capacity'],
+                        location=room['location'],
+                        building=room['building'],
+                        allowconflicts=room['allowconflicts'],
+                        user_id = g.user.id,
+                        isDefault = 0
+                    )
+                g.user.add_room(room)
+            flash(f'Successfully uploaded { len(g.user.rooms) } rooms', 'success')
+            return redirect(url_for('add_rooms'))
         else:
             flash(f'Please upload CSV that contains the following headers: \n { required_headings }', 'danger')
-        return redirect(url_for('add_rooms'))
+        
     return render_template('add-rooms.html', form=form, required_headings=required_headings)
 
 
@@ -256,7 +282,7 @@ def delete_backup():
 @app.route('/delete-rooms', methods=['POST'])
 def delete_rooms():
     if request.method == 'POST':
-        os.remove(models.getUserFolder(session["userID"])+'/rooms.json')
+        g.user.delete_rooms()
     return redirect(url_for('create_recurring_events'))
 
 

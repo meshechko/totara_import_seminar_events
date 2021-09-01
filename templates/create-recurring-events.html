@@ -89,8 +89,9 @@
             <div class="row mb-5">
               <div class="col-sm-6">
                 <div class="control-group">
-                  {{ form.rooms.label(class_='form-label') }}    
-                  {% if form.rooms.choices[0][0] != "None" %}  
+                  {{ form.rooms.label(class_='form-label') }}  
+      
+                  {% if form.rooms.choices | length > 0 %}  
                   <button type="hidden" class="btn pt-0 pb-0" form="delete-rooms" data-toggle="tooltip" data-placement="top" title="Delete rooms"><i class="bi bi-trash"></i></button>
                     {{ form.rooms() }}
 

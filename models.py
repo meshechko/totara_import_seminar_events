@@ -50,19 +50,19 @@ requiredHeaders = ['id', 'name', 'description', 'timecreated',
 def createFolder(folder):
     Path(folder).mkdir(parents=True, exist_ok=True)
 
+# #done
+# def covertCsvToList(file):
+#     decoded_file = file.read().decode('utf-8').splitlines()
+#     reader = csv.DictReader(decoded_file)
+#     return list(reader)
 
-def covertCsvToList(file):
-    decoded_file = file.read().decode('utf-8').splitlines()
-    reader = csv.DictReader(decoded_file)
-    return list(reader)
-
-
-def validateCsvHeaders(rooms_list):
-    roomsFileHeaders = list(rooms_list[0].keys())
-    difference = [i for i in requiredHeaders +
-                  roomsFileHeaders if i not in requiredHeaders or i not in roomsFileHeaders]
-    if len(difference) == 0:
-        return True
+# #done
+# def validateCsvHeaders(rooms_list):
+#     roomsFileHeaders = list(rooms_list[0].keys())
+#     difference = [i for i in requiredHeaders +
+#                   roomsFileHeaders if i not in requiredHeaders or i not in roomsFileHeaders]
+#     if len(difference) == 0:
+#         return True
 
 
 def saveToJsonFile(list, file_name):
@@ -391,7 +391,7 @@ def appendEventsToXml():
 
 
 class User:
-    def __init__(self, id="", created=None, lastlogin=None, firstname=None, lastname=None, email=None, password=None, company=None, super_user_id=None, timezone=None):
+    def __init__(self, id="", created=None, lastlogin=None, firstname=None, lastname=None, email=None, password=None, company=None, super_user_id=None, timezone=None, rooms = []):
         self.id = id
         self.firstname = firstname
         self.lastname = lastname
@@ -403,6 +403,7 @@ class User:
         self.lastlogin = lastlogin
         self.__timezone = timezone
         self.__root_folder = UPLOAD_FOLDER + self.id
+        self.rooms = rooms
         self.update_lastlogin()
 
 
@@ -433,10 +434,28 @@ class User:
     def update_lastlogin(self):
         db.update_lastlogin(self.id)
 
+    def add_room(self, room):
+        db.create_room(
+            room.id,
+            room.name, 
+            room.description, 
+            room.capacity, 
+            room.timecreated, 
+            room.building, 
+            room.location, 
+            room.allowconflicts, 
+            room.user_id, 
+            room.isDefault)
+        self.rooms.append(room)
+    
+    def delete_rooms(self):
+        self.rooms = []
+        db.delete_user_rooms(user_id=self.id)
+
 
 
 class Room:
-    def __init__(self, id, name, description, timecreated, capacity, location, building, allowconflicts):
+    def __init__(self, id, name, description, timecreated, capacity, location, building, allowconflicts, user_id, isDefault=0):
         self.id = id
         self.name = name
         self.description = description
@@ -445,6 +464,9 @@ class Room:
         self.location = location
         self.building = building
         self.allowconflicts = allowconflicts
+        self.isDefault = isDefault
+        self.user_id = user_id
+
 
     def __str__(self):
         room = {
@@ -482,7 +504,6 @@ class Room:
 
 class Controller:
         
-
     def new_user(self, user_id, firstname="", lastname="", email="", password="",super_user_id="", company="", timezone="" ):
         
         db.create_user(
@@ -498,7 +519,6 @@ class Controller:
                 timezone = timezone
             )
 
-
     def get_user_details(self, user_id):
         user_data = db.get_user(user_id)
         user = None
@@ -513,8 +533,10 @@ class Controller:
                 company = user_data['company'],
                 created = user_data['created'],
                 lastlogin = user_data['lastlogin'],
-                timezone=user_data['timezone']
+                timezone=user_data['timezone'],
+                rooms = db.get_user_rooms(user_id = user_data['id'])            
             )
+            
         return user
 
     def create_user_id(self):
@@ -522,4 +544,5 @@ class Controller:
         random_string = ''.join(random.choice(letters) for i in range(10))
         return random_string       
 
+    
 
