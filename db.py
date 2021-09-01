@@ -55,14 +55,14 @@ def get_user(id):
         return rows
 
 
-# with sqlite3.connect(DATABASE) as conn:
-#         conn.row_factory = sqlite3.Row
-#         cur = conn.cursor()
-#         cur.execute("SELECT * FROM users")
-#         # cur.execute("DELETE FROM users")
-#         rows = cur.fetchall(); 
-#         print(f'Total records: {len(rows)}')
-#         for row in rows:
-#             print(row["id"])
-#             print(f'created: {row["created"]}')
-#             print(f'lastlogin: {row["lastlogin"]}')
+with sqlite3.connect(DATABASE) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users")
+        # cur.execute("DELETE FROM users")
+        rows = cur.fetchall(); 
+        print(f'Total records: {len(rows)}')
+        for row in rows:
+            print(row["id"])
+            print(f'created: {row["created"]}')
+            print(f'lastlogin: {row["lastlogin"]}')

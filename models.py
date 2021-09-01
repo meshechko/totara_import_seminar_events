@@ -402,23 +402,17 @@ class User:
         self.created = created
         self.lastlogin = lastlogin
         self.__timezone = timezone
-        self.root_folder = UPLOAD_FOLDER + self.id
-        
-    # @property
-    # def id(self):
-    #     return self.id
+        self.__root_folder = UPLOAD_FOLDER + self.id
+        self.update_lastlogin()
 
-    # @id.setter
-    # def id(self, value):
-    #     self.id = value
 
-    # @property
-    # def root_folder(self):
-    #     return self.root_folder
+    @property
+    def root_folder(self):
+        return self.__root_folder
 
-    # @root_folder.setter
-    # def root_folder(self, value):
-    #     self.root_folder = value
+    @root_folder.setter
+    def root_folder(self, value):
+        self.__root_folder = value
 
     @property
     def seminar_folder(self):

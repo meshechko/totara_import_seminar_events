@@ -2,18 +2,15 @@ import re
 from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, g
 import models
 from forms import UploadBackup, UploadRooms, CreateEventForm, TimeZoneForm
-import random
-import string
 from datetime import datetime
 import xmltodict
-import json
 import os
 import shutil
 import time
 import db
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4kekrj'
+app.secret_key = b'_5#y2L"F4krjkj'
 
 
 #FILTERS
@@ -38,7 +35,6 @@ user = None
 def index():
     return render_template('index.html')
 
-
 @app.before_request
 def before_request():
     if 'userID' not in session:
@@ -46,7 +42,6 @@ def before_request():
         myapp.new_user(user_id=session['userID'])
     
     g.user = myapp.get_user_details(session['userID'])
-
     os.environ["TZ"] = g.user.timezone
     time.tzset()
 
@@ -67,8 +62,7 @@ def create_recurring_events(pin=None):
         models.saveToJsonFile(rooms, "rooms")
     else:
         custom_fields = models.getCustomFieldsFromXML(models.readXml())
-        # print('custom_fields')
-        # print(custom_fields)
+
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
     max_generated_events = 1000
     recurrence_type = request.args.get('recurrence_type')
