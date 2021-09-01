@@ -437,14 +437,14 @@
                 {% for value, text in timezone_form.timezone.choices %}
                 
                   
-                  <option {% if value == timezone or timezone == "None" and value=="Pacific/Auckland"  %}selected=""{% endif %} value="{{ value }}">{{ text }}</option>
+                  <option {% if value == timezone or timezone == False and value=="Pacific/Auckland"  %}selected=""{% endif %} value="{{ value }}">{{ text }}</option>
               
                 {% endfor %}
               </select>
             </form>
             </div>
             <div class="modal-footer">
-              {% if timezone != "None" %}
+              {% if timezone != None %}
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               {% endif %}
               {{ timezone_form.submit() }}
@@ -626,7 +626,8 @@ $(document).ready(function() {
   var timezone_modal = $('#timezone_modal')
   var timezone = $('#timezone')
   $(window).on('load', function() {
-      if (timezone.val() == "None"){
+      
+      if (!timezone.val()){
         timezone_modal.modal('show');
     }
 });

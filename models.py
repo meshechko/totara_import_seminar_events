@@ -16,15 +16,20 @@ from datetime import datetime
 import os.path
 from os import path
 import time
+import string
+import random
+
+import db
 # CONFIG data
 
+#done
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads/')
 
-
+#done
 def getSeminarFolder(userID):
     return UPLOAD_FOLDER + userID + "/seminar/"
 
-
+# done
 def getUserFolder(userID):
     return UPLOAD_FOLDER + userID
 
@@ -41,7 +46,7 @@ def fileAllowed(filename, allowedExtension):
 requiredHeaders = ['id', 'name', 'description', 'timecreated',
                    'capacity', 'location', 'building', 'allowconflicts']
 
-
+#done
 def createFolder(folder):
     Path(folder).mkdir(parents=True, exist_ok=True)
 
@@ -59,13 +64,15 @@ def validateCsvHeaders(rooms_list):
     if len(difference) == 0:
         return True
 
+
 def saveToJsonFile(list, file_name):
     userFolder = getUserFolder(session["userID"])
-    if os.path.isdir(userFolder) == False:
-        createFolder(userFolder)
+    # if os.path.isdir(userFolder) == False: # done
+    #     createFolder(userFolder) #done
     with open(os.path.join(userFolder, file_name+".json"), 'w') as file:
         toJson = json.dumps(list)
         file.write(toJson)
+
 
 def getFromJsonFile(file_name):
     list = []
@@ -124,10 +131,10 @@ def unzipBackup(file):
 def getf2fxml():
     userActivitiesFolder = getSeminarFolder(session["userID"])+"activities/"
     if path.exists(userActivitiesFolder) == False:
-        # if 'pin' in session:
-        #     userActivitiesFolder = UPLOAD_FOLDER + "default/" + session['pin'] + '/seminar/activities/'
-        # else:
-        userActivitiesFolder = UPLOAD_FOLDER + "default/seminar/activities/"
+        if 'pin' in session:
+            userActivitiesFolder = UPLOAD_FOLDER + "default/" + session['pin'] + '/seminar/activities/'
+        else:
+            userActivitiesFolder = UPLOAD_FOLDER + "default/seminar/activities/"
 
     subfolders = [f.path for f in os.scandir(
         userActivitiesFolder) if f.is_dir()]
@@ -135,12 +142,15 @@ def getf2fxml():
         if "facetoface" in folder:
             return folder+"/facetoface.xml"
 
+
 def saveToF2fXml(data):
      with open(getf2fxml(), "w") as f:
          f.write(data)
          return True
 
+
 GENERATED_ZIP_BACKUP_FILE_NAME = "backup-totara-activity-facetoface.mbz"
+
 
 def zipGeneratedSessions():
     base_dir = getSeminarFolder(session["userID"])
@@ -157,6 +167,7 @@ def zipGeneratedSessions():
                 if os.path.isfile(path):
                     zf.write(path, os.path.relpath(path, base_path))
     # urllib.request.urlretrieve(urlparse(str(userFolder + GENERATED_ZIP_BACKUP_FILE_NAME)))
+
 
 def readXml(xml_attribs=True):
     with open(getf2fxml(), "rb") as f:
@@ -192,6 +203,7 @@ def generateRecurringDates(datestart, datefinish,frequency, occurrence_number, d
     recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
     dates = list(rrulestr(recurrance_data_string))
     return dates
+
 
 def generate_recurring_sessions(recurring_dates, custom_fields_data, details, timestart, timefinish, room_id, capacity,  allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number, send_capacity_email_cutoff_timeunit, normal_cost):
 
@@ -233,8 +245,7 @@ def generate_recurring_sessions(recurring_dates, custom_fields_data, details, ti
             }
     else:
         room = None
-    print("custom_fields_data")
-    print(custom_fields_data)
+
     all_custom_fields = []
     for custom_field in custom_fields_data:
         field_dict = {
@@ -246,8 +257,7 @@ def generate_recurring_sessions(recurring_dates, custom_fields_data, details, ti
             }
         
         all_custom_fields.append(field_dict)
-    print("all_custom_fields")
-    print(all_custom_fields)
+
     for date in recurring_dates:
         start = f"{ str(date.date()) } { timestart }"
         start = int(datetime.strptime(start, '%Y-%m-%d %H:%M').timestamp())
@@ -302,6 +312,7 @@ def generate_recurring_sessions(recurring_dates, custom_fields_data, details, ti
         sessions.append(session)
     return sessions
 
+
 def strDatesToDatetimeList(dates):
     if isinstance(dates, str):
         dates = dates.replace(' ','').split(",")
@@ -332,13 +343,10 @@ def getCustomFieldsFromXML(file):
         sessions = file["activity"]["facetoface"]["sessions"]["session"]
         # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
         if isinstance(sessions, list):
-            print('IS LIST')
-            print(type(sessions))
+
             custom_fields = sessions[0]["custom_fields"]["custom_field"]
         else:
-            print('IS NOT A LIST')
-            print(type(sessions))
-            # print(sessions["session"][0])
+
             custom_fields = sessions["custom_fields"]["custom_field"]
     except:
         custom_fields = []
@@ -347,6 +355,7 @@ def getCustomFieldsFromXML(file):
         custom_fields = [custom_fields]
 
     return custom_fields
+
 
 def getSessionsFromXML(file):
     sessions = []
@@ -362,7 +371,6 @@ def getSessionsFromXML(file):
 
 def copyDefaultToUserFolder():
     seminarFolder = getSeminarFolder(session["userID"])
-    # print(f'len(os.listdir(seminarFolder) ) == 0: {len(os.listdir(seminarFolder) ) == 0}')
     if path.exists(seminarFolder) == False:
         shutil.copytree(UPLOAD_FOLDER + "default/seminar/", seminarFolder)
     elif len(os.listdir(seminarFolder) ) == 0:
@@ -380,3 +388,144 @@ def appendEventsToXml():
     except:
         facetoface_dict["activity"]["facetoface"]["sessions"] = {"session": generated_sessions}
     return facetoface_dict
+
+
+class User:
+    def __init__(self, id="", created=None, lastlogin=None, firstname=None, lastname=None, email=None, password=None, company=None, super_user_id=None, timezone=None):
+        self.id = id
+        self.firstname = firstname
+        self.lastname = lastname
+        self.email = email
+        self.password = password
+        self.company = company
+        self.super_user_id = super_user_id
+        self.created = created
+        self.lastlogin = lastlogin
+        self.__timezone = timezone
+        self.root_folder = UPLOAD_FOLDER + self.id
+        
+    # @property
+    # def id(self):
+    #     return self.id
+
+    # @id.setter
+    # def id(self, value):
+    #     self.id = value
+
+    # @property
+    # def root_folder(self):
+    #     return self.root_folder
+
+    # @root_folder.setter
+    # def root_folder(self, value):
+    #     self.root_folder = value
+
+    @property
+    def seminar_folder(self):
+        return self.root_folder + '/seminar/'
+
+    @property
+    def activity_folder(self):
+        return self.seminar_folder + '/activities/'
+
+    @property
+    def timezone(self):
+        return self.__timezone
+    
+    @timezone.setter
+    def timezone(self, value):
+        db.update_timezone(id=self.id, timezone=value)
+
+    def update_lastlogin(self):
+        db.update_lastlogin(self.id)
+
+
+
+class Room:
+    def __init__(self, id, name, description, timecreated, capacity, location, building, allowconflicts):
+        self.id = id
+        self.name = name
+        self.description = description
+        self.timecreated = timecreated
+        self.capacity = capacity
+        self.location = location
+        self.building = building
+        self.allowconflicts = allowconflicts
+
+    def __str__(self):
+        room = {
+                "@id": self.room.id,
+                "name": self.room.name,
+                "description": self.room.description,
+                "capacity": self.room.capacity,
+                "allowconflicts": "0",
+                "custom": "0",
+                "hidden": "0",
+                "usercreated": "$@NULL@$",
+                "usermodified": "$@NULL@$",
+                            "timecreated": "",
+                            "timemodified": "",
+                            "room_fields": {
+                                "room_field": [
+                                    {
+                                        "@id": "",
+                                        "field_name": "building",
+                                        "field_type": "text",
+                                        "field_data": self.room.building,
+                                        "paramdatavalue": "$@NULL@$",
+                                    },
+                                    {
+                                        "@id": "",
+                                        "field_name": "location",
+                                        "field_type": "location",
+                                        "field_data": '{"address":"' + self.room.location + '","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
+                                        "paramdatavalue": "$@NULL@$",
+                                    },
+                                ]
+                            },
+            }
+        return room
+
+class Controller:
+        
+
+    def new_user(self, user_id, firstname="", lastname="", email="", password="",super_user_id="", company="", timezone="" ):
+        
+        db.create_user(
+                id = user_id,
+                firstname = firstname,
+                lastname = lastname,
+                email = email,
+                password = password,
+                super_user_id = super_user_id,
+                company = company,
+                created = int(time.time()),
+                lastlogin = int(time.time()),
+                timezone = timezone
+            )
+
+
+    def get_user_details(self, user_id):
+        user_data = db.get_user(user_id)
+        user = None
+        if user_data:
+            user = User(
+                id = user_data['id'],
+                firstname = user_data['firstname'],
+                lastname = user_data['lastname'],
+                email = user_data['email'],
+                password = user_data['password'],
+                super_user_id = user_data['super_user_id'],
+                company = user_data['company'],
+                created = user_data['created'],
+                lastlogin = user_data['lastlogin'],
+                timezone=user_data['timezone']
+            )
+        return user
+
+    def create_user_id(self):
+        letters = string.ascii_lowercase
+        random_string = ''.join(random.choice(letters) for i in range(10))
+        return random_string       
+
+

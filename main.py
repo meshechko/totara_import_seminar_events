@@ -1,5 +1,5 @@
 import re
-from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file
+from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, g
 import models
 from forms import UploadBackup, UploadRooms, CreateEventForm, TimeZoneForm
 import random
@@ -10,9 +10,10 @@ import json
 import os
 import shutil
 import time
+import db
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8rzrer'
+app.secret_key = b'_5#y2L"F4kekrj'
 
 
 #FILTERS
@@ -30,30 +31,28 @@ def datetime_format(value, format="%A, %d %B %Y"):
 
 # ROUTES
 
+myapp = models.Controller()
+user = None
+
 @app.route('/')
 def index():
-    checkUserSession()
     return render_template('index.html')
 
-def checkUserSession():
+
+@app.before_request
+def before_request():
     if 'userID' not in session:
-        letters = string.ascii_lowercase
-        randomString = ''.join(random.choice(letters) for i in range(10))
-        session['userID'] = randomString
-        seminarFolder = models.getSeminarFolder(session["userID"])
-        models.createFolder(seminarFolder)
+        session['userID'] = myapp.create_user_id()
+        myapp.new_user(user_id=session['userID'])
+    
+    g.user = myapp.get_user_details(session['userID'])
 
-    if 'timezone' not in session:
-        
-        session["timezone"] = "None"
-
-    os.environ["TZ"] = str(session["timezone"])
+    os.environ["TZ"] = g.user.timezone
     time.tzset()
 
-@app.route('/create-recurring-events/<pin>')
+
 @app.route('/create-recurring-events', methods=['GET', 'POST'])
 def create_recurring_events(pin=None):
-    checkUserSession()
     if pin == 'healthlearn':
         session['pin'] = 'healthlearn'
     form = CreateEventForm()
@@ -68,12 +67,12 @@ def create_recurring_events(pin=None):
         models.saveToJsonFile(rooms, "rooms")
     else:
         custom_fields = models.getCustomFieldsFromXML(models.readXml())
-        print('custom_fields')
-        print(custom_fields)
+        # print('custom_fields')
+        # print(custom_fields)
     form.rooms.choices = [(room["id"], room["name"]) for room in models.getFromJsonFile("rooms")]
     max_generated_events = 1000
     recurrence_type = request.args.get('recurrence_type')
-    if request.method == 'POST' and form.validate_on_submit() and session["timezone"] != "None":
+    if request.method == 'POST' and form.validate_on_submit() and g.user.timezone:
         for field in custom_fields:
             try:
                 field["field_data"] = request.form[field['field_name']]
@@ -208,7 +207,6 @@ def delete_sessions_set():
 
 @app.route('/add-rooms', methods=['POST', 'GET'])
 def add_rooms():
-    checkUserSession()
     form = UploadRooms()
     required_headings = ', '.join(models.requiredHeaders)
     if request.method == 'POST' and form.validate():
@@ -225,7 +223,6 @@ def add_rooms():
 
 @app.route('/upload-backup', methods=['POST', 'GET'])
 def upload_backup():
-    checkUserSession()
     form = UploadBackup()
     
     if request.method == 'POST':
@@ -274,16 +271,17 @@ def delete_rooms():
 def clear_all():
     if request.method == 'POST':
         session.pop("userID", None)
-        if session.get('pin') is None:
-            session.pop("timezone", None)
+        # if session.get('pin') is None:
+        #     session.pop("timezone", None)
     return redirect(url_for('create_recurring_events'))
 
 @app.route('/save-timezone', methods=['POST'])
 def save_timezone():
     form = TimeZoneForm()
     if request.method == 'POST':
-        session["timezone"] = form.timezone.data
-       
+        # session["timezone"] = form.timezone.data
+       g.user.timezone = form.timezone.data
+       print(g.user.timezone)
     return redirect(url_for('create_recurring_events'))
 
 @app.route('/login', methods=['POST'])
@@ -292,7 +290,6 @@ def login():
         userID = request.form["pin"]
         if userID == "healthlearn":
             session["pin"] = userID
-            session["timezone"] = 'Pacific/Auckland'
     return redirect(url_for('create_recurring_events'))
 
 @app.route('/logout')

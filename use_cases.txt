@@ -1,3 +1,86 @@
 1. User enters 'event' details
 2. User selects 'recurrance' start and end date
 3. User downloads 'backup' 'file'
+
+
+Creating user accounts:
+1. User logs clicks register
+2. User enters First, Lastname, company name, email and password
+3. System:
+3.1. Save user data in database (User Id = folder in uploads)
+4. Take user to page where they set their defaults - Rooms, custom fields, and select timezone
+4.2. When user uploads CSV with rooms - save rooms details in the database under user ID 
+4.3. When user uploads backup - save custom fields data in database under user ID 
+4.4. When user selects timezone - save in database under user ID 
+
+User opens page:
+1. Create random user ID if user_auth is None 
+2. When user logs-in - replace user ID with the one from database. (user looses data they had before log in)
+
+
+
+Anonymous user:
+1. USer opens page
+2. check if there's a session:
+2.1 if not
+- create session user_id
+- create user with user id
+3. create user object from database
+
+
+Organisation admin:
+1. Olexiy manually set up organisation admin.
+2. Olexiy manually assign user to organisation by organisation ID
+3. Organisation 
+
+
+
+Not authenticated user:
+
+Creating user data:
+1. Generate unique ID 
+2. Create record in database USER:
+- ID = unique ID 
+- created - date when Unique ID was created
+- lastlogin - today date when user opens any page 
+- other feilds = EMPTY 
+
+Uploading rooms
+
+
+
+Database:
+
+- USER
+ID
+Firstname
+Lastname
+email
+password
+company
+created - timestamp
+lastlogin - timestamp
+super_user_id
+
+- ROOM 
+ID 
+room_id
+name
+description
+capacity
+timecreated
+building
+location
+allowconflicts
+user_id
+isDefault
+
+- CUSTOMFIELD
+ID
+field_id
+field_name
+field_type
+field_data
+paramdatavalue
+user_id
+isDefault
