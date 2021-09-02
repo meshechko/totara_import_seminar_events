@@ -33,36 +33,11 @@ def getSeminarFolder(userID):
 def getUserFolder(userID):
     return UPLOAD_FOLDER + userID
 
-# COMMON
-
-
-def fileAllowed(filename, allowedExtension):
-    if Path(filename).suffix == allowedExtension:
-        return True
-
 # ROOMS upload
-
-
-requiredHeaders = ['id', 'name', 'description', 'timecreated',
-                   'capacity', 'location', 'building', 'allowconflicts']
 
 #done
 def createFolder(folder):
     Path(folder).mkdir(parents=True, exist_ok=True)
-
-# #done
-# def covertCsvToList(file):
-#     decoded_file = file.read().decode('utf-8').splitlines()
-#     reader = csv.DictReader(decoded_file)
-#     return list(reader)
-
-# #done
-# def validateCsvHeaders(rooms_list):
-#     roomsFileHeaders = list(rooms_list[0].keys())
-#     difference = [i for i in requiredHeaders +
-#                   roomsFileHeaders if i not in requiredHeaders or i not in roomsFileHeaders]
-#     if len(difference) == 0:
-#         return True
 
 
 def saveToJsonFile(list, file_name):
@@ -94,7 +69,7 @@ def getFromJsonFile(file_name):
 
 def validateBackup(file):
     filename = secure_filename(file.filename)
-    if "facetoface" in filename and fileAllowed(filename, ".mbz"):
+    if "facetoface" in filename and Path(filename).suffix == ".mbz":
         return True
 
 
@@ -203,6 +178,41 @@ def generateRecurringDates(datestart, datefinish,frequency, occurrence_number, d
     recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
     dates = list(rrulestr(recurrance_data_string))
     return dates
+
+
+class Recurrance:
+    def __init__(self, datestart, datefinish,frequency, occurrence_number, days_of_week, interval):
+        self.datestart = datestart
+        self.datefinish = datefinish,
+        self.frequency = frequency,
+        self.occurence_number = occurrence_number,
+        self.days_of_week = days_of_week,
+        self.interval = interval
+        self.recurrence_date_sets = []
+
+    def generate_dates(self):
+        occurrence_number = self.occurrence_number
+        recurrence_data = []
+        if self.frequency == "WEEKLY":
+            self.occurrence_number = ""
+
+            days_of_week = [occurrence_number + day for day in self.days_of_week]
+
+            if self.frequency:
+                recurrence_data.append("FREQ="+self.frequency)
+
+            if days_of_week:
+                recurrence_data.append(f"BYDAY={ ','.join(self.days_of_week) }")
+
+            if self.interval:
+                recurrence_data.append(f"INTERVAL={ self.interval }")
+
+            if self.datefinish:
+                recurrence_data.append(f"UNTIL={ self.datefinish }")
+
+            recurrance_data_string = f"DTSTART:{ self.datestart } RRULE:{ ';'.join(self.recurrence_data[0:]) }"
+
+        self.recurrence_date_sets.append(list(rrulestr(recurrance_data_string))) #generate dates and append to object
 
 
 def generate_recurring_sessions(recurring_dates, custom_fields_data, details, timestart, timefinish, room_id, capacity,  allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number, send_capacity_email_cutoff_timeunit, normal_cost):
@@ -389,9 +399,122 @@ def appendEventsToXml():
         facetoface_dict["activity"]["facetoface"]["sessions"] = {"session": generated_sessions}
     return facetoface_dict
 
+class Event:
+    def __init__(self, id,capacity, allowoverbook, details, normalcost, allowcancellations, cancellationcutoff, timecreated, timemodified, mincapacity, cutoff, sendcapacityemail, sessiontimezone, usermodified, selfapproval, waitlisteveryone, discountcost, registrationtimestart, registrationtimefinish,cancelledstatus):
+        self.id=id
+        self.capacity = capacity
+        self.allowoverbook = allowoverbook
+        self.waitlisteveryone = waitlisteveryone
+        self.details=details
+        self.normalcost = normalcost
+        self.discountcost = discountcost
+        self.allowcancellations = allowcancellations
+        self.cancellationcutoff = cancellationcutoff # str(int(self.cancellation_cutoff_number) * int(self.cancellation_cutoff_timeunit))
+        self.timecreated = timecreated
+        self.timemodified = timemodified
+        self.usermodified = usermodified
+        self.selfapproval = selfapproval
+        self.mincapacity = mincapacity
+        self.cutoff = cutoff # str(int(self.send_capacity_email_cutoff_number) * int(self.send_capacity_email_cutoff_timeunit))
+        self.sendcapacityemail = sendcapacityemail
+        self.registrationtimestart = registrationtimestart
+        self.registrationtimefinish = registrationtimefinish
+        self.cancelledstatus = cancelledstatus
+        self.session_roles = []
+        self.custom_fields = []
+        self.sessioncancel_fields = []
+        self.signups = []
+        self.sessiontimezone = sessiontimezone
+        self.sessions_dates = []
+
+    def add_custom_field(self, field):
+        self.custom_fields.append(field)
+
+    def __str__(self):
+
+        if len(self.session_roles) == 0:
+            session_roles = None
+        if len(self.ssessioncancel_fieldsession_roles) == 0:
+            sessioncancel_fields = None
+        if len(self.signups) == 0:
+            signups = None
+
+        session = {
+            '@id': "",
+            'capacity': str(self.capacity),
+            'allowoverbook': str(int(self.allowoverbook)),
+            'waitlisteveryone': self.waitlisteveryone,
+            'details': self.details,
+            'normalcost': str(self.normalcost),
+            "discountcost": self.discountcost,  # this value is from event settings. so set it to 0 by default so far
+            'allowcancellations': self.allowcancellations,
+            'cancellationcutoff': self.cancellationcutoff,
+            "timecreated": str(int(time.time())),
+            "timemodified": str(int(time.time())),
+            "usermodified": self.usermodified,  # dont know user, leave blank
+            "selfapproval": self.selfapproval,  # this value is from event settings. Check what will happen if after loading backup to Totara change this value in settings in Totara, will it affect generated backup and session created in Totara?
+            'mincapacity': str(self.mincapacity),
+            'cutoff': self.cutoff,
+            'sendcapacityemail': str(int(self.sendcapacityemail)),
+            # this value is from event settings. so set it to 0 by default so far
+            'registrationtimestart': self.registrationtimestart,
+            # this value is from event settings. so set it to 0 by default so far
+            'registrationtimefinish': self.registrationtimefinish,
+            'cancelledstatus': self.cancelledstatus,
+            'session_roles': session_roles,  
+            'custom_fields': {
+                "custom_field": self.custom_fields
+                },
+            'sessioncancel_fields': sessioncancel_fields,
+            'signups': signups,  
+            "sessions_dates": {
+                "sessions_date": self.sessions_dates
+            }
+        }
+        return session
+
+class Session:
+    def __init__(self, id, sessiontimezone, timestart, timefinish, assets):
+        self.id =id
+        self.sessiontimezone=sessiontimezone
+        self.timestart = timestart
+        self.timefinish = timefinish
+        self.assets = assets # make None if empty
+
+    def __str__(self):
+        date = {
+                "@id": self.id,
+                "sessiontimezone": self.timestart,  
+                "timestart": str(self.timestart),
+                "timefinish": str(self.timefinish),
+                "assets": self.assets,
+                }
+        return date
+
+class CustomField:
+    def __init__(self, field_id, field_name, field_type, field_data, paramdatavalue, user_id, isDefault, id=''):
+        self.id = id
+        self.field_id = field_id
+        self.field_name = field_name
+        self.field_type = field_type
+        self.field_data = field_data
+        self.paramdatavalue = paramdatavalue
+        self.isDefault = isDefault
+        self.user_id = user_id
+
+    def get_field(self):
+        field = {
+                '@id': self.field_id,
+                'field_name': self.field_name,
+                'field_type': self.field_type,
+                'field_data': self.field_data,
+                'paramdatavalue': self.paramdatavalue,
+                }
+        return field
+
 
 class User:
-    def __init__(self, id="", created=None, lastlogin=None, firstname=None, lastname=None, email=None, password=None, company=None, super_user_id=None, timezone=None, rooms = []):
+    def __init__(self, id="", created=None, lastlogin=None, firstname=None, lastname=None, email=None, password=None, company=None, super_user_id=None, timezone=None):
         self.id = id
         self.firstname = firstname
         self.lastname = lastname
@@ -403,7 +526,8 @@ class User:
         self.lastlogin = lastlogin
         self.__timezone = timezone
         self.__root_folder = UPLOAD_FOLDER + self.id
-        self.rooms = rooms
+        self.__rooms = []
+        self.__custom_fields = []
         self.update_lastlogin()
 
 
@@ -436,27 +560,85 @@ class User:
 
     def add_room(self, room):
         db.create_room(
-            room.id,
-            room.name, 
-            room.description, 
-            room.capacity, 
-            room.timecreated, 
-            room.building, 
-            room.location, 
-            room.allowconflicts, 
-            room.user_id, 
-            room.isDefault)
-        self.rooms.append(room)
+            room_id=room.room_id,
+            name=room.name, 
+            description=room.description, 
+            capacity=room.capacity, 
+            timecreated=room.timecreated, 
+            building=room.building, 
+            location=room.location, 
+            allowconflicts=room.allowconflicts, 
+            user_id=room.user_id, 
+            isDefault=room.isDefault
+            )
     
+    @property
+    def rooms(self):
+        rooms = db.get_user_rooms(user_id=self.id)
+        for room in rooms:
+            room_obj = Room(
+                            room_id = room['id'],
+                            name=room['name'],
+                            description=room['description'],
+                            timecreated=room['timecreated'],
+                            capacity=room['capacity'],
+                            location=room['location'],
+                            building=room['building'],
+                            allowconflicts=room['allowconflicts'],
+                            user_id = self.id,
+                            isDefault = 0
+                        )
+            self.__rooms.append(room_obj)
+        return self.__rooms
+    
+    @rooms.setter
+    def rooms(self, list):
+        self.__rooms = list
+
+
     def delete_rooms(self):
         self.rooms = []
         db.delete_user_rooms(user_id=self.id)
 
+    @property
+    def custom_fields(self):
+        custom_fields = db.get_user_custom_fields(user_id=self.id)
+        for field in custom_fields:
+            field_obj = CustomField(
+                field_id = field['field_id'],
+                field_name = field['name'],
+                field_type= field['type'],
+                field_data = field['data'],
+                paramdatavalue= field['paramdatavalue'],
+                user_id = field['user_id'],
+                isDefault = field['isDefault']
+             )
+            self.__custom_fields.append(field_obj)
+        return self.__custom_fields
+    
+    @custom_fields.setter
+    def custom_fields(self, list):
+        self.__custom_fields = list
 
+    def add_custom_field(self, field):
+        db.create_custom_field(
+            field_id = field.field_id,
+            name = field.field_name,
+            type = field.field_type,
+            data = field.field_data, 
+            paramdatavalue = field.paramdatavalue,
+            isDefault = field.isDefault,
+            user_id = self.id
+            )
+
+    def delete_custom_fields(self):
+        self.__custom_fields = []
+        db.delete_user_custom_fields(user_id=self.id)
 
 class Room:
-    def __init__(self, id, name, description, timecreated, capacity, location, building, allowconflicts, user_id, isDefault=0):
+    def __init__(self, room_id, name, description, timecreated, capacity, location, building, allowconflicts, user_id, isDefault=0, id=''):
         self.id = id
+        self.room_id = room_id
         self.name = name
         self.description = description
         self.timecreated = timecreated
@@ -467,8 +649,7 @@ class Room:
         self.isDefault = isDefault
         self.user_id = user_id
 
-
-    def __str__(self):
+    def get_room(self):
         room = {
                 "@id": self.room.id,
                 "name": self.room.name,
@@ -502,10 +683,10 @@ class Room:
             }
         return room
 
+
 class Controller:
         
     def new_user(self, user_id, firstname="", lastname="", email="", password="",super_user_id="", company="", timezone="" ):
-        
         db.create_user(
                 id = user_id,
                 firstname = firstname,
@@ -533,8 +714,7 @@ class Controller:
                 company = user_data['company'],
                 created = user_data['created'],
                 lastlogin = user_data['lastlogin'],
-                timezone=user_data['timezone'],
-                rooms = db.get_user_rooms(user_id = user_data['id'])            
+                timezone=user_data['timezone']
             )
             
         return user

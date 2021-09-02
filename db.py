@@ -1,18 +1,25 @@
 import sqlite3
 import time
 
-conn = sqlite3.connect('database.db')
+# conn = sqlite3.connect('database.db')
 # print("Opened database successfully")
 
 # conn.execute('CREATE TABLE users (id TEXT, firstname TEXT, lastname TEXT, email TEXT, password TEXT, company TEXT, created INTEGER, lastlogin INTEGER, super_user_id TEXT)')
 
-# conn.execute('CREATE TABLE rooms (id TEXT, name TEXT, description TEXT, capacity INTEGER, timecreated INTEGER, building TEXT, location TEXT, allowconflicts TEXT, user_id TEXT, isDefault INTEGER)')
+# conn.execute('CREATE TABLE rooms (id INTEGER PRIMARY KEY, room_id TEXT, name TEXT, description TEXT, capacity INTEGER, timecreated INTEGER, building TEXT, location TEXT, allowconflicts TEXT, user_id TEXT, isDefault INTEGER)')
 
-# conn.execute('ALTER TABLE users ADD timezone TEXT')
+
+
+# conn.execute('ALTER TABLE customfields ADD isDefault INTEGER')
+
+# conn.execute('DROP TABLE customfields')
+
+# conn.execute('CREATE TABLE customfields (id INTEGER PRIMARY KEY, field_id TEXT, name TEXT, type TEXT, data TEXT, paramdatavalue TEXT, user_id TEXT, isDefault INTEGER)')
+# conn.execute('CREATE TABLE rooms (id INTEGER PRIMARY KEY, room_id TEXT, name TEXT, description TEXT, capacity INTEGER, timecreated INTEGER, building TEXT, location TEXT, allowconflicts TEXT, user_id TEXT, isDefault INTEGER)')
 
 # print("Table created successfully")
 
-conn.close()
+# conn.close()
 
 
 
@@ -70,24 +77,59 @@ def delete_user_rooms(user_id):
     with sqlite3.connect(DATABASE) as conn:
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-        cur.execute("DELETE FROM rooms WHERE user_id = ?",(user_id, ))
+        cur.execute("DELETE FROM rooms WHERE user_id = ? AND isDefault=0",(user_id, ))
+
+
+def create_room(room_id, name, description, capacity, timecreated, building, location, allowconflicts, user_id, isDefault):
+    with sqlite3.connect(DATABASE) as conn:
+        cur = conn.cursor()
+        cur.execute("INSERT INTO rooms (room_id, name, description, capacity, timecreated, building, location, allowconflicts, user_id, isDefault) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",(room_id, name, description, capacity, timecreated, building, location, allowconflicts, user_id, isDefault) )
+        conn.commit()
+
+def get_room(id):
+    with sqlite3.connect(DATABASE) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM rooms WHERE id= ?",(id, ))
         rows = cur.fetchall()
         rows_dict = [dict(row) for row in rows]
         return rows_dict
 
-
-def create_room(id, name, description, capacity, timecreated, building, location, allowconflicts, user_id, isDefault):
+def create_custom_field(field_id, name, type, data, paramdatavalue, user_id, isDefault):
     with sqlite3.connect(DATABASE) as conn:
         cur = conn.cursor()
-        cur.execute("INSERT INTO rooms (id, name, description, capacity, timecreated, building, location, allowconflicts, user_id, isDefault) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",(id, name, description, capacity, timecreated, building, location, allowconflicts, user_id, isDefault) )
+        cur.execute("INSERT INTO customfields (field_id, name, type, data, paramdatavalue, user_id, isDefault) VALUES (?, ?, ?, ?, ?, ?, ?)",(field_id, name, type, data, paramdatavalue, user_id, isDefault) )
         conn.commit()
 
+def get_user_custom_fields(user_id):
+    with sqlite3.connect(DATABASE) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM customfields WHERE user_id= ? ",(user_id, ))
+        rows = cur.fetchall()
+        rows_dict = [dict(row) for row in rows]
+        return rows_dict
+
+def delete_user_custom_fields(user_id):
+    with sqlite3.connect(DATABASE) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("DELETE FROM customfields WHERE user_id = ? AND isDefault=0",(user_id, ))
+
+def get_custom_field(id):
+    with sqlite3.connect(DATABASE) as conn:
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM customfields WHERE id= ?",(id, ))
+        rows = cur.fetchall()
+        rows_dict = [dict(row) for row in rows]
+        return rows_dict
 
 # with sqlite3.connect(DATABASE) as conn:
 #         conn.row_factory = sqlite3.Row
 #         cur = conn.cursor()
-#         cursor = cur.execute("SELECT * FROM rooms")
-#         # cur.execute("DELETE FROM users")
+#         cursor = cur.execute("SELECT * FROM customfields")
+#         # cur.execute("DELETE FROM customfields")
 #         rows = [dict(row) for row in cursor.fetchall()]
 #         # rows = dict(zip([c[0] for c in cursor.description], rows))
 #         # names = list(map(lambda x: x[0], cursor.description))

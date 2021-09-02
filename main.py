@@ -1,4 +1,4 @@
-import re
+from pathlib import Path
 from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, g
 import models
 from forms import UploadBackup, UploadRooms, CreateEventForm, TimeZoneForm
@@ -7,11 +7,11 @@ import xmltodict
 import os
 import shutil
 import time
-import db
+from werkzeug.utils import secure_filename
 import csv
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4kjnrjkj'
+app.secret_key = b'_5#y2L"Fjkmnrjkj'
 
 
 #FILTERS
@@ -54,18 +54,8 @@ def create_recurring_events(pin=None):
     form = CreateEventForm()
     timezone_form = TimeZoneForm()
     rooms = g.user.rooms
-
-    custom_fields = [] 
-    
-
-    if 'pin' in session:
-        custom_fields = [{'@id': '', 'field_name': 'Presenter', 'field_type': 'text', 'field_data': '', 'paramdatavalue': '$@NULL@$'}]
-        
-        # models.saveToJsonFile(rooms, "rooms")
-    else:
-        custom_fields = models.getCustomFieldsFromXML(models.readXml())
-
-    form.rooms.choices = [(room["id"], room["name"]) for room in rooms]
+    custom_fields = g.user.custom_fields
+    form.rooms.choices = [(room.id, room.name) for room in rooms]
     max_generated_events = 1000
     recurrence_type = request.args.get('recurrence_type')
     if request.method == 'POST' and form.validate_on_submit() and g.user.timezone:
@@ -155,7 +145,6 @@ def create_recurring_events(pin=None):
         session_sets = []
         session_sets = models.getFromJsonFile("sessions")
     
-    
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields={"custom_field":custom_fields}, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
 
 @app.route('/download', methods=['POST'])
@@ -203,25 +192,28 @@ def delete_sessions_set():
 
 @app.route('/add-rooms', methods=['POST', 'GET'])
 def add_rooms():
-    form = UploadRooms()
+    form = UploadRooms() #WTFroms for Uploading rooms
+    required_headers = ['id', 'name', 'description', 'timecreated', 'capacity', 'location', 'building', 'allowconflicts'] # these are headers that must be uploaded
 
-    required_headings = ', '.join(models.requiredHeaders)
+    required_headers_str = ', '.join(required_headers) # save them as string to display on the page
+
     if request.method == 'POST' and form.validate():
-        CSV = form.file.data
+        CSV = form.file.data #get frle form the form
 
-        decoded_file = CSV.read().decode('utf-8').splitlines()
+        decoded_file = CSV.read().decode('utf-8').splitlines() #read CSV
         reader = csv.DictReader(decoded_file)
-        rooms = list(reader)
+        rooms = list(reader) # save CSV data to list
 
-        roomsFileHeaders = list(rooms[0].keys())
-        difference = [i for i in models.requiredHeaders +
-                    roomsFileHeaders if i not in models.requiredHeaders or i not in roomsFileHeaders]
+        csv_headers = list(rooms[0].keys()) # read headers form the uploaded CSV file
+        difference = [i for i in required_headers + csv_headers if i not in required_headers or i not in csv_headers] # check if headers in the CSV file are any all matching to the required headers listed in required_headers
 
-        if len(difference) == 0:
+        if len(difference) == 0: # proceed with the code below if uploaded csv has same headers as the required ones
+
             g.user.delete_rooms() # delete and re-write user rooms in DB. 
-            for room in rooms:
+
+            for room in rooms: #loop through all rooms from CVS and create Rooms object for each fo them
                 room = models.Room(
-                        id = room['id'],
+                        room_id = room['id'],
                         name=room['name'],
                         description=room['description'],
                         timecreated=room['timecreated'],
@@ -232,13 +224,13 @@ def add_rooms():
                         user_id = g.user.id,
                         isDefault = 0
                     )
-                g.user.add_room(room)
+                g.user.add_room(room) # append these rooms to the User object and save in database
+
             flash(f'Successfully uploaded { len(g.user.rooms) } rooms', 'success')
             return redirect(url_for('add_rooms'))
         else:
-            flash(f'Please upload CSV that contains the following headers: \n { required_headings }', 'danger')
-        
-    return render_template('add-rooms.html', form=form, required_headings=required_headings)
+            flash(f'Please upload CSV that contains the following headers: \n { required_headers_str }', 'danger')
+    return render_template('add-rooms.html', form=form, required_headings=required_headers_str)
 
 
 @app.route('/upload-backup', methods=['POST', 'GET'])
@@ -247,17 +239,39 @@ def upload_backup():
     
     if request.method == 'POST':
         file = form.file.data
-        if models.validateBackup(file):
+        filename = secure_filename(file.filename)
+        if "facetoface" in filename and Path(filename).suffix == ".mbz":
+
             if models.unzipBackup(file):
                 facetoface_dict = models.readXml()
                 backup_sessions = models.getSessionsFromXML(facetoface_dict)
                 if len(backup_sessions) > 0:
-                    for backup_session in backup_sessions:
-                        try:
-                            if isinstance(backup_session["custom_fields"]["custom_field"], list) == False:
-                                backup_session["custom_fields"]["custom_field"] = [backup_session["custom_fields"]["custom_field"]]
-                        except:
-                            pass
+                    g.user.delete_custom_fields() #delete custom fields from the database and overwrite with new ones
+                        
+                    backup_custom_fields_wrapper = backup_sessions[0]["custom_fields"] # get <custom_fields></custom_fields> from xml
+
+                    if backup_custom_fields_wrapper: #xmlparser returns None if there are zero fields inside <custom_fields></custom_fields> tag in xml
+
+                        backup_custom_fields = backup_custom_fields_wrapper["custom_field"] # get the content of what's inside of <custom_fields></custom_fields>
+
+                        if isinstance(backup_custom_fields, list) == False: # xmlparser returns a list if there are more than one custom field in <custom_fields></custom_fields>, otherwise it returns just one dictionary with custom field data (not a list).
+
+                            backup_custom_fields = [backup_custom_fields] # convert dict to a list with one dictinoary as we need to loop through the list in the code below
+
+                        for custom_field in backup_custom_fields:
+
+                            field = models.CustomField(
+                                field_id = custom_field['@id'], 
+                                field_name = custom_field['field_name'], 
+                                field_type = custom_field['field_type'], 
+                                field_data = custom_field['field_data'], 
+                                paramdatavalue = custom_field['paramdatavalue'],
+                                isDefault = 0,
+                                user_id = g.user.id
+                            )
+
+                            g.user.add_custom_field(field) # save custom fields from backup to database
+                
                     sessions = models.getFromJsonFile("sessions")
                     sessions.insert(0, backup_sessions)
                     models.saveToJsonFile(sessions, "sessions")
@@ -275,8 +289,8 @@ def upload_backup():
 @app.route('/delete-backup', methods=['POST'])
 def delete_backup():
     if request.method == 'POST':
-        seminarFolder = models.getSeminarFolder(session["userID"])
-        shutil.rmtree(seminarFolder)
+        shutil.rmtree(g.user.root_folder)
+        g.user.delete_custom_fields()
     return redirect(url_for('create_recurring_events'))
 
 @app.route('/delete-rooms', methods=['POST'])
@@ -286,7 +300,7 @@ def delete_rooms():
     return redirect(url_for('create_recurring_events'))
 
 
-
+# TODO remove user generated events for loged in user and remove rooms, custom fields and all events for unauthenticated users
 @app.route('/clear-all', methods=['POST'])
 def clear_all():
     if request.method == 'POST':
@@ -295,13 +309,12 @@ def clear_all():
         #     session.pop("timezone", None)
     return redirect(url_for('create_recurring_events'))
 
+
 @app.route('/save-timezone', methods=['POST'])
 def save_timezone():
     form = TimeZoneForm()
     if request.method == 'POST':
-        # session["timezone"] = form.timezone.data
        g.user.timezone = form.timezone.data
-       print(g.user.timezone)
     return redirect(url_for('create_recurring_events'))
 
 @app.route('/login', methods=['POST'])

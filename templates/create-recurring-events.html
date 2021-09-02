@@ -2,11 +2,14 @@
 {% set active_page = "create-recurring-events" %}
 {% block title %}Create recurring events{% endblock title %}
 {% block content %}
-
 <div class="row g-5">
   <div class="col-md-3 offset-md-9 text-end">
 <button type="button" id="btn-timezone" class=" btn btn-success " data-bs-toggle="modal" data-bs-target="#timezone_modal">
+  {% if timezone %}
   Time zone: {{timezone}}
+  {% else %}
+  Select timezone
+  {% endif %}
 </button>
 </div>
 </div>
@@ -30,7 +33,7 @@
             </div>
             </div>
           <div class="row mb-5">
-            
+           
             {% if custom_fields|length > 0 %}
             <div class="control-group">
             <label class="form-label">Custom fields</label><button type="hidden" class="btn pt-0 pb-0" form="delete-backup" data-toggle="tooltip" data-placement="top" title="Delete backup"><i class="bi bi-trash"></i></button>
