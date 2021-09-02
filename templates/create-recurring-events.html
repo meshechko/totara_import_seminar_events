@@ -383,14 +383,9 @@
       <tbody>
         {% for session in sessions %}
         <tr>
-          <td scope="row">
-            {% if custom_fields%}
-              {% for field in session.custom_fields.custom_field %}
-                {% if field.field_type == 'text'%}
-                  {{ field.field_name }}: {{ field.field_data }} <br>
-                {% endif %}
-              {% endfor %}
-            {% endif %}
+          <td scope="row"> 
+            <!-- TODO fixe custom feilds in this table, as they don't show beacuse changed to OOP -->
+           
           </td>
           <td>{{ session.capacity }}</td>
           <td>{{ session.details }}</td>

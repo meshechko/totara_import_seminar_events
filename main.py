@@ -9,9 +9,11 @@ import shutil
 import time
 from werkzeug.utils import secure_filename
 import csv
+import random
+import string
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"Fjkmnrjkj'
+app.secret_key = b'_5#y2L"Fjkmnrkj'
 
 
 #FILTERS
@@ -38,19 +40,25 @@ def index():
 
 @app.before_request
 def before_request():
-    if 'userID' not in session:
-        session['userID'] = myapp.create_user_id()
-        myapp.new_user(user_id=session['userID'])
+    if 'userID' not in session: # check if its a returning user
+
+        # generate random user id that consists of 10 characters
+        letters = string.ascii_lowercase
+        random_string = ''.join(random.choice(letters) for i in range(10))
+
+        session['userID'] = random_string # create session for a new user
+        myapp.new_user(user_id=session['userID']) # initiat user and add user to database
     
-    g.user = myapp.get_user_details(session['userID'])
-    os.environ["TZ"] = g.user.timezone
+    g.user = myapp.get_user_details(session['userID']) # assign user to global app scope context
+
+    # assign user set timezone to server
+    os.environ["TZ"] = g.user.timezone 
     time.tzset()
 
 
 @app.route('/create-recurring-events', methods=['GET', 'POST'])
 def create_recurring_events(pin=None):
-    if pin == 'healthlearn':
-        session['pin'] = 'healthlearn'
+
     form = CreateEventForm()
     timezone_form = TimeZoneForm()
     rooms = g.user.rooms
@@ -101,16 +109,31 @@ def create_recurring_events(pin=None):
             days_of_week = ""
             if form.days_of_week:
                 days_of_week = request.form.getlist('days_of_week')
-            recurring_dates = models.generateRecurringDates(
+
+            # recurring_dates = models.generateRecurringDates(
+            #     datestart=datestart, 
+            #     datefinish=datefinish, 
+            #     frequency=frequency, 
+            #     occurrence_number=occurrence_number, 
+            #     days_of_week=days_of_week, 
+            #     interval=interval)
+
+            recurrence = models.Recurrence(
                 datestart=datestart, 
                 datefinish=datefinish, 
                 frequency=frequency, 
-                occurrence_number=occurrence_number, 
+                occurrence_number=occurrence_number[0], 
                 days_of_week=days_of_week, 
-                interval=interval)
+                interval=interval
+            )
+
+            recurring_dates = recurrence.dates
+
+            # print(recurrence.dates)
 
         if (len(recurring_dates) + models.countGeneratedEvents()) <= max_generated_events:
-
+            
+            
             generated_session = models.generate_recurring_sessions(
                 custom_fields_data=custom_fields, 
                 details=details, 
@@ -190,6 +213,7 @@ def delete_sessions_set():
         return redirect(url_for('create_recurring_events'))
     return render_template('create-recurring-events.html')
 
+#DONE
 @app.route('/add-rooms', methods=['POST', 'GET'])
 def add_rooms():
     form = UploadRooms() #WTFroms for Uploading rooms
@@ -293,6 +317,7 @@ def delete_backup():
         g.user.delete_custom_fields()
     return redirect(url_for('create_recurring_events'))
 
+#DONE
 @app.route('/delete-rooms', methods=['POST'])
 def delete_rooms():
     if request.method == 'POST':

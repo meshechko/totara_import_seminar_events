@@ -42,8 +42,8 @@ def createFolder(folder):
 
 def saveToJsonFile(list, file_name):
     userFolder = getUserFolder(session["userID"])
-    # if os.path.isdir(userFolder) == False: # done
-    #     createFolder(userFolder) #done
+    if os.path.isdir(userFolder) == False: # done
+        createFolder(userFolder) #done
     with open(os.path.join(userFolder, file_name+".json"), 'w') as file:
         toJson = json.dumps(list)
         file.write(toJson)
@@ -163,6 +163,7 @@ def generateRecurringDates(datestart, datefinish,frequency, occurrence_number, d
 
     days_of_week = [occurrence_number + day for day in days_of_week]
 
+
     if frequency:
         recurance_data.append("FREQ="+frequency)
 
@@ -179,40 +180,6 @@ def generateRecurringDates(datestart, datefinish,frequency, occurrence_number, d
     dates = list(rrulestr(recurrance_data_string))
     return dates
 
-
-class Recurrance:
-    def __init__(self, datestart, datefinish,frequency, occurrence_number, days_of_week, interval):
-        self.datestart = datestart
-        self.datefinish = datefinish,
-        self.frequency = frequency,
-        self.occurence_number = occurrence_number,
-        self.days_of_week = days_of_week,
-        self.interval = interval
-        self.recurrence_date_sets = []
-
-    def generate_dates(self):
-        occurrence_number = self.occurrence_number
-        recurrence_data = []
-        if self.frequency == "WEEKLY":
-            self.occurrence_number = ""
-
-            days_of_week = [occurrence_number + day for day in self.days_of_week]
-
-            if self.frequency:
-                recurrence_data.append("FREQ="+self.frequency)
-
-            if days_of_week:
-                recurrence_data.append(f"BYDAY={ ','.join(self.days_of_week) }")
-
-            if self.interval:
-                recurrence_data.append(f"INTERVAL={ self.interval }")
-
-            if self.datefinish:
-                recurrence_data.append(f"UNTIL={ self.datefinish }")
-
-            recurrance_data_string = f"DTSTART:{ self.datestart } RRULE:{ ';'.join(self.recurrence_data[0:]) }"
-
-        self.recurrence_date_sets.append(list(rrulestr(recurrance_data_string))) #generate dates and append to object
 
 
 def generate_recurring_sessions(recurring_dates, custom_fields_data, details, timestart, timefinish, room_id, capacity,  allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number, send_capacity_email_cutoff_timeunit, normal_cost):
@@ -260,10 +227,10 @@ def generate_recurring_sessions(recurring_dates, custom_fields_data, details, ti
     for custom_field in custom_fields_data:
         field_dict = {
                 '@id': '',
-                'field_name': custom_field["field_name"],
-                'field_type': custom_field["field_type"],
-                'field_data': custom_field["field_data"],
-                'paramdatavalue': '$@NULL@$',
+                'field_name': custom_field.field_name,
+                'field_type': custom_field.field_type,
+                'field_data': custom_field.field_data,
+                'paramdatavalue': custom_field.paramdatavalue,
             }
         
         all_custom_fields.append(field_dict)
@@ -346,27 +313,6 @@ def countGeneratedEvents():
     return len(all_sessions)
 
 
-def getCustomFieldsFromXML(file):
-    custom_fields = []
-
-    try:
-        sessions = file["activity"]["facetoface"]["sessions"]["session"]
-        # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
-        if isinstance(sessions, list):
-
-            custom_fields = sessions[0]["custom_fields"]["custom_field"]
-        else:
-
-            custom_fields = sessions["custom_fields"]["custom_field"]
-    except:
-        custom_fields = []
-
-    if isinstance(custom_fields, list) == False:
-        custom_fields = [custom_fields]
-
-    return custom_fields
-
-
 def getSessionsFromXML(file):
     sessions = []
     try:
@@ -399,8 +345,95 @@ def appendEventsToXml():
         facetoface_dict["activity"]["facetoface"]["sessions"] = {"session": generated_sessions}
     return facetoface_dict
 
+class Room:
+    def __init__(self, room_id, name, description, timecreated, capacity, location, building, allowconflicts, user_id, isDefault=0, id=''):
+        self.id = id
+        self.room_id = room_id
+        self.name = name
+        self.description = description
+        self.timecreated = timecreated
+        self.capacity = capacity
+        self.location = location
+        self.building = building
+        self.allowconflicts = allowconflicts
+        self.isDefault = isDefault
+        self.user_id = user_id
+
+    def get_room(self):
+        room = {
+                "@id": self.room.id,
+                "name": self.room.name,
+                "description": self.room.description,
+                "capacity": self.room.capacity,
+                "allowconflicts": "0",
+                "custom": "0",
+                "hidden": "0",
+                "usercreated": "$@NULL@$",
+                "usermodified": "$@NULL@$",
+                            "timecreated": "",
+                            "timemodified": "",
+                            "room_fields": {
+                                "room_field": [
+                                    {
+                                        "@id": "",
+                                        "field_name": "building",
+                                        "field_type": "text",
+                                        "field_data": self.room.building,
+                                        "paramdatavalue": "$@NULL@$",
+                                    },
+                                    {
+                                        "@id": "",
+                                        "field_name": "location",
+                                        "field_type": "location",
+                                        "field_data": '{"address":"' + self.room.location + '","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
+                                        "paramdatavalue": "$@NULL@$",
+                                    },
+                                ]
+                            },
+            }
+        return room
+
+class CustomField:
+    def __init__(self, field_id, field_name, field_type, field_data, paramdatavalue, user_id, isDefault, id=''):
+        self.id = id
+        self.field_id = field_id
+        self.field_name = field_name
+        self.field_type = field_type
+        self.field_data = field_data
+        self.paramdatavalue = paramdatavalue
+        self.isDefault = isDefault
+        self.user_id = user_id
+
+    def get_field(self):
+        field = {
+                '@id': self.field_id,
+                'field_name': self.field_name,
+                'field_type': self.field_type,
+                'field_data': self.field_data,
+                'paramdatavalue': self.paramdatavalue,
+                }
+        return field
+
+class Session:
+    def __init__(self, id, sessiontimezone, timestart, timefinish, assets):
+        self.id =id
+        self.sessiontimezone=sessiontimezone
+        self.timestart = timestart
+        self.timefinish = timefinish
+        self.assets = assets # make None if empty
+
+    def __str__(self):
+        date = {
+                "@id": self.id,
+                "sessiontimezone": self.timestart,  
+                "timestart": str(self.timestart),
+                "timefinish": str(self.timefinish),
+                "assets": self.assets,
+                }
+        return date
+
 class Event:
-    def __init__(self, id,capacity, allowoverbook, details, normalcost, allowcancellations, cancellationcutoff, timecreated, timemodified, mincapacity, cutoff, sendcapacityemail, sessiontimezone, usermodified, selfapproval, waitlisteveryone, discountcost, registrationtimestart, registrationtimefinish,cancelledstatus):
+    def __init__(self, id, capacity, allowoverbook, details, normalcost, allowcancellations, cancellationcutoff, timecreated, timemodified, mincapacity, cutoff, sendcapacityemail, sessiontimezone, usermodified, selfapproval, waitlisteveryone, discountcost, registrationtimestart, registrationtimefinish,cancelledstatus):
         self.id=id
         self.capacity = capacity
         self.allowoverbook = allowoverbook
@@ -430,7 +463,7 @@ class Event:
     def add_custom_field(self, field):
         self.custom_fields.append(field)
 
-    def __str__(self):
+    def get_event(self):
 
         if len(self.session_roles) == 0:
             session_roles = None
@@ -473,44 +506,45 @@ class Event:
         }
         return session
 
-class Session:
-    def __init__(self, id, sessiontimezone, timestart, timefinish, assets):
-        self.id =id
-        self.sessiontimezone=sessiontimezone
-        self.timestart = timestart
-        self.timefinish = timefinish
-        self.assets = assets # make None if empty
+class Recurrence:
+    def __init__(self, datestart, datefinish,frequency, occurrence_number, days_of_week, interval):
+        self.datestart = datestart
+        self.datefinish = datefinish
+        self.frequency = frequency
+        self.occurrence_number = occurrence_number
+        self.days_of_week = days_of_week
+        self.interval = interval
+        self.__dates = []
 
-    def __str__(self):
-        date = {
-                "@id": self.id,
-                "sessiontimezone": self.timestart,  
-                "timestart": str(self.timestart),
-                "timefinish": str(self.timefinish),
-                "assets": self.assets,
-                }
-        return date
+    @property
+    def dates(self):
+        # occurrence_number = self.occurrence_number
+        recurrence_data = []
 
-class CustomField:
-    def __init__(self, field_id, field_name, field_type, field_data, paramdatavalue, user_id, isDefault, id=''):
-        self.id = id
-        self.field_id = field_id
-        self.field_name = field_name
-        self.field_type = field_type
-        self.field_data = field_data
-        self.paramdatavalue = paramdatavalue
-        self.isDefault = isDefault
-        self.user_id = user_id
+        if self.frequency == "WEEKLY":
+            self.occurrence_number = ""
 
-    def get_field(self):
-        field = {
-                '@id': self.field_id,
-                'field_name': self.field_name,
-                'field_type': self.field_type,
-                'field_data': self.field_data,
-                'paramdatavalue': self.paramdatavalue,
-                }
-        return field
+        print(self.days_of_week)
+        days_of_week = [self.occurrence_number + day for day in self.days_of_week]
+        print(days_of_week)
+        if self.frequency:
+            recurrence_data.append("FREQ="+self.frequency)
+
+        if days_of_week:
+            recurrence_data.append(f"BYDAY={ ','.join(days_of_week) }")
+
+        if self.interval:
+            recurrence_data.append(f"INTERVAL={ self.interval }")
+
+        if self.datefinish:
+            recurrence_data.append(f"UNTIL={ self.datefinish }")
+
+        recurrance_data_string = f"DTSTART:{ self.datestart } RRULE:{ ';'.join(recurrence_data[0:]) }"
+
+        self.__dates = list(rrulestr(recurrance_data_string))
+
+        return self.__dates
+
 
 
 class User:
@@ -527,7 +561,9 @@ class User:
         self.__timezone = timezone
         self.__root_folder = UPLOAD_FOLDER + self.id
         self.__rooms = []
+        self.__event_sets = [] # create a list of events each time user generates events
         self.__custom_fields = []
+        
         self.update_lastlogin()
 
 
@@ -635,55 +671,6 @@ class User:
         self.__custom_fields = []
         db.delete_user_custom_fields(user_id=self.id)
 
-class Room:
-    def __init__(self, room_id, name, description, timecreated, capacity, location, building, allowconflicts, user_id, isDefault=0, id=''):
-        self.id = id
-        self.room_id = room_id
-        self.name = name
-        self.description = description
-        self.timecreated = timecreated
-        self.capacity = capacity
-        self.location = location
-        self.building = building
-        self.allowconflicts = allowconflicts
-        self.isDefault = isDefault
-        self.user_id = user_id
-
-    def get_room(self):
-        room = {
-                "@id": self.room.id,
-                "name": self.room.name,
-                "description": self.room.description,
-                "capacity": self.room.capacity,
-                "allowconflicts": "0",
-                "custom": "0",
-                "hidden": "0",
-                "usercreated": "$@NULL@$",
-                "usermodified": "$@NULL@$",
-                            "timecreated": "",
-                            "timemodified": "",
-                            "room_fields": {
-                                "room_field": [
-                                    {
-                                        "@id": "",
-                                        "field_name": "building",
-                                        "field_type": "text",
-                                        "field_data": self.room.building,
-                                        "paramdatavalue": "$@NULL@$",
-                                    },
-                                    {
-                                        "@id": "",
-                                        "field_name": "location",
-                                        "field_type": "location",
-                                        "field_data": '{"address":"' + self.room.location + '","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
-                                        "paramdatavalue": "$@NULL@$",
-                                    },
-                                ]
-                            },
-            }
-        return room
-
-
 class Controller:
         
     def new_user(self, user_id, firstname="", lastname="", email="", password="",super_user_id="", company="", timezone="" ):
@@ -719,10 +706,11 @@ class Controller:
             
         return user
 
-    def create_user_id(self):
-        letters = string.ascii_lowercase
-        random_string = ''.join(random.choice(letters) for i in range(10))
-        return random_string       
+    # def generate_events(self, ):
+    #     recurrance = Recurrance(
+    #         datestart, datefinish,frequency, occurrence_number, days_of_week, interval
+    #     )
+
 
     
 
