@@ -37,19 +37,6 @@ def getUserFolder(userID):
 
 # ROOMS upload
 
-#done
-def createFolder(folder):
-    Path(folder).mkdir(parents=True, exist_ok=True)
-
-
-def saveToJsonFile(list, file_name):
-    userFolder = getUserFolder(session["userID"])
-    if os.path.isdir(userFolder) == False: # done
-        createFolder(userFolder) #done
-    with open(os.path.join(userFolder, file_name+".json"), 'w') as file:
-        toJson = json.dumps(list)
-        file.write(toJson)
-
 
 def getFromJsonFile(file_name):
     list = []

@@ -34,10 +34,12 @@ def datetime_format(value, format="%A, %d %B %Y"):
 myapp = models.Controller()
 user = None
 
+#DONE
 @app.route('/')
 def index():
     return render_template('index.html')
 
+#DONE
 @app.before_request
 def before_request():
     if 'userID' not in session: # check if its a returning user
@@ -178,6 +180,7 @@ def create_recurring_events(pin=None):
     
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields={"custom_field":custom_fields}, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
 
+
 @app.route('/download', methods=['POST'])
 def download():
     models.copyDefaultToUserFolder()
@@ -197,29 +200,36 @@ def download():
             return redirect(url_for('create_recurring_events'))
     return render_template('download.html', events=events)
 
+
+#DONE
 @app.route('/delete-session', methods=['POST'])
 def delete_session():
     if request.method == 'POST':
-        sessions = models.getFromJsonFile("sessions")
+        sessions = g.user.event_sets
         set_index = int(request.form['session_set_index'])
         session_index = int(request.form['session_index'])
         if len(sessions[set_index]) == 1:
             del sessions[set_index]
         else:
             del sessions[set_index][session_index]
-        models.saveToJsonFile(sessions, "sessions")
+        g.user.event_sets = sessions
         return redirect(url_for('create_recurring_events'))
     return render_template('create-recurring-events.html')
 
+
+#DONE
 @app.route('/delete-sessions-set', methods=['POST'])
 def delete_sessions_set():
     if request.method == 'POST':
-        sessions = models.getFromJsonFile("sessions")
+        # sessions = models.getFromJsonFile("sessions")
+        sessions = g.user.event_sets
         set_index = int(request.form['session_set_index'])
         del sessions[set_index]
-        models.saveToJsonFile(sessions, "sessions")
+        g.user.event_sets = sessions
+        # models.saveToJsonFile(sessions, "sessions")
         return redirect(url_for('create_recurring_events'))
     return render_template('create-recurring-events.html')
+
 
 #DONE
 @app.route('/add-rooms', methods=['POST', 'GET'])
@@ -265,6 +275,7 @@ def add_rooms():
     return render_template('add-rooms.html', form=form, required_headings=required_headers_str)
 
 
+#DONE
 @app.route('/upload-backup', methods=['POST', 'GET'])
 def upload_backup():
     form = UploadBackup()
@@ -320,18 +331,13 @@ def upload_backup():
 
                             g.user.add_custom_field(field) # save custom fields from backup to database
 
-                    #DELETE
-                    # sessions = models.getFromJsonFile("sessions")
-                    # sessions.insert(0, backup_sessions)
-                    # models.saveToJsonFile(sessions, "sessions")
-
                     try: #try to ead file, if it doesnt exist (means user hasn't uploaded any thing yet) create an empty list
                         sessions = g.user.event_sets
                     except:
                         sessions = []
                     sessions.insert(0, backup_sessions)
-                    g.user.event_sets = sessions
 
+                    g.user.event_sets = sessions
 
                 flash(f'Backup file uploaded successfully', 'success')
             else:
@@ -343,12 +349,14 @@ def upload_backup():
     return render_template('upload-backup.html', form=form)
 
 
+#DONE
 @app.route('/delete-backup', methods=['POST'])
 def delete_backup():
     if request.method == 'POST':
         shutil.rmtree(g.user.root_folder)
         g.user.delete_custom_fields()
     return redirect(url_for('create_recurring_events'))
+
 
 #DONE
 @app.route('/delete-rooms', methods=['POST'])
@@ -368,12 +376,14 @@ def clear_all():
     return redirect(url_for('create_recurring_events'))
 
 
+#DONE
 @app.route('/save-timezone', methods=['POST'])
 def save_timezone():
     form = TimeZoneForm()
     if request.method == 'POST':
        g.user.timezone = form.timezone.data
     return redirect(url_for('create_recurring_events'))
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -383,11 +393,14 @@ def login():
             session["pin"] = userID
     return redirect(url_for('create_recurring_events'))
 
+
 @app.route('/logout')
 def logout():
     session.pop("pin", None)
     return redirect(url_for('create_recurring_events'))
 
+
+#DONE
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
