@@ -50,7 +50,7 @@ def before_request():
         myapp.new_user(user_id=session['userID']) # initiat user and add user to database
     
     g.user = myapp.get_user_details(session['userID']) # assign user to global app scope context
-    Path(g.user.seminar_folder).mkdir(parents=True, exist_ok=True)
+
     # assign user set timezone to server
     os.environ["TZ"] = g.user.timezone 
     time.tzset()

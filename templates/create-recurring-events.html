@@ -424,8 +424,8 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="timezone_modal_label">Select your time zone</h5>
-              {% if timezone != "None" %}
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              {% if timezone %}
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               {% endif %}
             </div>
             <div class="modal-body">
@@ -436,14 +436,14 @@
                 {% for value, text in timezone_form.timezone.choices %}
                 
                   
-                  <option {% if value == timezone or timezone == False and value=="Pacific/Auckland"  %}selected=""{% endif %} value="{{ value }}">{{ text }}</option>
+                  <option {% if value == timezone or timezone == '' and value=="Pacific/Auckland"  %}selected=""{% endif %} value="{{ value }}">{{ text }}</option>
               
                 {% endfor %}
               </select>
             </form>
             </div>
             <div class="modal-footer">
-              {% if timezone != None %}
+              {% if timezone %}
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               {% endif %}
               {{ timezone_form.submit() }}

@@ -78,7 +78,7 @@ def unzip_backup(file, folder):
         shutil.rmtree(folder)
 
     filename = secure_filename(file.filename) #get uploaded file name
-    #TODO how to avoid creating folder here as its created in @app.before_request
+
     Path(folder).mkdir(parents=True, exist_ok=True) # create seminar folder
     
     file.save(os.path.join(folder, filename)) # upload file in to user folder
@@ -559,6 +559,9 @@ class User:
 
     @event_sets.setter
     def event_sets(self, value):
+
+        Path(self.seminar_folder).mkdir(parents=True, exist_ok=True)
+
         file_name = self.root_folder+ "/events.json"            
         with open(file_name, 'w') as file:
             toJson = json.dumps(value)
