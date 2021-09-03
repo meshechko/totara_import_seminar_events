@@ -13,7 +13,7 @@ import random
 import string
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"Fjkmnrkj'
+app.secret_key = b'_5#y2L"okoFjkjjmnrkj'
 
 
 #FILTERS
@@ -50,7 +50,7 @@ def before_request():
         myapp.new_user(user_id=session['userID']) # initiat user and add user to database
     
     g.user = myapp.get_user_details(session['userID']) # assign user to global app scope context
-
+    Path(g.user.seminar_folder).mkdir(parents=True, exist_ok=True)
     # assign user set timezone to server
     os.environ["TZ"] = g.user.timezone 
     time.tzset()
@@ -67,6 +67,7 @@ def create_recurring_events(pin=None):
     max_generated_events = 1000
     recurrence_type = request.args.get('recurrence_type')
     if request.method == 'POST' and form.validate_on_submit() and g.user.timezone:
+
         for field in custom_fields:
             try:
                 field["field_data"] = request.form[field['field_name']]
@@ -102,37 +103,32 @@ def create_recurring_events(pin=None):
         # session["timezone"] = form.timezone.data
         
         recurring_dates = ""
-        if recurrence_type == "manual":
-            recurring_dates = models.strDatesToDatetimeList(form.manual_dates.data)
+        if recurrence_type == "manual": #if user selected some specific dates in the calendar
+            selected_dates = form.manual_dates.data
+
+            if isinstance(selected_dates, str):
+                dates = selected_dates.replace(' ','').split(",")
+                recurring_dates = sorted([datetime.strptime(date, '%d/%m/%Y') for date in dates])
+
+            # recurring_dates = models.strDatesToDatetimeList()
+
             session["recurrence_type"] = "manual"
-        else:
+
+        else: #if user selected recurrance pattern e.g. every Tuesday
+
             days_of_week = ""
             if form.days_of_week:
                 days_of_week = request.form.getlist('days_of_week')
 
-            # recurring_dates = models.generateRecurringDates(
-            #     datestart=datestart, 
-            #     datefinish=datefinish, 
-            #     frequency=frequency, 
-            #     occurrence_number=occurrence_number, 
-            #     days_of_week=days_of_week, 
-            #     interval=interval)
-
-            recurrence = models.Recurrence(
+            recurring_dates = models.generate_recurring_dates(
                 datestart=datestart, 
                 datefinish=datefinish, 
                 frequency=frequency, 
-                occurrence_number=occurrence_number[0], 
+                occurrence_number=occurrence_number, 
                 days_of_week=days_of_week, 
-                interval=interval
-            )
+                interval=interval)
 
-            recurring_dates = recurrence.dates
-
-            # print(recurrence.dates)
-
-        if (len(recurring_dates) + models.countGeneratedEvents()) <= max_generated_events:
-            
+        if (len(recurring_dates) + models.count_generated_events()) <= max_generated_events:
             
             generated_session = models.generate_recurring_sessions(
                 custom_fields_data=custom_fields, 
@@ -152,13 +148,22 @@ def create_recurring_events(pin=None):
                 send_capacity_email_cutoff_timeunit=send_capacity_email_cutoff_timeunit,
                 normal_cost=normal_cost)
 
-            sessions = models.getFromJsonFile("sessions")
+            #DELETE
+            # sessions = models.getFromJsonFile("sessions")
+
+            try:
+                sessions = g.user.event_sets
+            except:
+                sessions = []
+            
 
             if len(generated_session) > 0:
                 sessions.append(generated_session)
                 flash(f'<span class="btn btn-link p-0 align-baseline" data-tableid="recurrence-{ (len(sessions) -1) }" onclick="scrollSmoothTo(this.getAttribute(\'data-tableid\'));">{ len(recurring_dates) } events</span> have been successfully generated.', 'success')
             
-            models.saveToJsonFile(sessions, "sessions")
+            #DELETE
+            # models.saveToJsonFile(sessions, "sessions")
+            g.user.event_sets = sessions
             
             return redirect(url_for('create_recurring_events', recurrence_type=request.args.get('recurrence_type')))
         else:
@@ -166,7 +171,10 @@ def create_recurring_events(pin=None):
             return redirect(url_for('create_recurring_events'))
     else:
         session_sets = []
-        session_sets = models.getFromJsonFile("sessions")
+        # try:
+        session_sets = g.user.event_sets
+        # except:
+        #     session_sets = []
     
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=session_sets, custom_fields={"custom_field":custom_fields}, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
 
@@ -263,13 +271,29 @@ def upload_backup():
     
     if request.method == 'POST':
         file = form.file.data
+
         filename = secure_filename(file.filename)
+
         if "facetoface" in filename and Path(filename).suffix == ".mbz":
 
-            if models.unzipBackup(file):
-                facetoface_dict = models.readXml()
-                backup_sessions = models.getSessionsFromXML(facetoface_dict)
+            if models.unzip_backup(file=file, folder=g.user.seminar_folder): #check if uploaded file is correct archive and unzip it into user seminar folder
+
+                facetoface_dict = {}
+
+                with open(g.user.facetoface_xml, "rb") as f: #open facetoface.xml that user uploaded
+                    facetoface_dict = xmltodict.parse(f, dict_constructor=dict) #convert content of facetoface.xml to dict
+
+                try: #check if there any sessions in the uploaded file. Without TRY it will show error as the below path in a dict will not be accessible. That's why added TRY here
+                    backup_sessions = facetoface_dict["activity"]["facetoface"]["sessions"]["session"]
+
+                    # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
+                    if isinstance(backup_sessions, list) == False:
+                        backup_sessions = [backup_sessions]
+                except:
+                    backup_sessions = []
+
                 if len(backup_sessions) > 0:
+
                     g.user.delete_custom_fields() #delete custom fields from the database and overwrite with new ones
                         
                     backup_custom_fields_wrapper = backup_sessions[0]["custom_fields"] # get <custom_fields></custom_fields> from xml
@@ -295,19 +319,28 @@ def upload_backup():
                             )
 
                             g.user.add_custom_field(field) # save custom fields from backup to database
-                
-                    sessions = models.getFromJsonFile("sessions")
+
+                    #DELETE
+                    # sessions = models.getFromJsonFile("sessions")
+                    # sessions.insert(0, backup_sessions)
+                    # models.saveToJsonFile(sessions, "sessions")
+
+                    try: #try to ead file, if it doesnt exist (means user hasn't uploaded any thing yet) create an empty list
+                        sessions = g.user.event_sets
+                    except:
+                        sessions = []
                     sessions.insert(0, backup_sessions)
-                    models.saveToJsonFile(sessions, "sessions")
-             
+                    g.user.event_sets = sessions
+
+
                 flash(f'Backup file uploaded successfully', 'success')
             else:
                 flash(f'Incorrect backup', 'danger')
         else:
             flash('Upload the correct Totara activity backup that ends with .mbz. Scroll down to see a guide on how to create a Seminar activity backup with custom fields.', 'danger')
         return redirect(url_for('upload_backup'))
-    xmldata = models.readXml()
-    return render_template('upload-backup.html', form=form, xmldata=xmldata)
+
+    return render_template('upload-backup.html', form=form)
 
 
 @app.route('/delete-backup', methods=['POST'])

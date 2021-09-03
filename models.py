@@ -24,6 +24,8 @@ import db
 
 #done
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads/')
+DEFAULT_SEMINAR_FOLDER = UPLOAD_FOLDER + '/seminar/'
+DEFAULT_FACETOFACE_XML = DEFAULT_SEMINAR_FOLDER + '/activities/facetoface_14350/facetoface.xml'
 
 #done
 def getSeminarFolder(userID):
@@ -67,39 +69,39 @@ def getFromJsonFile(file_name):
 
 # BACKUP upload
 
-def validateBackup(file):
-    filename = secure_filename(file.filename)
-    if "facetoface" in filename and Path(filename).suffix == ".mbz":
-        return True
 
+#TODO how to move this into the controller or add this code into the route (it will make route code much longer)?
+def unzip_backup(file, folder):
 
-def unzipBackup(file):
-    seminarFolder = getSeminarFolder(session["userID"])
+    # check if diectory alreay exist and overwrite its content
+    if os.path.exists(folder):
+        shutil.rmtree(folder)
 
-    # check if diectory alreay exist
-    if os.path.exists(seminarFolder):
-        shutil.rmtree(seminarFolder)
+    filename = secure_filename(file.filename) #get uploaded file name
+    #TODO how to avoid creating folder here as its created in @app.before_request
+    Path(folder).mkdir(parents=True, exist_ok=True) # create seminar folder
+    
+    file.save(os.path.join(folder, filename)) # upload file in to user folder
 
-    # TODO check why this one is not under ELSE?
-    filename = secure_filename(file.filename)
-    createFolder(seminarFolder)
+    mbz_filepath = folder+filename
 
-    # upload file in to user folder
-    file.save(os.path.join(seminarFolder, filename))
-
-    mbz_filepath = seminarFolder+filename
     fileinfo = magic.from_file(mbz_filepath)
 
+    #check if file is zip or gzip and unzip it into the user seminar folder, otherwise don't unzip as .mbz is zip type file
     if 'Zip archive data' in fileinfo:
         with zipfile.ZipFile(mbz_filepath, 'r') as myzip:
-            myzip.extractall(seminarFolder)
+            myzip.extractall(folder)
+
     elif 'gzip compressed data' in fileinfo:
         tar = tarfile.open(mbz_filepath)
-        tar.extractall(path=seminarFolder)
+        tar.extractall(path=folder)
         tar.close()
+
     else:
         return False
-    os.remove(mbz_filepath)
+
+    os.remove(mbz_filepath) # delete .mbz after unzipping 
+
     return True
 
 
@@ -153,34 +155,6 @@ def readXml(xml_attribs=True):
 # RECURRANCE
 
 # "DTSTART:20210902T090000 RRULE:FREQ=WEEKLY;COUNT=5;INTERVAL=10;UNTIL=20230102T090000"
-
-def generateRecurringDates(datestart, datefinish,frequency, occurrence_number, days_of_week, interval):
-    recurance_data = []
-    # String builder - https://jakubroztocil.github.io/rrule/
-    occurrence_number = occurrence_number
-    if frequency == "WEEKLY":
-        occurrence_number = ""
-
-    days_of_week = [occurrence_number + day for day in days_of_week]
-
-
-    if frequency:
-        recurance_data.append("FREQ="+frequency)
-
-    if days_of_week:
-        recurance_data.append(f"BYDAY={ ','.join(days_of_week) }")
-
-    if interval:
-        recurance_data.append(f"INTERVAL={ interval }")
-
-    if datefinish:
-        recurance_data.append(f"UNTIL={ datefinish }")
-
-    recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
-    dates = list(rrulestr(recurrance_data_string))
-    return dates
-
-
 
 def generate_recurring_sessions(recurring_dates, custom_fields_data, details, timestart, timefinish, room_id, capacity,  allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number, send_capacity_email_cutoff_timeunit, normal_cost):
 
@@ -289,40 +263,18 @@ def generate_recurring_sessions(recurring_dates, custom_fields_data, details, ti
         sessions.append(session)
     return sessions
 
-
-def strDatesToDatetimeList(dates):
-    if isinstance(dates, str):
-        dates = dates.replace(' ','').split(",")
-        dates = sorted([datetime.strptime(date, '%d/%m/%Y') for date in dates])
-        return dates
-
-# import functools
-
-# def haskey(d, path):
-#     try:
-#         functools.reduce(lambda x, y: x[y], path.split("."), d)
-#         return True
-#     except:
-#         return False
-
-#  from https://stackoverflow.com/a/65782539
+# #DELETE this function
+# def strDatesToDatetimeList(dates):
+#     if isinstance(dates, str):
+#         dates = dates.replace(' ','').split(",")
+#         dates = sorted([datetime.strptime(date, '%d/%m/%Y') for date in dates])
+#         return dates
 
 
-def countGeneratedEvents():
+
+def count_generated_events():
     all_sessions = sum(getFromJsonFile("sessions"),[])
     return len(all_sessions)
-
-
-def getSessionsFromXML(file):
-    sessions = []
-    try:
-        sessions = file["activity"]["facetoface"]["sessions"]["session"]
-        # need to check if it is a lis or not because if there's only one event (session) then xmltodict makes it as a dict, if there are 2 and more then xmltodict makes it a list of dict's
-        if isinstance(sessions, list) == False:
-            sessions = [sessions]
-    except:
-        sessions = []
-    return sessions
 
 
 def copyDefaultToUserFolder():
@@ -506,6 +458,7 @@ class Event:
         }
         return session
 
+#TODO - Is it helpful somehow to have Recurrence as class or just e method is fine?
 class Recurrence:
     def __init__(self, datestart, datefinish,frequency, occurrence_number, days_of_week, interval):
         self.datestart = datestart
@@ -518,15 +471,14 @@ class Recurrence:
 
     @property
     def dates(self):
-        # occurrence_number = self.occurrence_number
+
         recurrence_data = []
 
         if self.frequency == "WEEKLY":
             self.occurrence_number = ""
 
-        print(self.days_of_week)
         days_of_week = [self.occurrence_number + day for day in self.days_of_week]
-        print(days_of_week)
+
         if self.frequency:
             recurrence_data.append("FREQ="+self.frequency)
 
@@ -545,6 +497,33 @@ class Recurrence:
 
         return self.__dates
 
+#TODO how to move this into the controller or add this code into the route (it will make route code much longer)?
+def generate_recurring_dates(datestart, datefinish,frequency, occurrence_number, days_of_week, interval):
+    recurance_data = []
+    # String builder - https://jakubroztocil.github.io/rrule/
+    occurrence_number = occurrence_number
+    if frequency == "WEEKLY":
+        occurrence_number = ""
+
+    days_of_week = [occurrence_number + day for day in days_of_week]
+
+
+    if frequency:
+        recurance_data.append("FREQ="+frequency)
+
+    if days_of_week:
+        recurance_data.append(f"BYDAY={ ','.join(days_of_week) }")
+
+    if interval:
+        recurance_data.append(f"INTERVAL={ interval }")
+
+    if datefinish:
+        recurance_data.append(f"UNTIL={ datefinish }")
+
+    recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
+    dates = list(rrulestr(recurrance_data_string))
+    return dates
+
 
 
 class User:
@@ -561,11 +540,29 @@ class User:
         self.__timezone = timezone
         self.__root_folder = UPLOAD_FOLDER + self.id
         self.__rooms = []
-        self.__event_sets = [] # create a list of events each time user generates events
         self.__custom_fields = []
+        
         
         self.update_lastlogin()
 
+    #TODO is this a right way to do? Tried to ave just in a session but looks like g.user creates a new object on every page so data is not transered between pages. Is there a way to transfer object between routes?
+    @property
+    def event_sets(self):
+        file_name = self.root_folder+"/events.json"
+        if path.exists(file_name):
+            data = open(file_name, "rb").read()
+            sessions = json.loads(data)
+        else:
+            sessions = []
+        
+        return sessions
+
+    @event_sets.setter
+    def event_sets(self, value):
+        file_name = self.root_folder+ "/events.json"            
+        with open(file_name, 'w') as file:
+            toJson = json.dumps(value)
+            file.write(toJson)
 
     @property
     def root_folder(self):
@@ -581,7 +578,14 @@ class User:
 
     @property
     def activity_folder(self):
-        return self.seminar_folder + '/activities/'
+        return self.seminar_folder + 'activities/'
+
+    @property
+    def facetoface_xml(self):
+        subfolders = [f.path for f in os.scandir(self.activity_folder) if f.is_dir()]
+        for folder in list(subfolders):
+            if "facetoface" in folder:
+                return folder+"/facetoface.xml"
 
     @property
     def timezone(self):
