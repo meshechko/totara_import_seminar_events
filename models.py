@@ -560,7 +560,7 @@ class User:
     @event_sets.setter
     def event_sets(self, value):
 
-        Path(self.seminar_folder).mkdir(parents=True, exist_ok=True)
+        Path(self.root_folder).mkdir(parents=True, exist_ok=True)
 
         file_name = self.root_folder+ "/events.json"            
         with open(file_name, 'w') as file:

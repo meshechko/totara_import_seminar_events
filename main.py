@@ -13,7 +13,7 @@ import random
 import string
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"okoFjkjjmnrkj'
+app.secret_key = b'_5#y2L"okoFhujkjjnrkj'
 
 
 #FILTERS
