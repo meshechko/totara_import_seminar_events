@@ -6,283 +6,19 @@ from pathlib import Path
 import zipfile
 import tarfile
 import magic
-import xmltodict
 import json
-import csv
-import uuid
-from dateutil import rrule, parser, relativedelta
 from dateutil.rrule import rrulestr
 from datetime import datetime
 import os.path
 from os import path
 import time
-import string
-import random
-
 import db
-# CONFIG data
 
-#done
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'uploads/')
-DEFAULT_SEMINAR_FOLDER = UPLOAD_FOLDER + '/seminar/'
-DEFAULT_FACETOFACE_XML = DEFAULT_SEMINAR_FOLDER + '/activities/facetoface_14350/facetoface.xml'
-
-#done
-def getSeminarFolder(userID):
-    return UPLOAD_FOLDER + userID + "/seminar/"
-
-# done
-def getUserFolder(userID):
-    return UPLOAD_FOLDER + userID
-
-# ROOMS upload
-
-
-def getFromJsonFile(file_name):
-    list = []
-    userFile = getUserFolder(session["userID"])+"/"+file_name+".json"
-
-    if path.exists(userFile):
-        list = open(userFile, "rb").read()
-        list = json.loads(list)
-    else:
-        folder = "default/"
-        if 'pin' in session:
-            folder = "default/" + session['pin'] + '/'
-
-        list = open((UPLOAD_FOLDER + folder + file_name+".json"), "rb").read()
-        list = json.loads(list)
-    return list
-
-# BACKUP upload
-
-
-#TODO how to move this into the controller or add this code into the route (it will make route code much longer)?
-def unzip_backup(file, folder):
-
-    # check if diectory alreay exist and overwrite its content
-    if os.path.exists(folder):
-        shutil.rmtree(folder)
-
-    filename = secure_filename(file.filename) #get uploaded file name
-
-    Path(folder).mkdir(parents=True, exist_ok=True) # create seminar folder
-    
-    file.save(os.path.join(folder, filename)) # upload file in to user folder
-
-    mbz_filepath = folder+filename
-
-    fileinfo = magic.from_file(mbz_filepath)
-
-    #check if file is zip or gzip and unzip it into the user seminar folder, otherwise don't unzip as .mbz is zip type file
-    if 'Zip archive data' in fileinfo:
-        with zipfile.ZipFile(mbz_filepath, 'r') as myzip:
-            myzip.extractall(folder)
-
-    elif 'gzip compressed data' in fileinfo:
-        tar = tarfile.open(mbz_filepath)
-        tar.extractall(path=folder)
-        tar.close()
-
-    else:
-        return False
-
-    os.remove(mbz_filepath) # delete .mbz after unzipping 
-
-    return True
-
-
-def getf2fxml():
-    userActivitiesFolder = getSeminarFolder(session["userID"])+"activities/"
-    if path.exists(userActivitiesFolder) == False:
-        if 'pin' in session:
-            userActivitiesFolder = UPLOAD_FOLDER + "default/" + session['pin'] + '/seminar/activities/'
-        else:
-            userActivitiesFolder = UPLOAD_FOLDER + "default/seminar/activities/"
-
-    subfolders = [f.path for f in os.scandir(
-        userActivitiesFolder) if f.is_dir()]
-    for folder in list(subfolders):
-        if "facetoface" in folder:
-            return folder+"/facetoface.xml"
-
-
-def saveToF2fXml(data):
-     with open(getf2fxml(), "w") as f:
-         f.write(data)
-         return True
-
-
+DEFAULT_SEMINAR_FOLDER = UPLOAD_FOLDER + 'default/seminar/'
+DEFAULT_FACETOFACE_XML = DEFAULT_SEMINAR_FOLDER + 'activities/facetoface_14350/facetoface.xml'
 GENERATED_ZIP_BACKUP_FILE_NAME = "backup-totara-activity-facetoface.mbz"
 
-
-def zipGeneratedSessions():
-    base_dir = getSeminarFolder(session["userID"])
-    userFolder = getUserFolder(session["userID"])+"/"
-    with zipfile.ZipFile(userFolder + GENERATED_ZIP_BACKUP_FILE_NAME, "w",
-                     compression=zipfile.ZIP_DEFLATED) as zf:
-        base_path = os.path.normpath(base_dir)
-        for dirpath, dirnames, filenames in os.walk(base_dir):
-            for name in sorted(dirnames):
-                path = os.path.normpath(os.path.join(dirpath, name))
-                zf.write(path, os.path.relpath(path, base_path))
-            for name in filenames:
-                path = os.path.normpath(os.path.join(dirpath, name))
-                if os.path.isfile(path):
-                    zf.write(path, os.path.relpath(path, base_path))
-    # urllib.request.urlretrieve(urlparse(str(userFolder + GENERATED_ZIP_BACKUP_FILE_NAME)))
-
-
-def readXml(xml_attribs=True):
-    with open(getf2fxml(), "rb") as f:
-        # my_dictionary = xmltodict.parse(f, xml_attribs=xml_attribs)
-        return xmltodict.parse(f, dict_constructor=dict)
-
-
-# RECURRANCE
-
-# "DTSTART:20210902T090000 RRULE:FREQ=WEEKLY;COUNT=5;INTERVAL=10;UNTIL=20230102T090000"
-
-def generate_recurring_sessions(recurring_dates, custom_fields_data, details, timestart, timefinish, room_id, capacity,  allow_overbook, allow_cancellations, cancellation_cutoff_number, cancellation_cutoff_timeunit, min_capacity, send_capacity_email, send_capacity_email_cutoff_number, send_capacity_email_cutoff_timeunit, normal_cost):
-
-
-    sessions = []
-    
-    if room_id != None:
-        room = next((item for item in getFromJsonFile("rooms") if item['id'] == room_id), None)
-        room = {
-                "@id": room["id"],
-                "name": room["name"],
-                "description": room["description"],
-                "capacity": room["capacity"],
-                "allowconflicts": "0",
-                "custom": "0",
-                "hidden": "0",
-                "usercreated": "$@NULL@$",
-                "usermodified": "$@NULL@$",
-                            "timecreated": "",
-                            "timemodified": "",
-                            "room_fields": {
-                                "room_field": [
-                                    {
-                                        "@id": "",
-                                        "field_name": "building",
-                                        "field_type": "text",
-                                        "field_data": room["building"],
-                                        "paramdatavalue": "$@NULL@$",
-                                    },
-                                    {
-                                        "@id": "",
-                                        "field_name": "location",
-                                        "field_type": "location",
-                                        "field_data": '{"address":"' + room["location"] + '","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
-                                        "paramdatavalue": "$@NULL@$",
-                                    },
-                                ]
-                            },
-            }
-    else:
-        room = None
-
-    all_custom_fields = []
-    for custom_field in custom_fields_data:
-        field_dict = {
-                '@id': '',
-                'field_name': custom_field.field_name,
-                'field_type': custom_field.field_type,
-                'field_data': custom_field.field_data,
-                'paramdatavalue': custom_field.paramdatavalue,
-            }
-        
-        all_custom_fields.append(field_dict)
-
-    for date in recurring_dates:
-        start = f"{ str(date.date()) } { timestart }"
-        start = int(datetime.strptime(start, '%Y-%m-%d %H:%M').timestamp())
-        finish = f"{ str(date.date()) } { timefinish }"
-        finish = int(datetime.strptime(finish, '%Y-%m-%d %H:%M').timestamp())
-
-        if not all_custom_fields:
-            all_custom_fields = None
-
-        session = {
-            '@id': "",
-            'capacity': str(capacity),
-            'allowoverbook': str(int(allow_overbook)),
-            'waitlisteveryone': "0",
-            'details': details,
-            'normalcost': str(normal_cost),
-            "discountcost": "0",  # this value is from event settings. so set it to 0 by default so far
-            'allowcancellations': allow_cancellations,
-            'cancellationcutoff': str(int(cancellation_cutoff_number) * int(cancellation_cutoff_timeunit)),
-            "timecreated": str(int(time.time())),
-            "timemodified": str(int(time.time())),
-            "usermodified": "",  # dont know user, leave blank
-            "selfapproval": "0",  # this value is from event settings. Check what will happen if after loading backup to Totara change this value in settings in Totara, will it affect generated backup and session created in Totara?
-            'mincapacity': str(min_capacity),
-            'cutoff': str(int(send_capacity_email_cutoff_number) * int(send_capacity_email_cutoff_timeunit)),
-            'sendcapacityemail': str(int(send_capacity_email)),
-            # this value is from event settings. so set it to 0 by default so far
-            'registrationtimestart': "0",
-            # this value is from event settings. so set it to 0 by default so far
-            'registrationtimefinish': "0",
-            'cancelledstatus': "0",
-            'session_roles': None,  # TODO add value from backup uploaded by the user in the fufure
-            'custom_fields': {
-                "custom_field": all_custom_fields
-                },
-            # TODO add value from backup uploaded by the user in the fufure
-            'sessioncancel_fields': None,
-            'signups': None,  
-            "sessions_dates": {
-                "sessions_date": {
-                    "@id": "",
-                    "sessiontimezone": "99",  # TODO do we need timezone or Totara add it automatically?
-                    "timestart": str(start),
-                    "timefinish": str(finish),
-                    "assets": None,
-                }
-            }
-        }
-        if room:
-            session["sessions_dates"]["sessions_date"]["room"] = room
-
-        sessions.append(session)
-    return sessions
-
-# #DELETE this function
-# def strDatesToDatetimeList(dates):
-#     if isinstance(dates, str):
-#         dates = dates.replace(' ','').split(",")
-#         dates = sorted([datetime.strptime(date, '%d/%m/%Y') for date in dates])
-#         return dates
-
-
-
-def count_generated_events():
-    all_sessions = sum(getFromJsonFile("sessions"),[])
-    return len(all_sessions)
-
-
-def copyDefaultToUserFolder():
-    seminarFolder = getSeminarFolder(session["userID"])
-    if path.exists(seminarFolder) == False:
-        shutil.copytree(UPLOAD_FOLDER + "default/seminar/", seminarFolder)
-    elif len(os.listdir(seminarFolder) ) == 0:
-        shutil.rmtree(seminarFolder)
-        shutil.copytree(UPLOAD_FOLDER + "default/seminar/", seminarFolder)
-        
-    return True
-
-
-def appendEventsToXml():
-    facetoface_dict = readXml()
-    generated_sessions = sum(getFromJsonFile("sessions"),[])# sum is required to merge multiple sets of generated events into one set to ensure each session is properly printed in <sessions> xml tag
-    try:
-        facetoface_dict["activity"]["facetoface"]["sessions"]["session"] =  generated_sessions
-    except:
-        facetoface_dict["activity"]["facetoface"]["sessions"] = {"session": generated_sessions}
-    return facetoface_dict
 
 class Room:
     def __init__(self, room_id, name, description, timecreated, capacity, location, building, allowconflicts, user_id, isDefault=0, id=''):
@@ -298,12 +34,12 @@ class Room:
         self.isDefault = isDefault
         self.user_id = user_id
 
-    def get_room(self):
+    def to_dict(self):
         room = {
-                "@id": self.room.id,
-                "name": self.room.name,
-                "description": self.room.description,
-                "capacity": self.room.capacity,
+                "@id": self.room_id,
+                "name": self.name,
+                "description": self.description,
+                "capacity": self.capacity,
                 "allowconflicts": "0",
                 "custom": "0",
                 "hidden": "0",
@@ -317,14 +53,14 @@ class Room:
                                         "@id": "",
                                         "field_name": "building",
                                         "field_type": "text",
-                                        "field_data": self.room.building,
+                                        "field_data": self.building,
                                         "paramdatavalue": "$@NULL@$",
                                     },
                                     {
                                         "@id": "",
                                         "field_name": "location",
                                         "field_type": "location",
-                                        "field_data": '{"address":"' + self.room.location + '","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
+                                        "field_data": '{"address":"' + self.location + '","size":"medium","view":"map","display":"address","zoom":12,"location":{"latitude":"0","longitude":"0"}}',
                                         "paramdatavalue": "$@NULL@$",
                                     },
                                 ]
@@ -332,8 +68,9 @@ class Room:
             }
         return room
 
+
 class CustomField:
-    def __init__(self, field_id, field_name, field_type, field_data, paramdatavalue, user_id, isDefault, id=''):
+    def __init__(self, field_id, field_name, field_type, field_data, user_id='', isDefault='', id='', paramdatavalue='$@NULL@$'):
         self.id = id
         self.field_id = field_id
         self.field_name = field_name
@@ -343,7 +80,7 @@ class CustomField:
         self.isDefault = isDefault
         self.user_id = user_id
 
-    def get_field(self):
+    def to_dict(self):
         field = {
                 '@id': self.field_id,
                 'field_name': self.field_name,
@@ -353,26 +90,33 @@ class CustomField:
                 }
         return field
 
+
 class Session:
-    def __init__(self, id, sessiontimezone, timestart, timefinish, assets):
+    def __init__(self, timestart, timefinish, room, assets = None, id = '', sessiontimezone = '99'):
         self.id =id
         self.sessiontimezone=sessiontimezone
         self.timestart = timestart
         self.timefinish = timefinish
-        self.assets = assets # make None if empty
+        self.assets = assets
+        self.room = room
 
-    def __str__(self):
+    def to_dict(self):
         date = {
-                "@id": self.id,
-                "sessiontimezone": self.timestart,  
-                "timestart": str(self.timestart),
-                "timefinish": str(self.timefinish),
-                "assets": self.assets,
+                '@id': self.id,
+                'sessiontimezone': self.sessiontimezone,  
+                'timestart': str(self.timestart),
+                'timefinish': str(self.timefinish),
+                'assets': self.assets,
                 }
+
+        if self.room:
+            date['room'] = self.room.to_dict()
+
         return date
 
+
 class Event:
-    def __init__(self, id, capacity, allowoverbook, details, normalcost, allowcancellations, cancellationcutoff, timecreated, timemodified, mincapacity, cutoff, sendcapacityemail, sessiontimezone, usermodified, selfapproval, waitlisteveryone, discountcost, registrationtimestart, registrationtimefinish,cancelledstatus):
+    def __init__(self, id, capacity, allowoverbook, details, normalcost, allowcancellations, cancellationcutoff, timecreated, timemodified, mincapacity, cutoff, sendcapacityemail, usermodified, selfapproval, waitlisteveryone, discountcost, registrationtimestart, registrationtimefinish,cancelledstatus):
         self.id=id
         self.capacity = capacity
         self.allowoverbook = allowoverbook
@@ -381,41 +125,58 @@ class Event:
         self.normalcost = normalcost
         self.discountcost = discountcost
         self.allowcancellations = allowcancellations
-        self.cancellationcutoff = cancellationcutoff # str(int(self.cancellation_cutoff_number) * int(self.cancellation_cutoff_timeunit))
+        self.cancellationcutoff = cancellationcutoff 
         self.timecreated = timecreated
         self.timemodified = timemodified
         self.usermodified = usermodified
         self.selfapproval = selfapproval
         self.mincapacity = mincapacity
-        self.cutoff = cutoff # str(int(self.send_capacity_email_cutoff_number) * int(self.send_capacity_email_cutoff_timeunit))
+        self.cutoff = cutoff 
         self.sendcapacityemail = sendcapacityemail
         self.registrationtimestart = registrationtimestart
         self.registrationtimefinish = registrationtimefinish
         self.cancelledstatus = cancelledstatus
-        self.session_roles = []
-        self.custom_fields = []
-        self.sessioncancel_fields = []
-        self.signups = []
-        self.sessiontimezone = sessiontimezone
-        self.sessions_dates = []
+        self.__custom_fields = []
+        self.__sessions_dates = []
 
     def add_custom_field(self, field):
-        self.custom_fields.append(field)
+        if len(self.__custom_fields) == 0:
+            self.__custom_fields = field.to_dict()
 
-    def get_event(self):
+        elif isinstance(self.__custom_fields, dict):
+            first_field = self.__custom_fields
+            self.__custom_fields = []
+            self.__custom_fields.append(first_field)
+            self.__custom_fields.append(field.to_dict())
 
-        if len(self.session_roles) == 0:
-            session_roles = None
-        if len(self.ssessioncancel_fieldsession_roles) == 0:
-            sessioncancel_fields = None
-        if len(self.signups) == 0:
-            signups = None
+        else:
+            self.__custom_fields.append(field.to_dict())
+        
+    
+    @property
+    def custom_fields(self):
+        return self.__custom_fields
 
-        session = {
+    def add_session(self, session):
+        if len(self.__sessions_dates) == 0: # TODO try if xmlparser can recognise a list with a single dict?
+            self.__sessions_dates = session.to_dict()
+
+        elif isinstance(self.__sessions_dates, dict):
+            first_session = self.__sessions_dates
+            self.__sessions_dates = []
+            self.__sessions_dates.append(first_session)
+            self.__sessions_dates.append(session)
+
+        else:
+            self.__sessions_dates.append(session.to_dict())
+
+
+    def to_dict(self):
+        event = {
             '@id': "",
             'capacity': str(self.capacity),
             'allowoverbook': str(int(self.allowoverbook)),
-            'waitlisteveryone': self.waitlisteveryone,
+            'waitlisteveryone': '0',
             'details': self.details,
             'normalcost': str(self.normalcost),
             "discountcost": self.discountcost,  # this value is from event settings. so set it to 0 by default so far
@@ -433,84 +194,19 @@ class Event:
             # this value is from event settings. so set it to 0 by default so far
             'registrationtimefinish': self.registrationtimefinish,
             'cancelledstatus': self.cancelledstatus,
-            'session_roles': session_roles,  
-            'custom_fields': {
-                "custom_field": self.custom_fields
-                },
-            'sessioncancel_fields': sessioncancel_fields,
-            'signups': signups,  
+            'session_roles': None,  
+            'custom_fields': None,
+            'sessioncancel_fields': None,
+            'signups': None,  
             "sessions_dates": {
-                "sessions_date": self.sessions_dates
+                "sessions_date": self.__sessions_dates
             }
         }
-        return session
+        
+        if len(self.__custom_fields) > 0:
+            event['custom_fields'] = {'custom_field': self.__custom_fields}
 
-#TODO - Is it helpful somehow to have Recurrence as class or just e method is fine?
-class Recurrence:
-    def __init__(self, datestart, datefinish,frequency, occurrence_number, days_of_week, interval):
-        self.datestart = datestart
-        self.datefinish = datefinish
-        self.frequency = frequency
-        self.occurrence_number = occurrence_number
-        self.days_of_week = days_of_week
-        self.interval = interval
-        self.__dates = []
-
-    @property
-    def dates(self):
-
-        recurrence_data = []
-
-        if self.frequency == "WEEKLY":
-            self.occurrence_number = ""
-
-        days_of_week = [self.occurrence_number + day for day in self.days_of_week]
-
-        if self.frequency:
-            recurrence_data.append("FREQ="+self.frequency)
-
-        if days_of_week:
-            recurrence_data.append(f"BYDAY={ ','.join(days_of_week) }")
-
-        if self.interval:
-            recurrence_data.append(f"INTERVAL={ self.interval }")
-
-        if self.datefinish:
-            recurrence_data.append(f"UNTIL={ self.datefinish }")
-
-        recurrance_data_string = f"DTSTART:{ self.datestart } RRULE:{ ';'.join(recurrence_data[0:]) }"
-
-        self.__dates = list(rrulestr(recurrance_data_string))
-
-        return self.__dates
-
-#TODO how to move this into the controller or add this code into the route (it will make route code much longer)?
-def generate_recurring_dates(datestart, datefinish,frequency, occurrence_number, days_of_week, interval):
-    recurance_data = []
-    # String builder - https://jakubroztocil.github.io/rrule/
-    occurrence_number = occurrence_number
-    if frequency == "WEEKLY":
-        occurrence_number = ""
-
-    days_of_week = [occurrence_number + day for day in days_of_week]
-
-
-    if frequency:
-        recurance_data.append("FREQ="+frequency)
-
-    if days_of_week:
-        recurance_data.append(f"BYDAY={ ','.join(days_of_week) }")
-
-    if interval:
-        recurance_data.append(f"INTERVAL={ interval }")
-
-    if datefinish:
-        recurance_data.append(f"UNTIL={ datefinish }")
-
-    recurrance_data_string = f"DTSTART:{ datestart } RRULE:{ ';'.join(recurance_data[0:]) }"
-    dates = list(rrulestr(recurrance_data_string))
-    return dates
-
+        return event
 
 
 class User:
@@ -525,7 +221,8 @@ class User:
         self.created = created
         self.lastlogin = lastlogin
         self.__timezone = timezone
-        self.__root_folder = UPLOAD_FOLDER + self.id
+        self.__event_sets = []
+        self.__root_folder = UPLOAD_FOLDER + self.id + '/'
         self.__rooms = []
         self.__custom_fields = []
         
@@ -535,24 +232,37 @@ class User:
     #TODO is this a right way to do? Tried to ave just in a session but looks like g.user creates a new object on every page so data is not transered between pages. Is there a way to transfer object between routes?
     @property
     def event_sets(self):
-        file_name = self.root_folder+"/events.json"
+        file_name = self.root_folder+"events.json"
         if path.exists(file_name):
             data = open(file_name, "rb").read()
-            sessions = json.loads(data)
+            self.__event_sets = json.loads(data)
         else:
-            sessions = []
+            self.__event_sets = []
         
-        return sessions
+        return self.__event_sets
 
     @event_sets.setter
     def event_sets(self, value):
 
         Path(self.root_folder).mkdir(parents=True, exist_ok=True)
 
-        file_name = self.root_folder+ "/events.json"            
+        file_name = self.root_folder+ "events.json"            
         with open(file_name, 'w') as file:
             toJson = json.dumps(value)
             file.write(toJson)
+
+    def count_events(self):
+        return len(sum(self.event_sets,[]))
+    
+    def get_all_events(self):
+        return sum(self.event_sets,[])
+    
+    def count_event_sets(self):
+        # print('self.__event_sets')
+        # print(self.__event_sets)
+        # print('self.event_sets')
+        # print(self.event_sets)
+        return len(self.__event_sets) #TODO why self.__event_sets shows 1 when first event added but is use self.event_sets shows 0?
 
     @property
     def root_folder(self):
@@ -564,7 +274,7 @@ class User:
 
     @property
     def seminar_folder(self):
-        return self.root_folder + '/seminar/'
+        return self.root_folder + 'seminar/'
 
     @property
     def activity_folder(self):
@@ -575,7 +285,7 @@ class User:
         subfolders = [f.path for f in os.scandir(self.activity_folder) if f.is_dir()]
         for folder in list(subfolders):
             if "facetoface" in folder:
-                return folder+"/facetoface.xml"
+                return folder+ '/' + 'facetoface.xml'
 
     @property
     def timezone(self):
@@ -665,8 +375,57 @@ class User:
         self.__custom_fields = []
         db.delete_user_custom_fields(user_id=self.id)
 
+
+#TODO - Is it helpful somehow to have Recurrence as class or just e method in the controller?
+class Recurrence:
+    def __init__(self, datestart='', datefinish='',frequency='', occurrence_number='', days_of_week='', interval=''):
+        self.datestart = datestart
+        self.datefinish = datefinish
+        self.frequency = frequency
+        self.occurrence_number = occurrence_number
+        self.days_of_week = days_of_week
+        self.interval = interval
+        self.__dates = []
+
+    @property
+    def dates(self):
+
+        recurrence_data = []
+
+        if self.frequency == "WEEKLY":
+            self.occurrence_number = ""
+
+        days_of_week = [self.occurrence_number + day for day in self.days_of_week]
+
+        if self.frequency:
+            recurrence_data.append("FREQ="+self.frequency)
+
+        if days_of_week:
+            recurrence_data.append(f"BYDAY={ ','.join(days_of_week) }")
+
+        if self.interval:
+            recurrence_data.append(f"INTERVAL={ self.interval }")
+
+        if self.datefinish:
+            recurrence_data.append(f"UNTIL={ self.datefinish }")
+
+        recurrance_data_string = f"DTSTART:{ self.datestart } RRULE:{ ';'.join(recurrence_data[0:]) }"
+
+        self.__dates = list(rrulestr(recurrance_data_string))
+
+        return self.__dates
+    
+    @dates.setter
+    def dates(self, value):
+        self.__dates = value
+
+    def count(self):
+        return len(self.__dates)
+
+
+#TODO does this controller make any sense? Essentially it is just a bunch of helper functions?
 class Controller:
-        
+
     def new_user(self, user_id, firstname="", lastname="", email="", password="",super_user_id="", company="", timezone="" ):
         db.create_user(
                 id = user_id,
@@ -680,6 +439,7 @@ class Controller:
                 lastlogin = int(time.time()),
                 timezone = timezone
             )
+
 
     def get_user_details(self, user_id):
         user_data = db.get_user(user_id)
@@ -700,11 +460,122 @@ class Controller:
             
         return user
 
-    # def generate_events(self, ):
-    #     recurrance = Recurrance(
-    #         datestart, datefinish,frequency, occurrence_number, days_of_week, interval
-    #     )
+
+    def generate_recurring_events(
+        self,
+        user, 
+        recurring_dates, 
+        custom_fields, 
+        details, 
+        timestart, 
+        timefinish, 
+        room_id, 
+        capacity,  
+        allow_overbook, 
+        allow_cancellations, 
+        cancellation_cutoff_number, 
+        cancellation_cutoff_timeunit, 
+        min_capacity, 
+        send_capacity_email, 
+        send_capacity_email_cutoff_number, 
+        send_capacity_email_cutoff_timeunit, 
+        normal_cost):
+
+        events = []
+        
+        if room_id != None:
+            selected_room = next((item for item in user.rooms if item.id == room_id), None)
+        else:
+            selected_room = None
 
 
-    
+        for date in recurring_dates:
+            event = Event(
+                        id = '',
+                        capacity = str(capacity),
+                        allowoverbook = str(int(allow_overbook)),
+                        details = details,
+                        normalcost = str(normal_cost),
+                        allowcancellations = allow_cancellations,
+                        cancellationcutoff = str(int(cancellation_cutoff_number) * int(cancellation_cutoff_timeunit)),
+                        timecreated = str(int(time.time())),
+                        timemodified = str(int(time.time())),
+                        mincapacity = str(min_capacity),
+                        cutoff = str(int(send_capacity_email_cutoff_number) * int(send_capacity_email_cutoff_timeunit)),
+                        sendcapacityemail = str(int(send_capacity_email)),
+                        usermodified = '',
+                        selfapproval = '0',
+                        waitlisteveryone = '',
+                        discountcost = '0',
+                        registrationtimestart = '0',
+                        registrationtimefinish = '0',
+                        cancelledstatus = '0'
+                    )   
 
+            
+            if len(custom_fields) > 0:
+                for field in custom_fields:
+                    event.add_custom_field(field)
+
+            start = f'{ str(date.date()) } { timestart }'
+            start = int(datetime.strptime(start, '%Y-%m-%d %H:%M').timestamp())
+            finish = f'{ str(date.date()) } { timefinish }'
+            finish = int(datetime.strptime(finish, '%Y-%m-%d %H:%M').timestamp())
+
+            session = Session(
+                timestart = start, 
+                timefinish = finish, 
+                room = selected_room
+            )
+            event.add_session(session)
+      
+            events.append(event.to_dict())
+        return events
+
+
+    def unzip_backup(self, file, folder):
+
+        # check if diectory alreay exist and overwrite its content
+        if os.path.exists(folder):
+            shutil.rmtree(folder)
+
+        filename = secure_filename(file.filename) #get uploaded file name
+
+        Path(folder).mkdir(parents=True, exist_ok=True) # create seminar folder
+        
+        file.save(os.path.join(folder, filename)) # upload file in to user folder
+
+        mbz_filepath = folder+filename
+
+        fileinfo = magic.from_file(mbz_filepath)
+
+        #check if file is zip or gzip and unzip it into the user seminar folder, otherwise don't unzip as .mbz is zip type file
+        if 'Zip archive data' in fileinfo:
+            with zipfile.ZipFile(mbz_filepath, 'r') as myzip:
+                myzip.extractall(folder)
+
+        elif 'gzip compressed data' in fileinfo:
+            tar = tarfile.open(mbz_filepath)
+            tar.extractall(path=folder)
+            tar.close()
+
+        else:
+            return False
+
+        os.remove(mbz_filepath) # delete .mbz after unzipping 
+
+        return True
+
+
+    def zip_backup(self, root_folder, seminar_folder):
+        with zipfile.ZipFile(root_folder + GENERATED_ZIP_BACKUP_FILE_NAME, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+            base_path = os.path.normpath(seminar_folder)
+            for dirpath, dirnames, filenames in os.walk(seminar_folder):
+                for name in sorted(dirnames):
+                    path = os.path.normpath(os.path.join(dirpath, name))
+                    zf.write(path, os.path.relpath(path, base_path))
+                for name in filenames:
+                    path = os.path.normpath(os.path.join(dirpath, name))
+                    if os.path.isfile(path):
+                        zf.write(path, os.path.relpath(path, base_path))
+        # urllib.request.urlretrieve(urlparse(str(userFolder + GENERATED_ZIP_BACKUP_FILE_NAME)))
