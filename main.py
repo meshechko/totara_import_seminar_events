@@ -101,7 +101,7 @@ def create_recurring_events():
             if form.days_of_week:
                 days_of_week = request.form.getlist('days_of_week')
 
-            recurrence.datestart=form.datestart.data.strftime("%Y%m%d")
+            recurrence.datestart=form.datestart.data.strftime("%Y%m%d") #TODO what is the best way to convert here or within Recurrence class
             recurrence.datefinish=form.datefinish.data.strftime("%Y%m%d")
             recurrence.frequency=form.frequency.data
             recurrence.occurrence_number=occurrence_number
@@ -113,7 +113,7 @@ def create_recurring_events():
             generated_events = myapp.generate_recurring_events(
                 user = g.user,
                 custom_fields=form_custom_fields, 
-                details=form.details.data, #TODO currently empy field is saved as None, make it empty string
+                details=form.details.data,
                 timestart=form.timestart.data.strftime("%H:%M"), 
                 timefinish=form.timefinish.data.strftime("%H:%M"), 
                 room_id=form.rooms.data, 
@@ -174,8 +174,10 @@ def download():
                 seminar_folder=g.user.seminar_folder
                 )
 
+            zip_file = os.path.join(g.user.root_folder, models.GENERATED_ZIP_BACKUP_FILE_NAME)
+           
             # send file to the user
-            return send_file(f"{ g.user.root_folder }{models.GENERATED_ZIP_BACKUP_FILE_NAME}")
+            return send_file(zip_file)
         else:
             flash(f"Ooops, looks like you don't have any events. Create some events first and try to downlad again.", 'danger')
 
@@ -210,7 +212,7 @@ def delete_sessions_set():
 
 @app.route('/add-rooms', methods=['POST', 'GET'])
 def add_rooms():
-    form = UploadRooms() #WTFroms for Uploading rooms
+    form = UploadRooms() 
     required_headers = ['id', 'name', 'description', 'timecreated', 'capacity', 'location', 'building', 'allowconflicts'] # these are headers that must be uploaded
 
     required_headers_str = ', '.join(required_headers) # save them as string to display on the page

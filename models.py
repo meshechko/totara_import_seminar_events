@@ -503,9 +503,10 @@ class Controller:
                         mincapacity = str(min_capacity),
                         cutoff = str(int(send_capacity_email_cutoff_number) * int(send_capacity_email_cutoff_timeunit)),
                         sendcapacityemail = str(int(send_capacity_email)),
-                        usermodified = '',
+                        # TODO add the below values to the form if needed later on
+                        usermodified = '', 
                         selfapproval = '0',
-                        waitlisteveryone = '',
+                        waitlisteveryone = '0',
                         discountcost = '0',
                         registrationtimestart = '0',
                         registrationtimefinish = '0',
