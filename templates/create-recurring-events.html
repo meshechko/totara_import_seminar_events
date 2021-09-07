@@ -352,69 +352,14 @@
 
       
     </form>
-    {% if session_sets|length > 0 %}
-      <form action="download" method="POST">
-        <input class="w-100 btn btn-success btn-lg" id="download" name="submit" type="submit" value="Download Totara backup with recurring events">
-      </form>
-    {% endif %}
+   
   </div>
 </div>
 
-<div class="row g-5">
-  <div class="col-md-12">
-
-    {% for sessions in session_sets %}
-    {% set set_index = loop.index %}
-    <table class="table" id="recurrence-{{ loop.index - 1 }}">
-      <thead>
-        <tr>
-          <th>Custom fields</th>
-          <th>Max.bookings</th>
-          <th>Details</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Room</th>
-          <th><form method="POST" action="delete-sessions-set" onSubmit="return confirm('Are you sure you wish to delete this recurrence?');">
-            <input type="hidden" name="session_set_index" value="{{ set_index - 1 }}">
-            <button type="hidden" class="btn " data-toggle="tooltip" data-placement="top" title="Delete  recurrance"><i class="bi bi-trash"></i></button>
-        </form></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for session in sessions %}
-        <tr>
-          <td scope="row"> 
-            {% if session.custom_fields %}
-              {% for field in session.custom_fields.custom_field | to_list %}
-                {% if field.field_type == 'text'%}
-                  {{ field.field_name }}: {{ field.field_data }} <br>
-                {% endif %}
-              {% endfor %}
-            {% endif %}
-          </td>
-          <td>{{ session.capacity }}</td>
-          <td>{{ session.details }}</td>
-          <td>{{ session.sessions_dates.sessions_date.timestart|date_format }}</td>
-          <td>{{ session.sessions_dates.sessions_date.timestart|time_format }} - {{ session.sessions_dates.sessions_date.timefinish|time_format }}</td>
-          <td>{% if session.sessions_dates.sessions_date.room %}{{ session.sessions_dates.sessions_date.room.name }}{% endif %}</td>
-          <td>
-            {% set session_index = loop.index %}
-            <form method="POST" action="delete-session" onSubmit="return confirm('Are you sure you wish to delete this event?');">
-              <input type="hidden" name="session_set_index" value="{{ set_index - 1 }}">
-              <input type="hidden" name="session_index" value="{{ session_index - 1 }}">
-              <button type="hidden" class="btn " data-toggle="tooltip" data-placement="top" title="Delete event"><i class="bi bi-trash"></i></button>
-
-          </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    {% endfor %}
-
-  </div>
+<div id="event-sets">
+  {% include 'event-sets.html' %}
 </div>
+
 <button
         type="button"
         class="btn btn-danger btn-floating btn-lg btn-fixed"
@@ -635,7 +580,38 @@ $(document).ready(function() {
         timezone_modal.modal('show');
     }
 });
+</script>
+<script>
 
 
+  $(document).on('submit', 'form', function(e) {
+    
+    let from_url = $(this).attr("action");
+    if (from_url == 'delete-events-set' || from_url == 'delete-event'){
+      e.preventDefault();
+      $.ajax({
+        method: 'POST',
+        url: from_url,
+        data: $(this).serialize(),
+        success: function(resp){
+          $('#event-sets').html(resp.data)
+        }
+      });
+    }
+  });
+
+  $(document).on('submit', '#save-timezone', function(e) {
+    e.preventDefault();
+      $.ajax({
+        method: 'POST',
+        url: '/save-timezone',
+        data: $(this).serialize(),
+        success: function(resp){
+          $('#btn-timezone').html('Timezone: ' + resp.data)
+        }
+      });
+    
+  });
+  
 </script>
 {% endblock %}

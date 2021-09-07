@@ -1,0 +1,58 @@
+{% if session_sets|length > 0 %}
+<div class="row g-5">
+    <div class="col-md-12">
+<form action="download" method="POST">
+  <input class="w-100 btn btn-success btn-lg" id="download" name="submit" type="submit" value="Download Totara backup with recurring events">
+</form>
+</div>
+</div>
+{% endif %}
+<div class="row g-5">
+    <div class="col-md-12">
+      {% for set in session_sets %}
+      {% set set_index = set.index %}
+      <table class="table" id="recurrence-{{ set.index }}">
+        <thead>
+          <tr>
+            <th>Custom fields</th>
+            <th>Max.bookings</th>
+            <th>Details</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Room</th>
+            <th><form action="delete-events-set">
+              <input type="hidden" name="session_set_index" value="{{ set.index }}">
+              <button type="submit" class="btn" data-toggle="tooltip" data-placement="top" title="Delete  recurrance"><i class="bi bi-trash"></i></button>
+          </form></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          {% for session in set.data %}
+          {% set set_index = set.index %}
+          <tr>
+            <td scope="row"> 
+              {{ session.custom_fields | safe }}
+            </td>
+            <td>{{ session.capacity }}</td>
+            <td>{{ session.details }}</td>
+            <td>{{ session.date }}</td>
+            <td>{{ session.time }}</td>
+            <td>{{ session.room }}</td>
+            <td>
+              <form action='delete-event'>
+                <input type="hidden" name="session_set_index" value="{{ set_index }}">
+                <input type="hidden" name="session_index" value="{{ session.index }}">
+                <button type="submit" class="btn" data-toggle="tooltip" data-placement="top" title="Delete event"><i class="bi bi-trash"></i></button>
+  
+            </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+  
+      {% endfor %}
+  
+    </div>
+  </div>

@@ -1,5 +1,5 @@
 from pathlib import Path
-from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, g
+from flask import Flask, render_template, redirect, url_for, request, session, flash, send_file, g, jsonify
 import models
 from forms import UploadBackup, UploadRooms, CreateEventForm, TimeZoneForm
 from datetime import datetime
@@ -24,10 +24,12 @@ def datetime_format(value, format="%H:%M"):
     proper_date = datetime.fromtimestamp(int(value))
     return proper_date.strftime(format)
 
+
 @app.template_filter('date_format')
 def datetime_format(value, format="%A, %d %B %Y"):
     proper_date = datetime.fromtimestamp(int(value))
     return proper_date.strftime(format)
+
 
 @app.template_filter('to_list')
 def to_list(value):
@@ -142,7 +144,7 @@ def create_recurring_events():
             flash(f'You have requested to many events. Maximum number of events you can create is { max_generated_events }.', 'danger')
             return redirect(url_for('create_recurring_events'))
 
-    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=g.user.event_sets, custom_fields={"custom_field":user_custom_fields}, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
+    return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=g.user.get_sets_data(), custom_fields={"custom_field":user_custom_fields}, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
 
 
 @app.route('/download', methods=['POST'])
@@ -184,30 +186,57 @@ def download():
     return redirect(url_for('create_recurring_events'))
 
 
-@app.route('/delete-session', methods=['POST'])
-def delete_session():
-    if request.method == 'POST':
-        sessions = g.user.event_sets
-        set_index = int(request.form['session_set_index'])
-        session_index = int(request.form['session_index'])
+# @app.route('/delete-session', methods=['POST'])
+# def delete_session():
+#     if request.method == 'POST':
+#         sessions = g.user.event_sets
+#         set_index = int(request.form['session_set_index'])
+#         session_index = int(request.form['session_index'])
 
-        if len(sessions[set_index]) == 1:
-            del sessions[set_index]
-        else:
-            del sessions[set_index][session_index]
+#         if len(sessions[set_index]) == 1:
+#             del sessions[set_index]
+#         else:
+#             del sessions[set_index][session_index]
 
-        g.user.event_sets = sessions
-    return redirect(url_for('create_recurring_events'))
+#         g.user.event_sets = sessions
+#     return redirect(url_for('create_recurring_events'))
 
 
-@app.route('/delete-sessions-set', methods=['POST'])
-def delete_sessions_set():
-    if request.method == 'POST':
-        sessions = g.user.event_sets
-        set_index = int(request.form['session_set_index'])
-        del sessions[set_index]
-        g.user.event_sets = sessions
-    return redirect(url_for('create_recurring_events'))
+@app.route('/delete-event', methods=['POST'])
+def delete_event():
+    events = g.user.event_sets
+
+    set_index = int(request.form['session_set_index'])
+    session_index = int(request.form['session_index'])
+
+    if len(events[set_index]) == 1:
+        del events[set_index]
+    else:
+        del events[set_index][session_index]
+    
+    g.user.event_sets = events
+
+    table_data = g.user.get_sets_data()
+
+    return jsonify({'data': render_template('event-sets.html', session_sets=table_data)})
+
+# @app.route('/delete-sessions-set', methods=['POST'])
+# def delete_sessions_set():
+#     if request.method == 'POST':
+#         sessions = g.user.event_sets
+#         set_index = int(request.form['session_set_index'])
+#         del sessions[set_index]
+#         g.user.event_sets = sessions
+#     return redirect(url_for('create_recurring_events'))
+
+@app.route('/delete-events-set', methods=['POST'])
+def _delete_events_set():
+    events = g.user.event_sets
+    set_index = int(request.form['session_set_index'])
+    del events[set_index]
+    g.user.event_sets = events
+    table_data = g.user.get_sets_data()
+    return jsonify({'data': render_template('event-sets.html', session_sets=table_data)})
 
 
 @app.route('/add-rooms', methods=['POST', 'GET'])
@@ -295,7 +324,6 @@ def upload_backup():
                             backup_custom_fields = [backup_custom_fields] # convert dict to a list with one dictinoary as we need to loop through the list in the code below
 
                         for custom_field in backup_custom_fields:
-
                             field = models.CustomField(
                                 field_id = custom_field['@id'], 
                                 field_name = custom_field['field_name'], 
@@ -354,9 +382,12 @@ def clear_all():
 @app.route('/save-timezone', methods=['POST'])
 def save_timezone():
     form = TimeZoneForm()
-    if request.method == 'POST':
-       g.user.timezone = form.timezone.data
-    return redirect(url_for('create_recurring_events'))
+    g.user.timezone = form.timezone.data
+    tz= g.user.timezone
+    print(tz)
+    print(g.user.timezone)
+    return jsonify({'data': g.user.timezone})
+
 
 
 @app.errorhandler(404)

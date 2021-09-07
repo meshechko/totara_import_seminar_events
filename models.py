@@ -225,10 +225,43 @@ class User:
         self.__root_folder = UPLOAD_FOLDER + self.id + '/'
         self.__rooms = []
         self.__custom_fields = []
-        
-        
         self.update_lastlogin()
 
+    def get_sets_data(self):
+        sets = self.event_sets
+        new_sets = []
+        for set in sets:
+            set_data = []
+            for event in set:
+                
+                custom_fields_data = []
+                if event['custom_fields']:
+                    for field in event['custom_fields']['custom_field']:
+                        print(field)
+                        custom_fields_data.append(f"{field['field_name']} : {field['field_data']}")
+                
+                try:
+                    room =  event['sessions_dates']['sessions_date']['room']['name']
+                except:
+                    room = ''
+
+                event = {  
+                'index' :  set.index(event),
+                'custom_fields': "<br>". join(custom_fields_data),
+                'capacity' : event['capacity'],
+                'details' : event['details'],
+                'date' : datetime.fromtimestamp(int(event['sessions_dates']['sessions_date']['timestart'])).strftime('%A, %d %B %Y'),
+                'time' : datetime.fromtimestamp(int(event['sessions_dates']['sessions_date']['timestart'])).strftime('%H:%M') + ' - ' + datetime.fromtimestamp(int(event['sessions_dates']['sessions_date']['timefinish'])).strftime('%H:%M'),
+                'room' : room,
+                }
+                set_data.append(event)
+
+            new_data = {
+                'index' : sets.index(set),
+                'data' : set_data
+            }
+            new_sets.append(new_data)
+        return new_sets
     #TODO is this a right way to do? Tried to ave just in a session but looks like g.user creates a new object on every page so data is not transered between pages. Is there a way to transfer object between routes?
     @property
     def event_sets(self):
@@ -289,6 +322,9 @@ class User:
 
     @property
     def timezone(self):
+        user_data = db.get_user(id=self.id)
+        timezone = user_data['timezone']
+        self.__timezone = timezone
         return self.__timezone
     
     @timezone.setter
@@ -375,7 +411,6 @@ class User:
         self.__custom_fields = []
         db.delete_user_custom_fields(user_id=self.id)
 
-
 #TODO - Is it helpful somehow to have Recurrence as class or just e method in the controller?
 class Recurrence:
     def __init__(self, datestart='', datefinish='',frequency='', occurrence_number='', days_of_week='', interval=''):
@@ -421,7 +456,6 @@ class Recurrence:
 
     def count(self):
         return len(self.__dates)
-
 
 #TODO does this controller make any sense? Essentially it is just a bunch of helper functions?
 class Controller:
