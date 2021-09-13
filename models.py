@@ -223,6 +223,7 @@ class User:
         self.__timezone = timezone
         self.__event_sets = []
         self.__root_folder = UPLOAD_FOLDER + self.id + '/'
+        self.__events_file = self.root_folder + "events.json"
         self.__rooms = []
         self.__custom_fields = []
         self.update_lastlogin()
@@ -235,10 +236,15 @@ class User:
             for event in set:
                 
                 custom_fields_data = []
-                if event['custom_fields']:
-                    for field in event['custom_fields']['custom_field']:
-                        print(field)
-                        custom_fields_data.append(f"{field['field_name']} : {field['field_data']}")
+                custom_fields_wrapper = event['custom_fields']
+                if custom_fields_wrapper:
+                    custom_fields = custom_fields_wrapper['custom_field']
+                    if custom_fields:
+                        if isinstance(custom_fields, list): 
+                            for field in custom_fields:
+                                custom_fields_data.append(f"{field['field_name']} : {field['field_data']}")
+                        else:
+                            custom_fields_data.append(f"{custom_fields['field_name']} : {custom_fields['field_data']}")
                 
                 try:
                     room =  event['sessions_dates']['sessions_date']['room']['name']
@@ -263,6 +269,11 @@ class User:
             new_sets.append(new_data)
         return new_sets
     #TODO is this a right way to do? Tried to ave just in a session but looks like g.user creates a new object on every page so data is not transered between pages. Is there a way to transfer object between routes?
+
+    @property
+    def events_file(self):
+        return self.__events_file
+
     @property
     def event_sets(self):
         file_name = self.root_folder+"events.json"
@@ -279,7 +290,7 @@ class User:
 
         Path(self.root_folder).mkdir(parents=True, exist_ok=True)
 
-        file_name = self.root_folder+ "events.json"            
+        file_name = self.events_file            
         with open(file_name, 'w') as file:
             toJson = json.dumps(value)
             file.write(toJson)

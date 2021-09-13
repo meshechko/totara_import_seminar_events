@@ -14,7 +14,7 @@ import string
 from os import path
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"ojifdjKKnrkj'
+app.secret_key = b'_5#y2L"ojiKnrkj'
 
 myapp = models.Controller()
 
@@ -50,8 +50,10 @@ def before_request():
         myapp.new_user(user_id=session['userID']) # initiat user and add user to database
     
     g.user = myapp.get_user_details(session['userID']) # assign user to global app scope context
-    #TODO how to use the same user object across all requests/pages? At the moment it creates a new object for every request. Hence, it makes it impossible to store data in user properties, e.g. I have created events.json to temporary store events that user generated. If there's a way to have only one user object then I thought would be better to store generated events in user property rather than .json file.
 
+   
+    #TODO how to use the same user object across all requests/pages? At the moment it creates a new object for every request. Hence, it makes it impossible to store data in user properties, e.g. I have created events.json to temporary store events that user generated. If there's a way to have only one user object then I thought would be better to store generated events in user property rather than .json file.
+    
     # assign user set timezone to server
     os.environ["TZ"] = g.user.timezone 
     time.tzset()
@@ -59,6 +61,7 @@ def before_request():
 
 @app.route('/')
 def index():
+
     return render_template('index.html')
 
 
@@ -186,22 +189,6 @@ def download():
     return redirect(url_for('create_recurring_events'))
 
 
-# @app.route('/delete-session', methods=['POST'])
-# def delete_session():
-#     if request.method == 'POST':
-#         sessions = g.user.event_sets
-#         set_index = int(request.form['session_set_index'])
-#         session_index = int(request.form['session_index'])
-
-#         if len(sessions[set_index]) == 1:
-#             del sessions[set_index]
-#         else:
-#             del sessions[set_index][session_index]
-
-#         g.user.event_sets = sessions
-#     return redirect(url_for('create_recurring_events'))
-
-
 @app.route('/delete-event', methods=['POST'])
 def delete_event():
     events = g.user.event_sets
@@ -220,14 +207,6 @@ def delete_event():
 
     return jsonify({'data': render_template('event-sets.html', session_sets=table_data)})
 
-# @app.route('/delete-sessions-set', methods=['POST'])
-# def delete_sessions_set():
-#     if request.method == 'POST':
-#         sessions = g.user.event_sets
-#         set_index = int(request.form['session_set_index'])
-#         del sessions[set_index]
-#         g.user.event_sets = sessions
-#     return redirect(url_for('create_recurring_events'))
 
 @app.route('/delete-events-set', methods=['POST'])
 def _delete_events_set():
@@ -249,6 +228,7 @@ def add_rooms():
     if request.method == 'POST' and form.validate():
         CSV = form.file.data #get frle form the form
 
+        #TODO move to controller
         decoded_file = CSV.read().decode('utf-8').splitlines() #read CSV
         reader = csv.DictReader(decoded_file)
         rooms = list(reader) # save CSV data to list
@@ -275,6 +255,7 @@ def add_rooms():
                     )
                 g.user.add_room(room) # append these rooms to the User object and save in database
 
+            #TODO messages are return value from the method in Controller
             flash(f'Successfully uploaded { len(g.user.rooms) } rooms', 'success')
             return redirect(url_for('add_rooms'))
         else:
@@ -373,9 +354,13 @@ def delete_rooms():
 @app.route('/clear-all', methods=['POST'])
 def clear_all():
     if request.method == 'POST':
-        session.pop("userID", None)
-        # if session.get('pin') is None:
-        #     session.pop("timezone", None)
+        if g.user.email:
+            file_to_rem = Path(g.user.events_file)
+            file_to_rem.unlink(missing_ok=True)
+        else:
+            shutil.rmtree(g.user.root_folder)
+            g.user.delete_custom_fields()
+            g.user.delete_rooms()
     return redirect(url_for('create_recurring_events'))
 
 
@@ -383,11 +368,7 @@ def clear_all():
 def save_timezone():
     form = TimeZoneForm()
     g.user.timezone = form.timezone.data
-    tz= g.user.timezone
-    print(tz)
-    print(g.user.timezone)
     return jsonify({'data': g.user.timezone})
-
 
 
 @app.errorhandler(404)
@@ -400,13 +381,16 @@ def page_not_found(e):
 def login():
     if request.method == 'POST':
         userID = request.form["pin"]
-        if userID == "healthlearn":
-            session["pin"] = userID
+        user = myapp.get_user_details(userID)
+        if user:
+            session['userID'] = user.id
+            session['user_email'] = user.email
     return redirect(url_for('create_recurring_events'))
 
 
 @app.route('/logout')
 def logout():
-    session.pop("pin", None)
+    session.pop("userID", None)
+    session.pop("user_email", None)
     return redirect(url_for('create_recurring_events'))
 

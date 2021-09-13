@@ -8,7 +8,6 @@ def create_user(id, created, lastlogin, firstname, lastname, email, password, co
     with sqlite3.connect(DATABASE) as conn:
         cur = conn.cursor()
         cur.execute("INSERT INTO users (id, firstname, lastname, email, password, company, super_user_id, created, lastlogin, timezone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",(id, firstname, lastname, email, password, company, super_user_id, created, lastlogin, timezone) )
-        print('Creating user....')
         conn.commit()
 
 
@@ -139,7 +138,7 @@ def get_custom_field(id):
 # with sqlite3.connect(DATABASE) as conn:
 #         conn.row_factory = sqlite3.Row
 #         cur = conn.cursor()
-#         cursor = cur.execute("SELECT * FROM customfields")
+#         cursor = cur.execute("UPDATE users set email='ust@email.com' WHERE id='ust'")
 #         # cur.execute("DELETE FROM customfields")
 #         rows = [dict(row) for row in cursor.fetchall()]
 #         # rows = dict(zip([c[0] for c in cursor.description], rows))

@@ -51,10 +51,9 @@
               <small class="text-muted align-middle">Totara recurring events generator</small>
             </a>
           </div>
-          <div class="col-2 col-md">
-
-            {% if session['pin']%}
-                  <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-secondary" type="submit">Logout from {{ session['pin'] }}</a>
+          <div class="col-2 col-md text-end">
+            {% if session['user_email'] %}
+                  <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-secondary">Logout from {{ session['userID'] }}</a>
             {% else %}
             <form id="login" class="needs-validation" method="POST" action="login" novalidate="">
               <div class="input-group mb-3">
