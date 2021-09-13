@@ -62,15 +62,13 @@
          processData: false,
          async: false,
          success: function(resp){
-            if (resp.success){
                $('#file').val('')
                message_container.addClass('alert-success').removeClass('alert-danger');
                message_container.html(resp.message)
-            }
-            else{
-               message_container.addClass('alert-danger').removeClass('alert-success');
-               message_container.html(resp.message)
-            }
+         },
+         error: function(request,status, message){
+            message_container.addClass('alert-danger').removeClass('alert-success');
+            message_container.html(request.responseJSON.message)
          }
        });
    });

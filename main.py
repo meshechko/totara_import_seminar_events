@@ -326,11 +326,11 @@ def upload_backup():
                     g.user.event_sets = sessions
 
 
-                return jsonify(success=1, message='Backup file uploaded successfully')
+                return jsonify(message='Backup file uploaded successfully')
             else:
-                return jsonify(success=0, message='Incorrect backup')
+                return jsonify(message='Incorrect backup'), 500
         else:
-            return jsonify(success=0, message='Upload the correct Totara activity backup that ends with .mbz. Scroll down to see a guide on how to create a Seminar activity backup with custom fields.')
+            return jsonify(message='Upload the correct Totara activity backup that ends with .mbz. Scroll down to see a guide on how to create a Seminar activity backup with custom fields.'), 500
 
     return render_template('upload-backup.html', form=form)
 
