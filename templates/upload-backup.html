@@ -13,7 +13,7 @@
       </p>
       <p class="fs-5 text-muted">Below there's a quick guide on how to create a Seminar activity backup.</p>
       <div>
-         <form method="POST" action="" enctype="multipart/form-data">
+         <form enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             {{ form.file(class="form-control mb-3 btn btn-lg btn-light") }}
 		 <div class="btn-group w-100">
@@ -27,9 +27,9 @@
 
          
          <div class="message">
-            {% for category, message in get_flashed_messages(with_categories=True) %}
-		    <div class="alert alert-{{category}} mt-3" role="alert">{{ message }}</div>
-            {% endfor %} 
+
+		    <div class="alert  mt-3" role="alert"></div>
+
          </div>
       </div>
    </div>
@@ -45,3 +45,35 @@
    <li class="list-group-item">Under "Activity backup area" find your backup file and click on the file name to download it.</li>
 </ol>
 {% endblock %}
+
+{% block body_bottom_js %}
+<script>
+
+
+   $(document).on('submit', 'form', function(e) {
+       e.preventDefault();
+       message_container = $('.alert')
+       $.ajax({
+         method: 'POST',
+         url: 'upload-backup',
+         data: new FormData($(this)[0]),
+         contentType: false,
+         cache: false,
+         processData: false,
+         async: false,
+         success: function(resp){
+            if (resp.success){
+               $('#file').val('')
+               message_container.addClass('alert-success').removeClass('alert-danger');
+               message_container.html(resp.message)
+            }
+            else{
+               message_container.addClass('alert-danger').removeClass('alert-success');
+               message_container.html(resp.message)
+            }
+         }
+       });
+   });
+   
+ </script>
+ {% endblock body_bottom_js %}
