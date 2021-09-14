@@ -60,7 +60,12 @@
          contentType: false,
          cache: false,
          processData: false,
-         async: false,
+         beforeSend: function() {
+            $('#spinner').show();
+         },
+         complete: function(){
+            $('#spinner').hide();
+         },
          success: function(resp){
                $('#file').val('')
                message_container.addClass('alert-success').removeClass('alert-danger');
