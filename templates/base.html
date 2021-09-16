@@ -70,6 +70,7 @@
         <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}" crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='js/main.js') }}" crossorigin="anonymous"></script>
         <script>
+          /*
           $(document).on('submit', '#login', function(e) {
             e.preventDefault();
             $.ajax({
@@ -102,9 +103,9 @@
             success: function(resp){
               $('#login-wrapper').html(resp.data);      
             }
-          });
+          }); 
       
-      });
+      });*/
         </script>
        {% block body_bottom_js %}{% endblock %}
        <div id="spinner">

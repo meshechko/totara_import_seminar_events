@@ -15,6 +15,7 @@
 </div>
 <div class="row g-5">
   <div class="col-md-12">
+
     <form id="clear-all" method="POST" action="clear-all" onSubmit="return confirm('Are you sure you wish to clear everything and start over again?');"></form>
     <form id="delete-backup" method="POST" action="delete-backup"></form>
     <form id="delete-rooms" method="POST" action="delete-rooms"></form>
@@ -33,7 +34,7 @@
           <div id="custom-fields-wrapper" class="row mb-5">
            
 
-              
+            {% include 'recurring_events_elements/custom-fields.html' %}
 
 
 

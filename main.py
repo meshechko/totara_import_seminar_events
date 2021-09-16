@@ -414,16 +414,16 @@ def login():
         if user:
             session['userID'] = user.id
             session['user_email'] = user.email
-            return jsonify(data=render_template('login.html'))
-        else:
-            return jsonify(data=render_template('login.html'), login_message=f'Incorrect pin'), 500
+    return redirect(url_for('create_recurring_events'))
+        #     return jsonify(data=render_template('login.html'))
+        # else:
+        #     return jsonify(data=render_template('login.html'), login_message=f'Incorrect pin'), 500
 
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['GET'])
 def logout():
-    if request.method == 'POST':
-        session.pop("userID", None)
-        session.pop("user_email", None)
+    session.pop("userID", None)
+    session.pop("user_email", None)
     return redirect(url_for('create_recurring_events'))
         # return jsonify(data=render_template('login.html'))
 
