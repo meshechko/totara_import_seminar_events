@@ -51,19 +51,8 @@
               <small class="text-muted align-middle">Totara recurring events generator</small>
             </a>
           </div>
-          <div class="col-2 col-md text-end">
-            {% if session['user_email'] %}
-                  <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-secondary">Logout from {{ session['userID'] }}</a>
-            {% else %}
-            <form id="login" class="needs-validation" method="POST" action="login" novalidate="">
-              <div class="input-group mb-3">
-                <input type="text" class="form-control" name="pin" placeholder="Enter PIN" aria-label="Enter PIN" aria-describedby="basic-addon2">
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" type="submit">Enter</button>
-                </div>
-              </div>
-          </form>
-          {% endif %}
+          <div id="login-wrapper" class="col-2 col-md text-end">
+            {% include 'login.html' %}
           </div>
         </div>
 
@@ -80,7 +69,50 @@
         src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}" crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='js/main.js') }}" crossorigin="anonymous"></script>
+        <script>
+          $(document).on('submit', '#login', function(e) {
+            e.preventDefault();
+            $.ajax({
+              method: 'POST',
+              url: 'login',
+              data: $(this).serialize(),
+              beforeSend: function() {
+                $('#spinner').show();
+              },
+              complete: function(){
+                  $('#spinner').hide();
+              },
+              success: function(resp){
+                $('#login-wrapper').html(resp.data);      
+              },
+              error: function(request,status, login_message){
+                $('#login-message').html(request.responseJSON.login_message)
+              }
+            });
         
+        });
+
+
+        $(document).on('click', '#logout', function(e) {
+          e.preventDefault();
+          $.ajax({
+            method: 'POST',
+            url: 'logout',
+            data: $(this).serialize(),
+            success: function(resp){
+              $('#login-wrapper').html(resp.data);      
+            }
+          });
+      
+      });
+        </script>
        {% block body_bottom_js %}{% endblock %}
+       <div id="spinner">
+        <div class="text-center">
+            <div class="spinner-grow" role="status">
+            </div>
+        </div>
+        <div class="spinner-backdrop"></div>
+      </div>
   </body>
 </html>

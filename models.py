@@ -21,7 +21,7 @@ GENERATED_ZIP_BACKUP_FILE_NAME = "backup-totara-activity-facetoface.mbz"
 
 
 class Room:
-    def __init__(self, room_id, name, description, timecreated, capacity, location, building, allowconflicts, user_id, isDefault=0, id=''):
+    def __init__(self, room_id, name, description, timecreated, capacity, location, building, allowconflicts, user_id, id='',isDefault=0):
         self.id = id
         self.room_id = room_id
         self.name = name
@@ -364,7 +364,8 @@ class User:
         rooms = db.get_user_rooms(user_id=self.id)
         for room in rooms:
             room_obj = Room(
-                            room_id = room['id'],
+                            id = room['id'],
+                            room_id = room['room_id'],
                             name=room['name'],
                             description=room['description'],
                             timecreated=room['timecreated'],
@@ -435,7 +436,7 @@ class Recurrence:
 
     @property
     def dates(self):
-
+        
         recurrence_data = []
 
         if self.frequency == "WEEKLY":
@@ -456,11 +457,12 @@ class Recurrence:
             recurrence_data.append(f"UNTIL={ self.datefinish }")
 
         recurrance_data_string = f"DTSTART:{ self.datestart } RRULE:{ ';'.join(recurrence_data[0:]) }"
-
-        self.__dates = list(rrulestr(recurrance_data_string))
+        if len(recurrence_data) > 0:
+            self.__dates = list(rrulestr(recurrance_data_string))
 
         return self.__dates
-    
+
+
     @dates.setter
     def dates(self, value):
         self.__dates = value
@@ -529,7 +531,7 @@ class Controller:
         events = []
         
         if room_id != None:
-            selected_room = next((item for item in user.rooms if item.id == room_id), None)
+            selected_room = next((item for item in user.rooms if item.room_id == room_id), None)
         else:
             selected_room = None
 

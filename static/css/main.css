@@ -33,32 +33,32 @@ list-style-type: none;
     position: fixed;
  }
 
-#spinner {
-  display:none;
- }
-
-#spinner .text-center {
-    width: 100%;
-    position: relative;
-    height: 100%;
-    z-index: 1041;
-}
-
-#spinner .spinner-grow {
-    display: block;
-    position: fixed;
-    top: calc(50% - (58px / 2));
-    right: calc(50% - (58px / 2));
-    color: #fff;
-}
-
-#spinner .spinner-backdrop{
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1040;
-    width: 100vw;
-    height: 100vh;
-    background-color: #000;
-    opacity:0.5;
-}
+ #spinner {
+    display:none;
+   }
+  
+  #spinner .text-center {
+      width: 100%;
+      position: relative;
+      height: 100%;
+      z-index: 1041;
+  }
+  
+  #spinner .spinner-grow {
+      display: block;
+      position: fixed;
+      top: calc(50% - (58px / 2));
+      right: calc(50% - (58px / 2));
+      color: #fff;
+  }
+  
+  #spinner .spinner-backdrop{
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1040;
+      width: 100vw;
+      height: 100vh;
+      background-color: #000;
+      opacity:0.5;
+  }

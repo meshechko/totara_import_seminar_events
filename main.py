@@ -73,79 +73,95 @@ def create_recurring_events():
     user_custom_fields = g.user.custom_fields # get custom fields user has in adabase
 
     rooms = g.user.rooms # get rooms user has in database
-    form.rooms.choices = [(room.id, room.name) for room in rooms] #loadrooms id and name form dtabase
-
+    form.rooms.choices = [(room.room_id, room.name) for room in rooms] #loadrooms id and name form dtabase
+    
     max_generated_events = 1000 # max number of events user can create (including the ones in the uploaded backup file)
 
     recurrence_type = request.args.get('recurrence_type') # type of recurrence either selected dates from calendar or recurrence patterns
-
-    if request.method == 'POST' and form.validate_on_submit() and g.user.timezone:
+    
+    form.recurrence_type.data = recurrence_type
+    # print('GET')
+    # print(request.form['recurrence_type'])
+    if request.method == 'POST' and g.user.timezone:
         
-        form_custom_fields = []
+        if form.validate_on_submit():
+            recurrence_type = request.form['recurrence_type']
+            print(f'POST:{recurrence_type}' )
+            form_custom_fields = []
 
-        i = 0
-        for field in user_custom_fields: #loop through all custom fields in a form and append values to form_custom_fields  that will then transfer data to the Event object
-            form_custom_fields.append(field)
-            form_custom_fields[i].field_data = request.form[field.field_name]
-            i += 1
+            i = 0
+            for field in user_custom_fields: #loop through all custom fields in a form and append values to form_custom_fields  that will then transfer data to the Event object
+                form_custom_fields.append(field)
+                form_custom_fields[i].field_data = request.form[field.field_name]
+                i += 1
 
-        recurrence = models.Recurrence()
-
-        if recurrence_type == "manual": #if user selected some specific dates in the calendar
-            dates = form.manual_dates.data.replace(' ','').split(",")
-            recurrence.dates = sorted([datetime.strptime(date, '%d/%m/%Y') for date in dates])
-
-            session["recurrence_type"] = "manual" #use session to show manual calendar rather than recurring form after page is refreshed
-
-        else: #if user selected recurrence pattern e.g. every Tuesday
-            occurrence_number = ''
-            if form.occurrence_number:
-                occurrence_number = form.occurrence_number.data
-
-            days_of_week = ''
-            if form.days_of_week:
-                days_of_week = request.form.getlist('days_of_week')
-
-            recurrence.datestart=form.datestart.data.strftime("%Y%m%d") #TODO what is the best way to convert here or within Recurrence class
-            recurrence.datefinish=form.datefinish.data.strftime("%Y%m%d")
-            recurrence.frequency=form.frequency.data
-            recurrence.occurrence_number=occurrence_number
-            recurrence.days_of_week=days_of_week
-            recurrence.interval=form.interval.data
-
-        if (recurrence.count() + g.user.count_events()) <= max_generated_events: 
-
-            generated_events = myapp.generate_recurring_events(
-                user = g.user,
-                custom_fields=form_custom_fields, 
-                details=form.details.data,
-                timestart=form.timestart.data.strftime("%H:%M"), 
-                timefinish=form.timefinish.data.strftime("%H:%M"), 
-                room_id=form.rooms.data, 
-                capacity=form.capacity.data, 
-                recurring_dates=recurrence.dates,
-                allow_overbook=form.allow_overbook.data, 
-                allow_cancellations=form.allow_cancellations.data, 
-                cancellation_cutoff_number=form.cancellation_cutoff_number.data, 
-                cancellation_cutoff_timeunit=form.cancellation_cutoff_timeunit.data, 
-                min_capacity=form.min_capacity.data, 
-                send_capacity_email=form.send_capacity_email.data, 
-                send_capacity_email_cutoff_number=form.send_capacity_email_cutoff_number.data,
-                send_capacity_email_cutoff_timeunit=form.send_capacity_email_cutoff_timeunit.data,
-                normal_cost=form.normal_cost.data)
+            recurrence = models.Recurrence()
             
-            user_events = g.user.event_sets
-            
-            if len(generated_events) > 0:
-                user_events.append(generated_events)
-                flash(f'<span class="btn btn-link p-0 align-baseline" data-tableid="recurrence-{ g.user.count_event_sets() - 1 }" onclick="scrollSmoothTo(this.getAttribute(\'data-tableid\'));">{ recurrence.count() } events</span> have been successfully generated.', 'success')
-            
-            g.user.event_sets = user_events
-            
-            return redirect(url_for('create_recurring_events', recurrence_type=request.args.get('recurrence_type')))
+            if recurrence_type == "manual": #if user selected some specific dates in the calendar
+                
+                dates = form.manual_dates.data.replace(' ','').split(",")
+                print(sorted([datetime.strptime(date, '%d/%m/%Y') for date in dates]))
+                recurrence.dates = sorted([datetime.strptime(date, '%d/%m/%Y') for date in dates])
+                
+                recurring_dates = recurrence.dates
+                session["recurrence_type"] = "manual" #use session to show manual calendar rather than recurring form after page is refreshed
+
+                
+
+            else: #if user selected recurrence pattern e.g. every Tuesday
+                occurrence_number = ''
+                if form.occurrence_number:
+                    occurrence_number = form.occurrence_number.data
+
+                days_of_week = ''
+                if form.days_of_week:
+                    days_of_week = request.form.getlist('days_of_week')
+
+                recurrence.datestart=form.datestart.data.strftime("%Y%m%d") #TODO what is the best way to convert here or within Recurrence class
+                recurrence.datefinish=form.datefinish.data.strftime("%Y%m%d")
+                recurrence.frequency=form.frequency.data
+                recurrence.occurrence_number=occurrence_number
+                recurrence.days_of_week=days_of_week
+                recurrence.interval=form.interval.data
+                recurring_dates=recurrence.dates
+
+            if (recurrence.count() + g.user.count_events()) <= max_generated_events: 
+
+                generated_events = myapp.generate_recurring_events(
+                    user = g.user,
+                    custom_fields=form_custom_fields, 
+                    details=form.details.data,
+                    timestart=form.timestart.data.strftime("%H:%M"), 
+                    timefinish=form.timefinish.data.strftime("%H:%M"), 
+                    room_id=form.rooms.data, 
+                    capacity=form.capacity.data, 
+                    recurring_dates=recurring_dates,
+                    allow_overbook=form.allow_overbook.data, 
+                    allow_cancellations=form.allow_cancellations.data, 
+                    cancellation_cutoff_number=form.cancellation_cutoff_number.data, 
+                    cancellation_cutoff_timeunit=form.cancellation_cutoff_timeunit.data, 
+                    min_capacity=form.min_capacity.data, 
+                    send_capacity_email=form.send_capacity_email.data, 
+                    send_capacity_email_cutoff_number=form.send_capacity_email_cutoff_number.data,
+                    send_capacity_email_cutoff_timeunit=form.send_capacity_email_cutoff_timeunit.data,
+                    normal_cost=form.normal_cost.data)
+                
+                user_events = g.user.event_sets
+                
+                if len(generated_events) > 0:
+                    user_events.append(generated_events)
+                    flash(f'<span class="btn btn-link p-0 align-baseline" data-tableid="recurrence-{ g.user.count_event_sets() - 1 }" onclick="scrollSmoothTo(this.getAttribute(\'data-tableid\'));">{ recurrence.count() } events</span> have been successfully generated.', 'success')
+                
+                g.user.event_sets = user_events
+
+                return jsonify(data=render_template('recurring_events_elements/event-sets.html', session_sets=g.user.get_sets_data()),message=f'<span><span class="btn btn-link p-0 align-baseline" data-tableid="recurrence-{ g.user.count_event_sets() - 1 }" onclick="scrollSmoothTo(this.getAttribute(\'data-tableid\'));">{ recurrence.count() } events</span> have been successfully generated.</span>')
+            else:
+                return jsonify(message=f'You have requested to many events. Maximum number of events you can create is { max_generated_events }.'), 500
         else:
-            flash(f'You have requested to many events. Maximum number of events you can create is { max_generated_events }.', 'danger')
-            return redirect(url_for('create_recurring_events'))
+            all_errors = []
+            for error in list(form.errors.values()):
+                all_errors.append('<br>'.join(map(str, error)))
+            return jsonify(message='<br>'.join(all_errors)),500
 
     return render_template('create-recurring-events.html', form=form, rooms=rooms, session_sets=g.user.get_sets_data(), custom_fields={"custom_field":user_custom_fields}, timezone=os.environ["TZ"], timezone_form = timezone_form, recurrence_type=recurrence_type)
 
@@ -205,7 +221,7 @@ def delete_event():
 
     table_data = g.user.get_sets_data()
 
-    return jsonify({'data': render_template('event-sets.html', session_sets=table_data)})
+    return jsonify({'data': render_template('recurring_events_elements/event-sets.html', session_sets=table_data)})
 
 
 @app.route('/delete-events-set', methods=['POST'])
@@ -215,7 +231,7 @@ def _delete_events_set():
     del events[set_index]
     g.user.event_sets = events
     table_data = g.user.get_sets_data()
-    return jsonify({'data': render_template('event-sets.html', session_sets=table_data)})
+    return jsonify({'data': render_template('recurring_events_elements/event-sets.html', session_sets=table_data)})
 
 
 @app.route('/add-rooms', methods=['POST', 'GET'])
@@ -340,14 +356,25 @@ def delete_backup():
     if request.method == 'POST':
         shutil.rmtree(g.user.seminar_folder)
         g.user.delete_custom_fields()
-    return redirect(url_for('create_recurring_events'))
+        user_custom_fields = g.user.custom_fields # get custom fields user has in adabase
+        form_custom_fields = []
+
+        i = 0
+        for field in user_custom_fields: #loop through all custom fields in a form and append values to form_custom_fields  that will then transfer data to the Event object
+            form_custom_fields.append(field)
+            form_custom_fields[i].field_data = request.form[field.field_name]
+            i += 1
+    return jsonify({'data': render_template('recurring_events_elements/custom-fields.html', custom_fields={"custom_field":user_custom_fields})})
 
 
 @app.route('/delete-rooms', methods=['POST'])
 def delete_rooms():
     if request.method == 'POST':
         g.user.delete_rooms()
-    return redirect(url_for('create_recurring_events'))
+        form = CreateEventForm()
+        rooms = g.user.rooms # get rooms user has in database
+        form.rooms.choices = [(room.room_id, room.name) for room in rooms] #loadrooms id and name form dtabase
+    return jsonify({'data': render_template('recurring_events_elements/rooms.html', form=form)})
 
 
 # TODO remove user generated events for loged in user and remove rooms, custom fields and all events for unauthenticated users
@@ -368,7 +395,9 @@ def clear_all():
 def save_timezone():
     form = TimeZoneForm()
     g.user.timezone = form.timezone.data
-    return jsonify({'data': g.user.timezone})
+    os.environ["TZ"] = g.user.timezone 
+    table_data = g.user.get_sets_data()
+    return jsonify({'event_sets': render_template('recurring_events_elements/event-sets.html', session_sets=table_data), 'timezone': g.user.timezone})
 
 
 @app.errorhandler(404)
@@ -385,12 +414,16 @@ def login():
         if user:
             session['userID'] = user.id
             session['user_email'] = user.email
-    return redirect(url_for('create_recurring_events'))
+            return jsonify(data=render_template('login.html'))
+        else:
+            return jsonify(data=render_template('login.html'), login_message=f'Incorrect pin'), 500
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
-    session.pop("userID", None)
-    session.pop("user_email", None)
+    if request.method == 'POST':
+        session.pop("userID", None)
+        session.pop("user_email", None)
     return redirect(url_for('create_recurring_events'))
+        # return jsonify(data=render_template('login.html'))
 

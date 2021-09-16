@@ -1,0 +1,11 @@
+<div class="control-group">
+    {{ form.rooms.label(class_='form-label') }}  
+
+    {% if form.rooms.choices | length > 0 %}  
+    <button type="hidden" class="btn pt-0 pb-0" form="delete-rooms" data-toggle="tooltip" data-placement="top" title="Delete rooms"><i class="bi bi-trash"></i></button>
+      {{ form.rooms() }}
+
+    {% else %}
+      <a class="d-block btn btn-light" href="{{ url_for('add_rooms') }}">Add rooms (optional)</a>
+    {% endif %}
+  </div>

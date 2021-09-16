@@ -15,13 +15,11 @@
 </div>
 <div class="row g-5">
   <div class="col-md-12">
-    {% set rr = recurrence_type %}
     <form id="clear-all" method="POST" action="clear-all" onSubmit="return confirm('Are you sure you wish to clear everything and start over again?');"></form>
-    <form id="delete-backup" method="POST" action="delete-backup" onSubmit="return confirm('Are you sure you wish to delete your backup file?');"></form>
-    <form id="delete-rooms" method="POST" action="delete-rooms" onSubmit="return confirm('Are you sure you wish to delete your rooms?');"></form>
-    <form class="needs-validation" method="POST" action="" novalidate="">
+    <form id="delete-backup" method="POST" action="delete-backup"></form>
+    <form id="delete-rooms" method="POST" action="delete-rooms"></form>
+    <form id="events-generator" class="needs-validation" method="POST" action="create-recurring-events" novalidate="">
       {{ form.hidden_tag() }}
-      {% set custom_fields = custom_fields.custom_field%}
       <div class="row g-3">
         <div class="col-md-6">
           <div class="row">
@@ -32,36 +30,13 @@
               <button type="hidden" class="btn btn-outline-secondary btn-sm" form="clear-all" data-toggle="tooltip" data-placement="top" title="Clear all and start over again"><i class="bi bi-trash me-2"></i>Clear all</button>
             </div>
             </div>
-          <div class="row mb-5">
+          <div id="custom-fields-wrapper" class="row mb-5">
            
-            {% if custom_fields|length > 0 %}
-            <div class="control-group">
-            <label class="form-label">Custom fields</label><button type="hidden" class="btn pt-0 pb-0" form="delete-backup" data-toggle="tooltip" data-placement="top" title="Delete backup"><i class="bi bi-trash"></i></button>
-            </div>
-              {% for field in custom_fields%}
-                {% if field.field_type == "text"%}
-                <div class="col-6">
-                  <label class="form-label" for="{{ field.field_name }}">{{ field.field_name }}</label>
 
-                  <input
-                    id="{{ field.field_name }}"
-                    name="{{ field.field_name }}"
-                    type="text"
-                    placeholder=""
-                    class="form-control"
-                    value="{{ field.field_data }}"
-                    required=""
-                  />
-                </div>
-                {% endif %}
               
-              {% endfor %}
-              {% else %}
-              <div class="col-6">
-                <label class="form-label">Custom fields</label>
-                <a class=" btn btn-light" href="{{ url_for('upload_backup') }}">Add custom fields (optional)</a>
-              </div>
-              {% endif %}
+
+
+
             </div>
             <div class="row mb-5">
               <div class="col-sm-12">
@@ -91,17 +66,9 @@
             
             <div class="row mb-5">
               <div class="col-sm-6">
-                <div class="control-group">
-                  {{ form.rooms.label(class_='form-label') }}  
-      
-                  {% if form.rooms.choices | length > 0 %}  
-                  <button type="hidden" class="btn pt-0 pb-0" form="delete-rooms" data-toggle="tooltip" data-placement="top" title="Delete rooms"><i class="bi bi-trash"></i></button>
-                    {{ form.rooms() }}
-
-                  {% else %}
-                    <a class="d-block btn btn-light" href="{{ url_for('add_rooms') }}">Add rooms (optional)</a>
-                  {% endif %}
-                </div>
+              <div id="rooms-wrapper">
+                {% include 'recurring_events_elements/rooms.html' %}
+              </div>
               </div>
               <div class="col-sm-6">
                 {{ form.capacity.label(class_='form-label') }}
@@ -337,14 +304,15 @@
           <div class="row">
           {{ form.submit() }} 
         </div>
-           {% for category, message in get_flashed_messages(with_categories=True) %}
-          <div class="row mt-3">
-            <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
-              {{ message|safe }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+           
+        <div class="message">
+
+          <div class="alert fade show mt-3" role="alert">
+  
           </div>
-        {% endfor %} 
+  
+           </div>
+
         </div>
       </div>
 
@@ -357,7 +325,7 @@
 </div>
 
 <div id="event-sets">
-  {% include 'event-sets.html' %}
+  {% include 'recurring_events_elements/event-sets.html' %}
 </div>
 
 <button
@@ -588,17 +556,66 @@ $(document).ready(function() {
     
     let from_url = $(this).attr("action");
     if (from_url == 'delete-events-set' || from_url == 'delete-event'){
+      
       e.preventDefault();
+      if (window.confirm('Delete?')){
       $.ajax({
         method: 'POST',
         url: from_url,
         data: $(this).serialize(),
+        beforeSend: function() {
+          $('#spinner').show();
+        },
+        complete: function(){
+            $('#spinner').hide();
+        },
         success: function(resp){
           $('#event-sets').html(resp.data)
         }
       });
     }
+    }
   });
+
+  $(document).on('submit', '#delete-rooms', function(e) {
+      e.preventDefault();
+      if (window.confirm('Delete rooms?')){
+      $.ajax({
+        method: 'POST',
+        url: 'delete-rooms',
+        data: $(this).serialize(),
+        beforeSend: function() {
+          $('#spinner').show();
+        },
+        complete: function(){
+            $('#spinner').hide();
+        },
+        success: function(resp){
+          $('#rooms-wrapper').html(resp.data)
+        }
+      });
+  }
+  });
+
+  $(document).on('submit', '#delete-backup', function(e) {
+    e.preventDefault();
+    if (window.confirm('Delete custom fields?')){
+    $.ajax({
+      method: 'POST',
+      url: 'delete-backup',
+      data: $(this).serialize(),
+      beforeSend: function() {
+        $('#spinner').show();
+      },
+      complete: function(){
+          $('#spinner').hide();
+      },
+      success: function(resp){
+        $('#custom-fields-wrapper').html(resp.data)
+      }
+    });
+}
+});
 
   $(document).on('submit', '#save-timezone', function(e) {
     e.preventDefault();
@@ -607,10 +624,44 @@ $(document).ready(function() {
         url: '/save-timezone',
         data: $(this).serialize(),
         success: function(resp){
-          $('#btn-timezone').html('Timezone: ' + resp.data)
+          $('#btn-timezone').html('Timezone: ' + resp.timezone);
+          $('#event-sets').html(resp.event_sets);
         }
       });
     
+  });
+
+
+  $(document).on('submit', 'form', function(e) {
+
+    let from_url = $(this).attr("action");
+    message_container = $('.alert')
+    if (from_url == 'create-recurring-events'){
+      e.preventDefault();
+      $.ajax({
+        method: 'POST',
+        url: from_url,
+        data: $(this).serialize(),
+        beforeSend: function() {
+            $('#spinner').show();
+         },
+         complete: function(){
+            $('#spinner').hide();
+
+         },
+        success: function(resp){
+          message_container.addClass('alert-success').removeClass('alert-danger');
+          $('#event-sets').html(resp.data);
+          message_container.html(resp.message);
+
+        },
+        error: function(request,status, message){
+          message_container.addClass('alert-danger').removeClass('alert-success');
+          message_container.html(request.responseJSON.message)
+        }
+
+      });
+    }
   });
   
 </script>

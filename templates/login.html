@@ -1,0 +1,17 @@
+{% if session['user_email'] %}
+<button id="logout" class="btn btn-outline-secondary">Logout from {{ session['userID'] }}</button>
+{% else %}
+<form id="login" class="needs-validation" method="POST" action="login" novalidate="">
+<div class="input-group mb-3">
+<input type="text" class="form-control" name="pin" placeholder="Enter PIN" aria-label="Enter PIN" aria-describedby="basic-addon2">
+<div class="input-group-append">
+<button class="btn btn-outline-secondary" type="submit">Enter</button>
+</div>
+</div>
+</form>
+
+<div id="login-message" class="text-danger">
+
+     </div>
+
+{% endif %}

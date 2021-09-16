@@ -1,0 +1,29 @@
+{% set custom_fields = custom_fields.custom_field%}
+         {% if custom_fields|length > 0 %}
+            <div class="control-group">
+            <label class="form-label">Custom fields</label><button type="hidden" class="btn pt-0 pb-0" form="delete-backup" data-toggle="tooltip" data-placement="top" title="Delete backup"><i class="bi bi-trash"></i></button>
+            </div>
+              {% for field in custom_fields%}
+                {% if field.field_type == "text"%}
+                <div class="col-6">
+                  <label class="form-label" for="{{ field.field_name }}">{{ field.field_name }}</label>
+
+                  <input
+                    id="{{ field.field_name }}"
+                    name="{{ field.field_name }}"
+                    type="text"
+                    placeholder=""
+                    class="form-control"
+                    value="{{ field.field_data }}"
+                    required=""
+                  />
+                </div>
+                {% endif %}
+              
+              {% endfor %}
+              {% else %}
+              <div class="col-6">
+                <label class="form-label">Custom fields</label>
+                <a class=" btn btn-light" href="{{ url_for('upload_backup') }}">Add custom fields (optional)</a>
+              </div>
+              {% endif %}

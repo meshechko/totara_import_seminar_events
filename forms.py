@@ -7,7 +7,7 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 from datetime import datetime, time
 import pytz
 from flask import session, request
-from wtforms.widgets.core import CheckboxInput, TextInput
+from wtforms.widgets.core import CheckboxInput, TextInput, HiddenInput
 
 
 class MultiCheckboxField(SelectMultipleField):
@@ -34,6 +34,7 @@ class PinFrom(FlaskForm):
     pin = StringField('pin')
     submit = SubmitField('Enter')
 
+from urllib import parse
 
 class TimeZoneForm(FlaskForm):
     timezones = [(x, x) for x in pytz.common_timezones]
@@ -77,9 +78,11 @@ class CreateEventForm(FlaskForm):
 
     normal_cost =IntegerField(u'Normal cost', widget=h5widgets.NumberInput(min=0, max=1000, step=1), render_kw={"class": "form-control"}, default=0)
 
+    recurrence_type = HiddenField()
+
     manual_dates = StringField(u'Select dates', render_kw={"class": "form-control cal flatpickr-input d-none", "readonly":"readonly"})
     def validate_manual_dates(form, field):
-        if request.args.get('recurrence_type') == "manual":
+        if request.form['recurrence_type'] == "manual":
             if field.data:
                 return True
             else:
@@ -100,10 +103,14 @@ class CreateEventForm(FlaskForm):
 
     interval = IntegerField(u'of every', [validators.required()], widget=h5widgets.NumberInput(min=0, max=50, step=1), render_kw={"class": "form-control d-inline"}, default=1)
 
+
     days_of_week = SelectMultipleField('', choices=[('MO', 'Monday'), ('TU', 'Tuesday'), ('WE', 'Wednesday'), ('TH', 'Thursday'), ('FR', 'Friday'), ('SA', 'Saturday'), ('SU', 'Sunday')], render_kw={'class': "form-check-input"})
     def validate_days_of_week(form, field):
-        if len(field.data) == 0 and request.args.get('recurrence_type') != "manual":
-            raise ValidationError("Select at least one day")
+        if len(field.data) == 0 and request.form['recurrence_type'] != "manual":
+            
+            raise ValidationError("Select at least one day of the week")
+
+    
 
     occurrence_number = SelectField(u'The', [validators.required()], choices=[('1', 'First'), ('2', 'Second'), ('3', 'Third'), ('4', 'Fourth'), ('-1', 'Last')], default=1, render_kw={"class": "form-select"})
 
