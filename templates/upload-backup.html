@@ -13,7 +13,7 @@
       </p>
       <p class="fs-5 text-muted">Below there's a quick guide on how to create a Seminar activity backup.</p>
       <div>
-         <form enctype="multipart/form-data">
+         <form id="upload-backup-form" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             {{ form.file(class="form-control mb-3 btn btn-lg btn-light") }}
 		 <div class="btn-group w-100">
@@ -50,7 +50,7 @@
 <script>
 
 
-   $(document).on('submit', 'form', function(e) {
+   $(document).on('submit', '#upload-backup-form', function(e) {
        e.preventDefault();
        message_container = $('.alert')
        $.ajax({

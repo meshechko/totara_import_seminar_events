@@ -272,11 +272,16 @@ def add_rooms():
                 g.user.add_room(room) # append these rooms to the User object and save in database
 
             #TODO messages are return value from the method in Controller
-            flash(f'Successfully uploaded { len(g.user.rooms) } rooms', 'success')
-            return redirect(url_for('add_rooms'))
+            # flash(f'Successfully uploaded { len(g.user.rooms) } rooms', 'success')
+            print('SUCCESS')
+            return jsonify(message=f'Successfully uploaded { len(g.user.rooms) } rooms')
         else:
-            flash(f'Please upload CSV that contains the following headers: \n { required_headers_str }', 'danger')
+            # flash(f'Please upload CSV that contains the following headers: \n { required_headers_str }', 'danger')
+            return jsonify(message=f'Please upload CSV that contains the following headers: \n { required_headers_str }'), 500
     return render_template('add-rooms.html', form=form, required_headings=required_headers_str)
+
+
+
 
 
 @app.route('/upload-backup', methods=['POST', 'GET'])

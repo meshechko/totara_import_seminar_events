@@ -9,7 +9,7 @@ content %}
       </p>
       <p class="fs-5 text-muted">Below there's a quick guide on how to create this report and generate CSV file with rooms in Totara.</p>
       <div>
-         <form method="POST" action="" enctype="multipart/form-data">
+         <form id="add-rooms-form" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             {{ form.file(class="form-control mb-3 btn btn-lg btn-light") }}
 		 <div class="btn-group w-100">
@@ -18,16 +18,10 @@ content %}
          </form>
          
          <div class="message">
-            {% for category, message in get_flashed_messages(with_categories=True) %}
-		    <div class="alert alert-{{category}} mt-3" role="alert">{{ message }}</div>
-            {% endfor %} 
-		 
-            {% if form.file.errors %} 
-		    {% for error in form.file.errors %}
-		 	<div class="alert alert-danger mt-3" role="alert">{{ error }}</div>
-		    {% endfor %} 
-            {% endif %}
-         </div>
+
+            <div class="alert  mt-3" role="alert"></div>
+  
+           </div>
       </div>
    </div>
    <div class="col-md-4"><img class="img-fluid" src="{{ url_for('static', filename='img/door.png') }}"></div>
@@ -42,3 +36,39 @@ content %}
    <li class="list-group-item">Download report in CSV format.</li>
 </ol>
 {% endblock %}
+
+{% block body_bottom_js %}
+<script>
+
+
+   $(document).on('submit', '#add-rooms-form', function(e) {
+       e.preventDefault();
+       message_container = $('.alert')
+       $.ajax({
+         method: 'POST',
+         url: 'add-rooms',
+         data: new FormData($(this)[0]),
+         contentType: false,
+         cache: false,
+         processData: false,
+         beforeSend: function() {
+            $('#spinner').show();
+         },
+         complete: function(){
+            $('#spinner').hide();
+         },
+         success: function(resp){
+               $('#file').val('')
+               message_container.addClass('alert-success').removeClass('alert-danger');
+               message_container.html(resp.message)
+         },
+         error: function(request,status, message){
+
+            message_container.addClass('alert-danger').removeClass('alert-success');
+            message_container.html(request.responseJSON.message)
+         }
+       });
+   });
+   
+ </script>
+ {% endblock body_bottom_js %}
